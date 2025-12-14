@@ -1,0 +1,589 @@
+/* ============================================
+   HEADER STYLES
+   ============================================ */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--bg-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.logo {
+  width: 100px;
+  height: auto;
+}
+
+/* ============================================
+   DESKTOP NAVIGATION
+   ============================================ */
+
+.desktopNav {
+  display: flex;
+  align-items: center;
+}
+
+.navList {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.navList li {
+  list-style: none;
+}
+
+.navList li a {
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 500;
+  transition: color 0.2s;
+  font-size: 0.95rem;
+}
+
+.navList li a:hover {
+  color: var(--primary-color);
+}
+
+/* ============================================
+   DESKTOP RIGHT SECTION
+   ============================================ */
+
+.desktopRight {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.authButtons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.loginBtn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  color: var(--text-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.loginBtn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.joinBtn {
+  background-color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.joinBtn:hover {
+  background-color: var(--primary-hover);
+}
+
+.langBtn {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s;
+}
+
+.langBtn:hover {
+  color: var(--text-color);
+}
+
+/* ============================================
+   USER DROPDOWN (Desktop)
+   ============================================ */
+
+.userDropdown {
+  position: relative;
+}
+
+.userDropdownBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.userDropdownBtn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.userAvatar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2563eb 0%, #21489c 100%);
+  border-radius: 50%;
+  color: #ffffff;
+}
+
+.userName {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.9rem;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  padding: 8px;
+  min-width: 200px;
+  z-index: 100;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+[dir="rtl"] .dropdownMenu {
+  right: auto;
+  left: 0;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownRole {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #2563eb 0%, #21489c 100%);
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  width: 100%;
+  text-align: start;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #000;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.dropdownItem:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.dropdownItem svg {
+  color: #64748b;
+}
+
+.dropdownItem:hover svg {
+  color: #059669;
+}
+
+.actionItem {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.actionItem svg {
+  color: #059669;
+}
+
+.logoutItem {
+  color: #dc2626;
+}
+
+.logoutItem:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.logoutItem svg {
+  color: #dc2626;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 8px 0;
+}
+
+/* ============================================
+   HAMBURGER MENU BUTTON (Hidden on desktop)
+   ============================================ */
+
+.menuBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  padding: 0.5rem;
+}
+
+/* ============================================
+   MOBILE MENU (Hidden on desktop)
+   ============================================ */
+
+.overlay {
+  display: none;
+}
+
+.mobileMenu {
+  display: none;
+}
+
+.closeMenuBtn {
+  display: none;
+}
+
+/* ============================================
+   RESPONSIVE: 320px - 1200px (Mobile/Tablet)
+   ============================================ */
+
+@media (min-width: 320px) and (max-width: 1200px) {
+  .header {
+    padding: 0.5rem 1rem;
+  }
+
+  .logo {
+    width: 80px;
+  }
+
+  /* Hide desktop elements on mobile */
+  .desktopNav {
+    display: none;
+  }
+
+  .desktopRight {
+    display: none;
+  }
+
+  /* Show hamburger menu button */
+  .menuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Overlay */
+  .overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+  }
+
+  /* Mobile Menu Panel */
+  .mobileMenu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85vw;
+    background-color: var(--bg-color);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+    padding-top: 4rem;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  [dir="rtl"] .mobileMenu {
+    right: auto;
+    left: 0;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobileMenuOpen {
+    transform: translateX(0) !important;
+  }
+
+  .closeMenuBtn {
+    display: flex;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0.25rem;
+  }
+
+  [dir="rtl"] .closeMenuBtn {
+    right: auto;
+    left: 1rem;
+  }
+
+  /* Mobile User Section */
+  .mobileUserSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1rem;
+  }
+
+  .mobileUserInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .mobileAvatar {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2563eb 0%, #21489c 100%);
+    border-radius: 50%;
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .mobileUserDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  .mobileUserName {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobileUserRole {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: #059669;
+    font-weight: 500;
+  }
+
+  .mobileMenuItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    width: 100%;
+    text-align: start;
+    background: none;
+    border: none;
+    cursor: pointer;
+    /* color: #475569; */
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .mobileMenuItem:hover {
+    background: #f1f5f9;
+    color: #1e293b;
+  }
+
+  .logoutItemMobile {
+    color: #dc2626;
+    margin-top: 4px;
+  }
+
+  .logoutItemMobile:hover {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .logoutItemMobile svg {
+    color: #dc2626;
+  }
+
+  /* Mobile Nav List */
+  .mobileNavList {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+  }
+
+  .mobileNavList li {
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .mobileNavList li a {
+    display: block;
+    padding: 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+
+  .mobileNavList li a:hover {
+    background: #f8fafc;
+    color: var(--primary-color);
+  }
+
+  /* Mobile Auth Buttons */
+  .mobileAuthButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .mobileAuthButtons a {
+    width: 100%;
+  }
+
+  .mobileAuthButtons button {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  /* Mobile Language Button */
+  .mobileLangBtn {
+    margin-top: auto;
+    padding: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: var(--text-color);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .mobileLangBtn:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+}
+
+/* ============================================
+   EXTRA SMALL DEVICES (320px - 480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .logo {
+    width: 70px;
+  }
+
+  .mobileMenu {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .mobileAvatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobileUserName {
+    font-size: 0.9rem;
+  }
+
+  .mobileMenuItem {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .mobileNavList li a {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+}

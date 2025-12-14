@@ -1,0 +1,495 @@
+/* FindWork Page - JustLife Inspired Design */
+
+.findWorkPage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f0fdf4 0%, #f8fafc 100%);
+}
+
+/* Hero Section */
+.heroSection {
+  background: linear-gradient(135deg, #2563eb 0%, #204ba7 50%, #2563eb 100%);
+  padding: 60px 24px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.sparkleIcon {
+  color: #fcd34d;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(10deg);
+  }
+}
+
+.heroSubtitle {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 32px;
+  line-height: 1.6;
+}
+
+/* Search Container */
+.searchContainer {
+  max-width: 600px;
+  margin: 0 auto 32px;
+}
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 20px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 18px 24px 18px 56px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.searchInput::placeholder {
+  color: #94a3b8;
+}
+
+/* Service Type Tabs */
+.serviceTabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.serviceTab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.serviceTab:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.serviceTab.activeTab {
+  background: #ffffff;
+  color: #047857;
+  border-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.tabCount {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.serviceTab.activeTab .tabCount {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+/* Main Content */
+.mainContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+  margin-top: -40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Section Styling */
+.categoriesSection,
+.resultsSection {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.sectionHeader {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* City Filter */
+.cityFilterWrapper {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cityLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.cityLabel svg {
+  color: #2563eb;
+}
+
+/* City Dropdown */
+.cityDropdownWrapper {
+  position: relative;
+  min-width: 200px;
+}
+
+.cityDropdownBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  transition: all 0.2s;
+}
+
+.cityDropdownBtn:hover {
+  border-color: #2563eb;
+  background: #ffffff;
+}
+
+.cityDropdownBtn.cityDropdownActive {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.cityDropdownIcon {
+  color: #2563eb;
+}
+
+.cityDropdownArrow {
+  margin-left: auto;
+  color: #64748b;
+  transition: transform 0.2s;
+}
+
+.cityDropdownArrow.rotated {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.cityDropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  min-width: 220px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* Search in Dropdown */
+.cityDropdownSearch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.citySearchIcon {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.citySearchInput {
+  flex: 1;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #1e293b;
+  outline: none;
+}
+
+.citySearchInput::placeholder {
+  color: #94a3b8;
+}
+
+.citySearchClear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #e2e8f0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.citySearchClear:hover {
+  background: #cbd5e1;
+  color: #1e293b;
+}
+
+/* Dropdown Options */
+.cityDropdownOptions {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.cityDropdownOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #475569;
+  text-align: start;
+  transition: all 0.15s;
+}
+
+.cityDropdownOption:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.cityDropdownOption svg {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.cityDropdownOption:hover svg {
+  color: #2563eb;
+}
+
+.cityOptionActive {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.cityOptionActive svg {
+  color: #2563eb;
+}
+
+/* No Results */
+.cityNoResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 14px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.cityNoResults svg {
+  opacity: 0.5;
+}
+
+.cityNoResults span {
+  font-size: 0.85rem;
+}
+
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 80px 40px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 24px;
+}
+
+.emptyState h2 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  margin: 0 0 12px;
+}
+
+.emptyState p {
+  color: #64748b;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 40px 20px 60px;
+  }
+
+  .heroTitle {
+    font-size: 1.75rem;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+
+  .searchInput {
+    padding: 16px 20px 16px 50px;
+    font-size: 0.95rem;
+  }
+
+  .serviceTabs {
+    gap: 12px;
+  }
+
+  .serviceTab {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .mainContent {
+    padding: 0 16px 40px;
+    margin-top: -30px;
+  }
+
+  .categoriesSection,
+  .resultsSection {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+
+  .cityFilterWrapper {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .citySelect {
+    width: 100%;
+  }
+
+  .emptyState {
+    padding: 60px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 1.5rem;
+  }
+
+  .serviceTab {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    gap: 8px;
+  }
+
+  .tabCount {
+    padding: 3px 8px;
+    font-size: 0.75rem;
+  }
+}

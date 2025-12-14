@@ -1,0 +1,182 @@
+/* ============================================
+   PROFILE BIO SECTION
+   ============================================ */
+
+.bioSection {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionTitle svg {
+  color: #2563eb;
+}
+
+.sectionTitle h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editBtn:hover {
+  background: #f1f5f9;
+  color: #059669;
+  border-color: #059669;
+}
+
+.sectionContent {
+  color: #475569;
+}
+
+.bioText {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.editContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bioTextarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #1e293b;
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.bioTextarea:focus {
+  outline: none;
+  border-color: #059669;
+}
+
+.bioTextarea::placeholder {
+  color: #94a3b8;
+}
+
+.editActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.saveBtn,
+.cancelBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.saveBtn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.saveBtn:hover {
+  background: #2564eba2;
+}
+
+.cancelBtn {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.cancelBtn:hover {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (min-width: 320px) and (max-width: 1200px) {
+  .bioSection {
+    padding: 1.25rem;
+  }
+
+  .sectionTitle h2 {
+    font-size: 1rem;
+  }
+
+  .bioText {
+    font-size: 0.95rem;
+  }
+  /* Make edit actions stack on narrower widths */
+  .editActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .saveBtn,
+  .cancelBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bioTextarea {
+    min-height: 110px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bioSection {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .bioTextarea {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+}

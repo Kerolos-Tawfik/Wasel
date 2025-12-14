@@ -1,0 +1,191 @@
+/* ============================================
+   PROFILE RATING SECTION
+   ============================================ */
+
+.ratingSection {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionTitle svg {
+  color: #f59e0b;
+}
+
+.sectionTitle h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.ratingContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Main Rating */
+.mainRating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-radius: 12px;
+}
+
+.ratingNumber {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1;
+}
+
+.starsContainer {
+  display: flex;
+  gap: 4px;
+  margin: 0.75rem 0;
+}
+
+.starFilled {
+  color: #f59e0b;
+}
+
+.starEmpty {
+  color: #d1d5db;
+}
+
+.reviewCount {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.statItem svg {
+  color: #059669;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Rating Bars */
+.ratingBars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ratingBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.barLabel {
+  width: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+}
+
+.barTrack {
+  flex: 1;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (min-width: 320px) and (max-width: 1200px) {
+  .ratingSection {
+    padding: 1.25rem;
+  }
+
+  .mainRating {
+    padding: 1.25rem;
+  }
+
+  .ratingNumber {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ratingSection {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .mainRating {
+    padding: 1rem;
+  }
+
+  .ratingNumber {
+    font-size: 2rem;
+  }
+
+  .starsContainer svg {
+    width: 18px;
+    height: 18px;
+  }
+}

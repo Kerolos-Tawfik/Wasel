@@ -1,0 +1,279 @@
+/* ============================================
+   PROFILE CONTACT SECTION
+   ============================================ */
+
+.contactSection {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionTitle svg {
+  color: #2563eb;
+}
+
+.sectionTitle h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editBtn:hover {
+  background: #f1f5f9;
+  color: #059669;
+  border-color: #059669;
+}
+
+/* Contact List */
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.contactItem svg {
+  color: #059669;
+  flex-shrink: 0;
+}
+
+.contactItem span {
+  font-size: 0.95rem;
+  color: #475569;
+  word-break: break-all;
+}
+
+.lockedIcon {
+  margin-left: auto;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.noContact {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  padding: 1rem;
+}
+
+/* Edit Container */
+.editContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.formGroup label svg {
+  color: #059669;
+}
+
+.readOnlyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 2px 8px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #1e293b;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  background: #ffffff;
+}
+
+.readOnlyInput {
+  background: #f8fafc;
+  color: #64748b;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.readOnlyInput:focus {
+  border-color: #e2e8f0;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #059669;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.select {
+  cursor: pointer;
+}
+
+.editActions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 0.5rem;
+}
+
+.saveBtn,
+.cancelBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.saveBtn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.saveBtn:hover {
+  background: #2564ebad;
+}
+
+.cancelBtn {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.cancelBtn:hover {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (min-width: 320px) and (max-width: 1200px) {
+  .contactSection {
+    padding: 1.25rem;
+  }
+  /* Stack edit actions and make buttons full-width on medium/small screens */
+  .editActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .saveBtn,
+  .cancelBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .formGroup {
+    gap: 8px;
+  }
+
+  .contactItem {
+    padding: 0.75rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactSection {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .contactItem {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .contactItem span {
+    font-size: 0.9rem;
+  }
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f0fdf4;
+  border: 1.5px solid #059669;
+  border-radius: 10px;
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionBtn:hover {
+  background: #dcfce7;
+}

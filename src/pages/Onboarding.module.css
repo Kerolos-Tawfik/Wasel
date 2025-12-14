@@ -1,0 +1,416 @@
+/* Onboarding Page - JustLife Inspired Design */
+
+.onboardingPage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f0fdf4 0%, #f8fafc 100%);
+}
+
+/* Hero Section */
+.heroSection {
+  background: linear-gradient(135deg, #2563eb 0%, #204ba7 50%, #2563eb 100%);
+  padding: 50px 24px 70px;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroSection::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+.heroContent {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.heroTitle {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.sparkleIcon {
+  color: #fcd34d;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(10deg);
+  }
+}
+
+.heroSubtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Main Content */
+.mainContent {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+  margin-top: -40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Onboarding Card */
+.onboardingCard {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+  margin-bottom: 32px;
+}
+
+.onboardingCard img {
+  display: block;
+  margin: 0 auto 24px;
+  max-width: 150px;
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.cardHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+
+.cardHeader p {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Roles Grid */
+.rolesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.roleCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 32px 24px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.roleCard:hover {
+  background-color: #2564eb0c;
+  border-color: #2563eb;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.12);
+}
+
+.roleCard.activeRole {
+  background-color: #2564eb0c;
+  border-color: #2563eb;
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.2);
+}
+
+.roleIconWrapper {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 20px;
+  color: #2563eb;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.roleCard:hover .roleIconWrapper {
+  color: #2563eb;
+}
+
+.roleCard.activeRole .roleIconWrapper {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+}
+
+.roleContent h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 6px;
+}
+
+.roleContent p {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.roleCard.activeRole .roleContent h3 {
+  color: #2563eb;
+}
+
+.checkIcon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #2563eb;
+}
+
+/* Continue Button */
+.continueButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 32px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb 0%, #4c79da 100%);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 32px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.continueButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2564ebcc 0%, #4c79dacf 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.3);
+}
+
+.backButton:hover:not(:disabled) {
+  background: #e2e8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.continueButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.backButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.continueButton svg {
+  transition: transform 0.3s ease;
+}
+
+.continueButton:hover:not(:disabled) svg {
+  transform: translateX(4px);
+}
+
+/* Steps Section */
+.stepsSection {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.stepsTitle {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 24px;
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.stepCard {
+  text-align: center;
+  padding: 20px;
+}
+
+.stepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.stepCard h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+
+.stepCard p {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 40px 20px 60px;
+  }
+
+  .heroTitle {
+    font-size: 1.75rem;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+
+  .mainContent {
+    padding: 0 16px 40px;
+    margin-top: -30px;
+  }
+
+  .onboardingCard {
+    padding: 28px 20px;
+    border-radius: 20px;
+  }
+
+  .rolesGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .roleCard {
+    flex-direction: row;
+    text-align: start;
+    padding: 24px 20px;
+  }
+
+  .roleIconWrapper {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+  }
+
+  .roleContent {
+    flex: 1;
+  }
+
+  .stepsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .stepCard {
+    display: flex;
+    align-items: flex-start;
+    text-align: start;
+    gap: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+  }
+
+  .stepNumber {
+    flex-shrink: 0;
+    margin-bottom: 0;
+  }
+
+  .stepCard h4 {
+    margin-bottom: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 1.5rem;
+  }
+
+  .cardHeader h2 {
+    font-size: 1.25rem;
+  }
+
+  .roleCard {
+    padding: 20px 16px;
+  }
+
+  .roleIconWrapper {
+    width: 50px;
+    height: 50px;
+  }
+
+  .roleIconWrapper svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .continueButton {
+    padding: 14px 24px;
+    font-size: 1rem;
+  }
+}
