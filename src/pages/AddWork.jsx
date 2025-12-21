@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { PlusCircle, Sparkles } from "lucide-react";
-import RequestWork from "../components/addwork/RequestWork.jsx";
+import RequestWork from "../../../Wasel/src/components/addwork/RequestWork.jsx";
 import styles from "./AddWork.module.css";
 
 function AddWork({ user }) {

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { supabase } from "../lib/supabaseClient";
-import { getAuthErrorMessage } from "../lib/errorHelpers";
-import { toastConfig } from "../lib/toastConfig";
+
+import { getAuthErrorMessage } from "../../../Wasel/src/lib/errorHelpers";
+import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
 import styles from "./Auth.module.css";
 import { Loader2 } from "lucide-react";
 
@@ -13,25 +13,28 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleReset = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleReset = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `https://market-place-mu-ashen.vercel.app/update-password
-`,
-      });
+  try {
+    const response = await fetch("/api/send-reset-link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
 
-      if (error) throw error;
-      toast.success(t("auth.reset_email_sent"), toastConfig);
-    } catch (error) {
-      const errorKey = getAuthErrorMessage(error);
-      toast.error(t(errorKey), toastConfig);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.message || "Failed to send reset email");
+
+    toast.success(t("auth.reset_email_sent"), toastConfig);
+  } catch (error) {
+    toast.error(error.message, toastConfig);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className={styles.container}>

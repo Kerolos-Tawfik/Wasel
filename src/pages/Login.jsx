@@ -4,9 +4,9 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 // import { useAuth } from "../../context/AuthContext";
-import { supabase } from "../lib/supabaseClient";
-import { getAuthErrorMessage } from "../lib/errorHelpers";
-import { toastConfig } from "../lib/toastConfig";
+
+import { getAuthErrorMessage } from "../../../Wasel/src/lib/errorHelpers";
+import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
 import styles from "./Auth.module.css";
 
 const Login = () => {
@@ -27,28 +27,36 @@ const Login = () => {
   //   }
   // }, [user, navigate, location]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-      if (error) throw error;
+  try {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      navigate("/findwork");
-      console.log("login successful");
-    } catch (error) {
-      const errorKey = getAuthErrorMessage(error);
-      toast.error(t(errorKey), toastConfig);
-   
-      console.error("login error from catch block:", error);
-    } finally {
-      setLoading(false);
+    const data = await response.json();
+
+    if (!response.ok) {
+      toast.error(data.message || t("errors.default"), toastConfig);
+      return;
     }
-  };
+
+    // تخزين التوكن أو أي جلسة حسب السيرفر
+    localStorage.setItem("authToken", data.token);
+
+    console.log("login successful");
+    navigate("/findwork");
+  } catch (error) {
+    console.error("login error:", error);
+    toast.error(t("errors.default"), toastConfig);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className={styles.container}>

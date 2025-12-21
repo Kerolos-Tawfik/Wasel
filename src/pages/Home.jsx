@@ -1,6 +1,6 @@
-import Hero from "../components/home/Hero";
-import Features from "../components/home/Features";
-import Categories from "../components/home/Categories";
+import Hero from "../../../Wasel/src/components/home/Hero";
+import Features from "../../../Wasel/src/components/home/Features";
+import Categories from "../../../Wasel/src/components/home/Categories";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 

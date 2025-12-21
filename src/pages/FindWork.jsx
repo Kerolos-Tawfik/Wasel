@@ -8,8 +8,8 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
-import Categories from "../components/findwork/Categories.jsx";
-import ClientsCard from "../components/findwork/ClientsCard.jsx";
+import Categories from "../../../Wasel/src/components/findwork/Categories.jsx";
+import ClientsCard from "../../../Wasel/src/components/findwork/ClientsCard.jsx";
 import styles from "./FindWork.module.css";
 
 function FindWork({ savedData, service, setService }) {

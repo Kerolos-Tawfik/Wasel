@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { supabase } from "../lib/supabaseClient";
-import PasswordStrength from "../components/auth/PasswordStrength";
-import { toastConfig } from "../lib/toastConfig";
+
+import PasswordStrength from "../../../Wasel/src/components/auth/PasswordStrength";
+import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
 import styles from "./Auth.module.css";
 
 const Join = () => {
@@ -27,48 +27,45 @@ const Join = () => {
   };
 
   const handleJoin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    console.log("handleJoin started");
+  e.preventDefault();
+  setLoading(true);
+  console.log("handleJoin started");
 
-    if (!isPasswordValid(password)) {
-      toast.error(t("auth.errors.weak_password"), toastConfig);
+  if (!isPasswordValid(password)) {
+    toast.error(t("auth.errors.weak_password"), toastConfig);
+    setLoading(false);
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        full_name: fullName,
+        phone: phoneNum,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      toast.error(data.message || t("errors.default"), toastConfig);
       return;
     }
 
-    const infoSignUp = {
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          phone: phoneNum,
-        },
-        emailRedirectTo: `${window.location.origin}/login`,
-      },
-    };
+    console.log("Sign up successful");
+    toast.success(t("auth.join_success"), toastConfig);
+  } catch (error) {
+    console.error("Sign up error:", error);
+    toast.error(t("errors.default"), toastConfig);
+  } finally {
+    setLoading(false);
+  }
+};
 
-    try {
-      const { data, error } = await supabase.auth.signUp(infoSignUp);
-
-      if (error) throw error;
-
-      // Check if user already exists (Supabase returns user with identities = [] for existing emails)
-      if (data?.user?.identities?.length === 0) {
-        console.log("User already registered (identities empty)");
-        toast.error(t("auth.errors.user_already_registered"), toastConfig);
-        return;
-      }
-
-      console.log("Sign up successful");
-      toast.success(t("auth.join_success"), toastConfig);
-    } catch (error) {
-      console.error("Sign up error from catch block:", error);
-      toast.error(t("errors.default"), toastConfig);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className={styles.container}>

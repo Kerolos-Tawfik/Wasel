@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { supabase } from "../lib/supabaseClient.js";
-import ProfileHeader from "../components/profile/ProfileHeader.jsx";
-import ProfileBio from "../components/profile/ProfileBio.jsx";
-import ProfilePortfolio from "../components/profile/ProfilePortfolio.jsx";
-import ProfileRating from "../components/profile/ProfileRating.jsx";
-import ProfileContact from "../components/profile/ProfileContact.jsx";
-import ProfileRoleSwitcher from "../components/profile/ProfileRoleSwitcher.jsx";
+
+import ProfileHeader from "../../../Wasel/src/components/profile/ProfileHeader.jsx";
+import ProfileBio from "../../../Wasel/src/components/profile/ProfileBio.jsx";
+import ProfilePortfolio from "../../../Wasel/src/components/profile/ProfilePortfolio.jsx";
+import ProfileRating from "../../../Wasel/src/components/profile/ProfileRating.jsx";
+import ProfileContact from "../../../Wasel/src/components/profile/ProfileContact.jsx";
+import ProfileRoleSwitcher from "../../../Wasel/src/components/profile/ProfileRoleSwitcher.jsx";
 import styles from "./Profile.module.css";
 import { LoaderCircle } from "lucide-react";
 import { toast } from "react-toastify";
-import { toastConfig } from "../lib/toastConfig";
-import { useAuth } from "../context/AuthContext";
+import { toastConfig } from "../../../Wasel/src/lib/toastConfig.js";
+import { useAuth } from "../../../Wasel/src/context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 const Profile = ({ user, userProfile, onProfileUpdate }) => {
@@ -38,59 +38,66 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
   const auth = useAuth();
   const refreshProfile = auth?.refreshProfile;
 
-  const handleUpdateProfile = async (updatedData) => {
+const handleUpdateProfile = async (updatedData) => {
+  try {
+    const userId = user?.id; // استخدم الـ id من user اللي بيرجعه السيرفر
+    if (!userId) throw new Error("User ID not found");
+
+    const response = await fetch(`/api/profile/update/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.message || "Failed to update profile");
+
+    setProfile({ ...profile, ...updatedData });
+    setIsEditing(false);
+
+    if (refreshProfile) refreshProfile();
+  } catch (error) {
+    console.error("Error updating profile:", error);
+  }
+};
+
+
+ const handleSwitchRole = async () => {
+  const newRole = profile?.user_role === "provider" ? "client" : "provider";
+  setIsSwitching(true);
+  console.log(newRole);
+
+  try {
+    const userId = user?.id; // استخدم الـ id من السيرفر
+    if (!userId) throw new Error("User ID not found");
+
+    const response = await fetch(`/api/profile/update-role/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_role: newRole }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to switch role");
+
+    setProfile({ ...profile, user_role: newRole });
+
+    if (refreshProfile) refreshProfile();
+    if (onProfileUpdate) onProfileUpdate();
+
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update(updatedData)
-        .eq("id", user?.user?.id);
-
-      if (error) throw error;
-
-      setProfile({ ...profile, ...updatedData });
-      setIsEditing(false);
-
-      // Refresh central auth/profile state so header and other components update
-      if (refreshProfile) refreshProfile();
-    } catch (error) {
-      console.error("Error updating profile:", error);
+      toast.success(t("profile.switch_success"), toastConfig);
+    } catch (err) {
+      console.warn("Toast failed:", err);
     }
-  };
-
-  const handleSwitchRole = async () => {
-    const newRole = profile?.user_role === "provider" ? "client" : "provider";
-    setIsSwitching(true);
-    console.log(newRole);
-
-    try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ user_role: newRole })
-        .eq("id", user?.user?.id);
-
-      if (error) throw error;
-
-      setProfile({ ...profile, user_role: newRole });
-
-      // Notify central auth to refresh profile so UI updates immediately
-      if (refreshProfile) refreshProfile();
-
-      // Notify parent to refresh profile if callback exists
-      if (onProfileUpdate) {
-        onProfileUpdate();
-      }
-      // Show success toast
-      try {
-        toast.success(t("profile.switch_success"), toastConfig);
-      } catch (err) {
-        console.warn("Toast failed:", err);
-      }
-    } catch (error) {
-      console.error("Error switching role:", error);
-    } finally {
-      setIsSwitching(false);
-    }
-  };
+  } catch (error) {
+    console.error("Error switching role:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  } finally {
+    setIsSwitching(false);
+  }
+};
 
   if (loading) {
     return (

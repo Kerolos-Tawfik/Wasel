@@ -14,7 +14,6 @@ import FindWork from "./pages/FindWork.jsx";
 import AddWork from "./pages/AddWork.jsx";
 import Onboarding from "./pages/Onboarding.jsx";
 import Profile from "./pages/Profile.jsx";
-import { supabase } from "./lib/supabaseClient.js";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import styles from "./App.module.css";
 import { LoaderCircle } from "lucide-react";
@@ -29,36 +28,32 @@ export default function App() {
   const [selectedRole, setSelectedRole] = useState("");
 
   const fetchWorkRequests = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("work_requests")
-        .select("*")
-        .order("created_at", { ascending: false });
+  try {
+    const response = await fetch("/api/work-requests");
+    const data = await response.json();
 
-      if (error) throw error;
-      setFormData(data || []);
-    } catch (error) {
-      console.error("Error fetching work requests from catch block:", error);
-    }
-  };
+    if (!response.ok) throw new Error(data.message || "Failed to fetch work requests");
+
+    setFormData(data.workRequests || []);
+  } catch (error) {
+    console.error("Error fetching work requests:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  }
+};
 
   const fetchUserProfile = async (userId) => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
+  try {
+    const response = await fetch(`/api/profile/${userId}`);
+    const data = await response.json();
 
-      if (error && error.code !== "PGRST116") {
-        console.error("Error fetching profile:", error);
-        return;
-      }
-      setUserProfile(data || null);
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    }
-  };
+    if (!response.ok) throw new Error(data.message || "Failed to fetch profile");
+
+    setUserProfile(data.profile || null);
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  }
+};
 
   const refreshProfile = () => {
     const userId = user?.user?.id;
@@ -82,31 +77,45 @@ export default function App() {
   }, [i18n.language]);
 
   // Check for current session
-  async function getCurrentSession() {
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
+ async function getCurrentSession() {
+  try {
+    setLoading(true);
 
-      // check for data.session and will be null if no user is logged in
-      if (data.session?.user) {
-        setUser(data?.session);
-        await fetchUserProfile(data.session.user.id);
-      }
+    // افترض إنك مخزن token في localStorage أو تستخدم cookies
+    const token = localStorage.getItem("authToken");
 
-      // Listen for changes to auth state (logged in, logged out, etc.)
-      supabase.auth.onAuthStateChange(async (_event, session) => {
-        setUser(session);
-        if (session?.user) {
-          await fetchUserProfile(session.user.id);
-        } else {
-          setUserProfile(null);
-        }
-        setLoading(false);
-      });
-    } catch (error) {
-      console.log("error from catch block" + error);
+    if (!token) {
+      setUser(null);
+      setUserProfile(null);
+      setLoading(false);
+      return;
     }
+
+    const response = await fetch("/api/user/current", {
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` 
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.message || "Failed to fetch current user");
+
+    if (data.user) {
+      setUser(data.user);
+      await fetchUserProfile(data.user.id);
+    } else {
+      setUser(null);
+      setUserProfile(null);
+    }
+  } catch (error) {
+    console.log("Error fetching current session:", error);
+  } finally {
+    setLoading(false);
   }
+}
+
 
   // turn on the session check on component mount
   useEffect(() => {

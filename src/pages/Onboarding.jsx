@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { toastConfig } from "../lib/toastConfig";
-import { supabase } from "../lib/supabaseClient";
+import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
+
 import {
   Briefcase,
   Wrench,
@@ -20,56 +20,61 @@ function Onboarding({ user, selectedRole, setSelectedRole, refreshProfile }) {
   const [step, setStep] = useState(1); // 1 = choose role, 2 = provider subtype
   const [providerType, setProviderType] = useState("");
 
-  const handleContinue = async () => {
-    if (!selectedRole) return;
+const handleContinue = async () => {
+  if (!selectedRole) return;
 
-    // If provider chosen and no providerType yet, go to step 2
-    if (selectedRole === "provider" && !providerType && step === 1) {
-      setStep(2);
-      return;
+  // If provider chosen and no providerType yet, go to step 2
+  if (selectedRole === "provider" && !providerType && step === 1) {
+    setStep(2);
+    return;
+  }
+
+  try {
+    setIsSubmitting(true);
+
+    const userId = user?.id; // عدلت هنا عشان تعتمد على user العادي من سيرفرك
+    const name = user?.full_name || "";
+    if (!userId) {
+      throw new Error("User ID not found");
     }
 
-    try {
-      setIsSubmitting(true);
+    const payload = {
+      id: userId,
+      full_name: name,
+      user_role: selectedRole,
+      updated_at: new Date().toISOString(),
+    };
 
-      const userId = user?.user?.id;
-      const name = user?.user?.user_metadata?.full_name || "";
-      if (!userId) {
-        throw new Error("User ID not found from  try");
-      }
-      // Prepare payload
-      const payload = {
-        id: userId,
-        full_name: name,
-        user_role: selectedRole,
-        updated_at: new Date().toISOString(),
-      };
-
-      if (selectedRole === "provider" && providerType) {
-        payload.provider_type = providerType; // save provider subtype
-      }
-
-      // Update or insert the user's profile with their role and optional provider_type
-      const { error } = await supabase.from("profiles").upsert(payload);
-
-      if (error) throw error;
-      toast.success(t("onboarding.success"), toastConfig);
-      // Call the refreshProfile callback to refresh the profile
-      if (refreshProfile) {
-        refreshProfile();
-      }
-      // Navigate based on role
-      if (selectedRole === "client") {
-        navigate("/addwork");
-      } else {
-        navigate("/findwork");
-      }
-    } catch (error) {
-      console.error("Error saving role:", error);
-    } finally {
-      setIsSubmitting(false);
+    if (selectedRole === "provider" && providerType) {
+      payload.provider_type = providerType;
     }
-  };
+
+    const response = await fetch("/api/profile/upsert", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to update profile");
+
+    toast.success(t("onboarding.success"), toastConfig);
+
+    if (refreshProfile) refreshProfile();
+
+    if (selectedRole === "client") {
+      navigate("/addwork");
+    } else {
+      navigate("/findwork");
+    }
+  } catch (error) {
+    console.error("Error saving role:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div className={styles.onboardingPage}>

@@ -12,7 +12,7 @@ import {
   PlusCircle,
   Search,
 } from "lucide-react";
-import { supabase } from "../../lib/supabaseClient.js";
+
 import { useAuth } from "../../context/AuthContext";
 import styles from "./Header.module.css";
 import { toast } from "react-toastify";
@@ -40,20 +40,26 @@ const Header = ({ user, userProfile }) => {
   // Guard against missing AuthContext (avoid destructuring from undefined)
   const auth = useAuth();
 
-  const handleLogout = async () => {
-    setIsMenuOpen(false);
-    try {
-      if (auth && typeof auth.signOut === "function") {
-        await auth.signOut();
-      } else {
-        await supabase.auth.signOut();
-      }
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-    toast.success(t("header.logout_success"), toastConfig);
-    navigate("/");
-  };
+ const handleLogout = async () => {
+  setIsMenuOpen(false);
+
+  try {
+    // لو عندك token/session مخزنة على الfrontend
+    localStorage.removeItem("authToken");
+
+    // لو عايز تسجل الخروج على السيرفر (invalidate session)
+    await fetch("/api/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // لو بتستخدم cookies
+    });
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
+
+  toast.success(t("header.logout_success"), toastConfig);
+  navigate("/");
+};
 
   const toggleLanguage = () => {
     const newLang = i18n.language === "ar" ? "en" : "ar";

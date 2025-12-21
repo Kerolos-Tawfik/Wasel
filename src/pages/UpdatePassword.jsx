@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { supabase } from "../lib/supabaseClient";
-import PasswordStrength from "../components/auth/PasswordStrength";
-import { getAuthErrorMessage } from "../lib/errorHelpers";
-import { toastConfig } from "../lib/toastConfig";
+
+import PasswordStrength from "../../../Wasel/src/components/auth/PasswordStrength";
+import { getAuthErrorMessage } from "../../../Wasel/src/lib/errorHelpers";
+import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
 import styles from "./Auth.module.css";
 
 const UpdatePassword = () => {
@@ -89,30 +89,38 @@ const UpdatePassword = () => {
     );
   };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    if (!isPasswordValid(password)) {
-      toast.error(t("auth.password_requirements"), toastConfig);
-      setLoading(false);
-      return;
-    }
+ const handleUpdate = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password,
-      });
+  if (!isPasswordValid(password)) {
+    toast.error(t("auth.password_requirements"), toastConfig);
+    setLoading(false);
+    return;
+  }
 
-      if (error) throw error;
-      toast.success(t("auth.password_updated_success"), toastConfig);
-      navigate("/login");
-    } catch (error) {
-      const errorKey = getAuthErrorMessage(error);
-      toast.error(t(errorKey), toastConfig);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const userId = user?.id; // ID المستخدم من السيرفر
+    if (!userId) throw new Error("User ID not found");
+
+    const response = await fetch(`/api/user/update-password/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to update password");
+
+    toast.success(t("auth.password_updated_success"), toastConfig);
+    navigate("/login");
+  } catch (error) {
+    console.error("Password update error:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className={styles.container}>

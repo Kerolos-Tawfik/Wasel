@@ -10,7 +10,7 @@ import {
   X,
   Camera,
 } from "lucide-react";
-import { supabase } from "../../lib/supabaseClient.js";
+
 import styles from "./ProfileHeader.module.css";
 
 const ProfileHeader = ({
@@ -48,56 +48,48 @@ const ProfileHeader = ({
   };
 
   const handleAvatarChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      alert(t("profile.invalid_image"));
-      return;
-    }
+  if (!file.type.startsWith("image/")) {
+    alert(t("profile.invalid_image"));
+    return;
+  }
 
-    setIsUploadingAvatar(true);
+  setIsUploadingAvatar(true);
 
-    try {
-      const userId = user?.user?.id;
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${userId}/avatar.${fileExt}`;
+  try {
+    const userId = user?.id;
+    if (!userId) throw new Error("User ID not found");
 
-      // Upload to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(fileName, file, { upsert: true });
-      if (uploadError) throw uploadError;
+    const formData = new FormData();
+    formData.append("avatar", file);
 
-      // Wait a moment to ensure the file is ready
-      await new Promise((resolve) => setTimeout(resolve, 300));
+    // Upload to server
+    const response = await fetch(`/api/profile/upload-avatar/${userId}`, {
+      method: "POST",
+      body: formData,
+    });
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from("avatars")
-        .getPublicUrl(fileName);
-      const newAvatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
-      setAvatarUrl(newAvatarUrl);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to upload avatar");
 
-      // Update profile in database
-      await onUpdate({ avatar_url: newAvatarUrl });
+    const newAvatarUrl = `${data.avatar_url}?t=${Date.now()}`;
+    setAvatarUrl(newAvatarUrl);
 
-      // Optionally re-fetch user
-      const { data: updatedUser, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", user.user.id)
-        .single();
-      if (!error) setUser({ user: updatedUser });
+    // Update profile in database (optional if server already returns updated profile)
+    if (onUpdate) await onUpdate({ avatar_url: newAvatarUrl });
 
-      // Reset file input to allow re-upload of same file
-      e.target.value = null;
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
-    } finally {
-      setIsUploadingAvatar(false);
-    }
-  };
+    // Reset file input
+    e.target.value = null;
+  } catch (error) {
+    console.error("Error uploading avatar:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  } finally {
+    setIsUploadingAvatar(false);
+  }
+};
+
 
   return (
     <section className={styles.headerSection}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Briefcase, Plus, X, Image } from "lucide-react";
-import { supabase } from "../../lib/supabaseClient.js";
+
 import styles from "./ProfilePortfolio.module.css";
 
 const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
@@ -18,20 +18,21 @@ const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
     link: "",
   });
 
-  const fetchPortfolio = async () => {
-    if (!userId) return;
-    try {
-      const { data, error } = await supabase
-        .from("portfolio")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      setPortfolioItems(data || []);
-    } catch (error) {
-      console.error("Error fetching portfolio:", error);
-    }
-  };
+ const fetchPortfolio = async () => {
+  if (!userId) return;
+
+  try {
+    const response = await fetch(`/api/portfolio/${userId}`);
+    const data = await response.json();
+
+    if (!response.ok) throw new Error(data.message || "Failed to fetch portfolio");
+
+    setPortfolioItems(data.portfolio || []);
+  } catch (error) {
+    console.error("Error fetching portfolio:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  }
+};
 
   useEffect(() => {
     fetchPortfolio();
@@ -45,58 +46,56 @@ const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
     }));
   };
 
-  const handleAddItem = async () => {
-    if (!newItem.title.trim()) return;
+ const handleAddItem = async () => {
+  if (!newItem.title.trim()) return;
 
-    try {
-      setLoading(true);
-      let uploadedUrls = [];
+  try {
+    setLoading(true);
+    let uploadedUrls = [];
 
-      if (newItem.files.length > 0) {
-        for (const file of newItem.files) {
-          const fileExt = file.name.split(".").pop();
-          const fileName = `${userId}/portfolio/${Date.now()}_${Math.random()
-            .toString(36)
-            .slice(2)}.${fileExt}`;
+    if (newItem.files.length > 0) {
+      const formData = new FormData();
+      newItem.files.forEach((file) => formData.append("files[]", file));
+      formData.append("user_id", userId);
 
-          const { error: uploadError } = await supabase.storage
-            .from("portfolio_images")
-            .upload(fileName, file, { upsert: true });
+      const uploadResponse = await fetch("/api/portfolio/upload-files", {
+        method: "POST",
+        body: formData,
+      });
 
-          if (uploadError) {
-            console.error("Upload error:", uploadError);
-            continue;
-          }
+      const uploadData = await uploadResponse.json();
+      if (!uploadResponse.ok) throw new Error(uploadData.message || "Failed to upload files");
 
-          const { data: urlData } = supabase.storage
-            .from("portfolio_images")
-            .getPublicUrl(fileName);
+      uploadedUrls = uploadData.urls || [];
+    }
 
-          if (urlData?.publicUrl) {
-            uploadedUrls.push(urlData.publicUrl);
-          }
-        }
-      }
-
-      const { error } = await supabase.from("portfolio").insert({
+    // Save portfolio item
+    const response = await fetch("/api/portfolio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         user_id: userId,
         title: newItem.title,
         description: newItem.description || "",
         images: uploadedUrls,
         link: newItem.link || "",
-      });
+      }),
+    });
 
-      if (error) throw error;
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to add portfolio item");
 
-      setNewItem({ title: "", description: "", files: [], link: "" });
-      setIsModalOpen(false);
-      fetchPortfolio();
-    } catch (error) {
-      console.error("Error adding portfolio item:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setNewItem({ title: "", description: "", files: [], link: "" });
+    setIsModalOpen(false);
+    fetchPortfolio();
+  } catch (error) {
+    console.error("Error adding portfolio item:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -113,23 +112,26 @@ const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
     setSelectedIndex(0);
   };
 
-  const handleDeleteItem = async () => {
-    if (!selectedItem) return;
+ const handleDeleteItem = async () => {
+  if (!selectedItem) return;
 
-    try {
-      const { error } = await supabase
-        .from("portfolio")
-        .delete()
-        .eq("id", selectedItem.id);
+  try {
+    const response = await fetch(`/api/portfolio/${selectedItem.id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
 
-      if (error) throw error;
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to delete portfolio item");
 
-      handleClosePortfolioModal();
-      fetchPortfolio();
-    } catch (error) {
-      console.error("Error deleting portfolio item:", error);
-    }
-  };
+    handleClosePortfolioModal();
+    fetchPortfolio();
+    toast.success(t("portfolio.delete_success"), toastConfig);
+  } catch (error) {
+    console.error("Error deleting portfolio item:", error);
+    toast.error(error.message || t("errors.default"), toastConfig);
+  }
+};
 
   const handleEditItem = () => {
     if (!selectedItem) return;
