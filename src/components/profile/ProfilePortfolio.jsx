@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Briefcase, Plus, X, Image } from "lucide-react";
-
+import { toast } from "react-toastify";
+import { toastConfig } from "../../lib/toastConfig";
+import { portfolioAPI } from "../../lib/apiService";
 import styles from "./ProfilePortfolio.module.css";
 
 const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
@@ -18,21 +20,22 @@ const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
     link: "",
   });
 
- const fetchPortfolio = async () => {
-  if (!userId) return;
+  const fetchPortfolio = async () => {
+    if (!userId) return;
 
-  try {
-    const response = await fetch(`/api/portfolio/${userId}`);
-    const data = await response.json();
+    try {
+      const response = await portfolioAPI.getPortfolio(userId);
+      const data = await response.json();
 
-    if (!response.ok) throw new Error(data.message || "Failed to fetch portfolio");
+      if (!response.ok)
+        throw new Error(data.message || "Failed to fetch portfolio");
 
-    setPortfolioItems(data.portfolio || []);
-  } catch (error) {
-    console.error("Error fetching portfolio:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  }
-};
+      setPortfolioItems(data.portfolio || []);
+    } catch (error) {
+      console.error("Error fetching portfolio:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    }
+  };
 
   useEffect(() => {
     fetchPortfolio();
@@ -46,56 +49,56 @@ const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
     }));
   };
 
- const handleAddItem = async () => {
-  if (!newItem.title.trim()) return;
+  const handleAddItem = async () => {
+    if (!newItem.title.trim()) return;
 
-  try {
-    setLoading(true);
-    let uploadedUrls = [];
+    try {
+      setLoading(true);
+      let uploadedUrls = [];
 
-    if (newItem.files.length > 0) {
-      const formData = new FormData();
-      newItem.files.forEach((file) => formData.append("files[]", file));
-      formData.append("user_id", userId);
+      if (newItem.files.length > 0) {
+        const formData = new FormData();
+        newItem.files.forEach((file) => formData.append("files[]", file));
+        formData.append("user_id", userId);
 
-      const uploadResponse = await fetch("/api/portfolio/upload-files", {
-        method: "POST",
-        body: formData,
-      });
+        const uploadResponse = await fetch(
+          "http://localhost:8000/api/portfolio/upload-files",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
-      const uploadData = await uploadResponse.json();
-      if (!uploadResponse.ok) throw new Error(uploadData.message || "Failed to upload files");
+        const uploadData = await uploadResponse.json();
+        if (!uploadResponse.ok)
+          throw new Error(uploadData.message || "Failed to upload files");
 
-      uploadedUrls = uploadData.urls || [];
-    }
+        uploadedUrls = uploadData.urls || [];
+      }
 
-    // Save portfolio item
-    const response = await fetch("/api/portfolio", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      // Save portfolio item
+      const response = await portfolioAPI.addPortfolioItem({
         user_id: userId,
         title: newItem.title,
         description: newItem.description || "",
         images: uploadedUrls,
         link: newItem.link || "",
-      }),
-    });
+      });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to add portfolio item");
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Failed to add portfolio item");
 
-    setNewItem({ title: "", description: "", files: [], link: "" });
-    setIsModalOpen(false);
-    fetchPortfolio();
-  } catch (error) {
-    console.error("Error adding portfolio item:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      setNewItem({ title: "", description: "", files: [], link: "" });
+      setIsModalOpen(false);
+      fetchPortfolio();
+    } catch (error) {
+      console.error("Error adding portfolio item:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -112,26 +115,27 @@ const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
     setSelectedIndex(0);
   };
 
- const handleDeleteItem = async () => {
-  if (!selectedItem) return;
+  const handleDeleteItem = async () => {
+    if (!selectedItem) return;
 
-  try {
-    const response = await fetch(`/api/portfolio/${selectedItem.id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const response = await portfolioAPI.deletePortfolioItem(
+        userId,
+        selectedItem.id
+      );
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to delete portfolio item");
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Failed to delete portfolio item");
 
-    handleClosePortfolioModal();
-    fetchPortfolio();
-    toast.success(t("portfolio.delete_success"), toastConfig);
-  } catch (error) {
-    console.error("Error deleting portfolio item:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  }
-};
+      handleClosePortfolioModal();
+      fetchPortfolio();
+      toast.success(t("portfolio.delete_success"), toastConfig);
+    } catch (error) {
+      console.error("Error deleting portfolio item:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    }
+  };
 
   const handleEditItem = () => {
     if (!selectedItem) return;

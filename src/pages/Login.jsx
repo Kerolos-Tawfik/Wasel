@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-// import { useAuth } from "../../context/AuthContext";
-
+import { useAuth } from "../context/AuthContext";
+import { authAPI } from "../lib/apiService";
 import { getAuthErrorMessage } from "../../../Wasel/src/lib/errorHelpers";
 import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
 import styles from "./Auth.module.css";
@@ -13,50 +13,38 @@ const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  // const { user } = useAuth();
+  const { user, signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate(location.state?.from?.pathname || "/listings", {
-  //       replace: true,
-  //     });
-  //   }
-  // }, [user, navigate, location]);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    try {
+      const response = await authAPI.login({ email, password });
+      const data = await response.json();
 
-  try {
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+      if (!response.ok) {
+        toast.error(data.message || t("errors.default"), toastConfig);
+        return;
+      }
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      toast.error(data.message || t("errors.default"), toastConfig);
-      return;
+      // Save to localStorage and AuthContext
+      signIn(data.user, data.token);
+      console.log("login successful");
+      
+      // Reload the page to trigger App.jsx getCurrentSession
+      window.location.href = "/findwork";
+    } catch (error) {
+      console.error("login error:", error);
+      toast.error(t("errors.default"), toastConfig);
+    } finally {
+      setLoading(false);
     }
-
-    // تخزين التوكن أو أي جلسة حسب السيرفر
-    localStorage.setItem("authToken", data.token);
-
-    console.log("login successful");
-    navigate("/findwork");
-  } catch (error) {
-    console.error("login error:", error);
-    toast.error(t("errors.default"), toastConfig);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className={styles.container}>

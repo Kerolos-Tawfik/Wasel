@@ -13,7 +13,6 @@ import {
   Search,
 } from "lucide-react";
 
-import { useAuth } from "../../context/AuthContext";
 import styles from "./Header.module.css";
 import { toast } from "react-toastify";
 import { toastConfig } from "../../lib/toastConfig.js";
@@ -32,34 +31,32 @@ const Header = ({ user, userProfile }) => {
         setIsDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Guard against missing AuthContext (avoid destructuring from undefined)
-  const auth = useAuth();
-
- const handleLogout = async () => {
-  setIsMenuOpen(false);
-
-  try {
-    // لو عندك token/session مخزنة على الfrontend
-    localStorage.removeItem("authToken");
-
-    // لو عايز تسجل الخروج على السيرفر (invalidate session)
-    await fetch("/api/logout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // لو بتستخدم cookies
-    });
-  } catch (err) {
-    console.error("Logout error:", err);
-  }
-
-  toast.success(t("header.logout_success"), toastConfig);
-  navigate("/");
-};
+  const handleLogout = async () => {
+    setIsMenuOpen(false);
+    try {
+      const token = localStorage.getItem("authToken");
+      await fetch("http://localhost:8000/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : undefined,
+        },
+        credentials: "include",
+      });
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+    toast.success(t("header.logout_success"), toastConfig);
+    
+    // Reload the page to clear all state
+    window.location.href = "/";
+  };
 
   const toggleLanguage = () => {
     const newLang = i18n.language === "ar" ? "en" : "ar";
@@ -69,17 +66,17 @@ const Header = ({ user, userProfile }) => {
 
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Get user display name
-  const userName = user?.user?.user_metadata?.full_name
-    ? user.user.user_metadata.full_name
-    : user?.user.email
-    ? user.user.email.split("@")[0]
+  // User info
+  const userName = user?.full_name
+    ? user.full_name
+    : user?.email
+    ? user.email.split("@")[0]
     : t("header.user");
 
-  // Role info
   const isClient = userProfile?.user_role === "client";
   const isProvider = userProfile?.user_role === "provider";
   const providerSubtype = userProfile?.provider_type;
+
   const roleLabel = isClient
     ? t("header.role_client")
     : isProvider
@@ -91,7 +88,6 @@ const Header = ({ user, userProfile }) => {
     : null;
   const RoleIcon = isClient ? Briefcase : isProvider ? Wrench : null;
 
-  // Action link based on role
   const actionTo = isClient ? "/addwork" : isProvider ? "/findwork" : null;
   const actionLabel = isClient
     ? t("header.add_work")
@@ -102,13 +98,12 @@ const Header = ({ user, userProfile }) => {
 
   return (
     <header className={styles.header}>
-      {/* Logo */}
       <Link
         to={
           user
-            ? userProfile?.user_role === "provider"
+            ? isProvider
               ? "/findwork"
-              : userProfile?.user_role === "client"
+              : isClient
               ? "/addwork"
               : "/"
             : "/"
@@ -120,7 +115,7 @@ const Header = ({ user, userProfile }) => {
           alt="logo"
         />
       </Link>
-      {/* Desktop Navigation - hidden on mobile */}
+
       {!user && (
         <nav className={styles.desktopNav}>
           <ul className={styles.navList}>
@@ -139,14 +134,13 @@ const Header = ({ user, userProfile }) => {
           </ul>
         </nav>
       )}
-      {/* Desktop Right Side */}
+
       <div className={styles.desktopRight}>
         <button onClick={toggleLanguage} className={styles.langBtn}>
           {i18n.language === "ar" ? "English" : "العربية"}
         </button>
 
         {user ? (
-          /* User Dropdown - Desktop Only */
           <div className={styles.userDropdown} ref={dropdownRef}>
             <button
               className={styles.userDropdownBtn}
@@ -166,7 +160,6 @@ const Header = ({ user, userProfile }) => {
 
             {isDropdownOpen && (
               <div className={styles.dropdownMenu}>
-                {/* Role Badge */}
                 {roleLabel && RoleIcon && (
                   <>
                     <div className={styles.dropdownRole}>
@@ -177,7 +170,6 @@ const Header = ({ user, userProfile }) => {
                   </>
                 )}
 
-                {/* Action Link */}
                 {actionTo && ActionIcon && (
                   <Link
                     to={actionTo}
@@ -189,7 +181,6 @@ const Header = ({ user, userProfile }) => {
                   </Link>
                 )}
 
-                {/* Profile */}
                 <Link
                   to="/profile"
                   className={styles.dropdownItem}
@@ -201,7 +192,6 @@ const Header = ({ user, userProfile }) => {
 
                 <div className={styles.dropdownDivider}></div>
 
-                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   className={`${styles.dropdownItem} ${styles.logoutItem}`}
@@ -213,7 +203,6 @@ const Header = ({ user, userProfile }) => {
             )}
           </div>
         ) : (
-          /* Auth Buttons - Desktop */
           <div className={styles.authButtons}>
             <Link to="/login">
               <button className={styles.loginBtn}>{t("header.login")}</button>
@@ -224,7 +213,7 @@ const Header = ({ user, userProfile }) => {
           </div>
         )}
       </div>
-      {/* Hamburger Menu Button - Mobile Only */}
+
       <button
         className={styles.menuBtn}
         onClick={() => setIsMenuOpen(true)}
@@ -232,9 +221,9 @@ const Header = ({ user, userProfile }) => {
       >
         <Menu size={24} />
       </button>
-      {/* Mobile Menu Overlay */}
+
       {isMenuOpen && <div className={styles.overlay} onClick={closeMenu}></div>}
-      {/* Mobile Menu */}
+
       <div
         className={`${styles.mobileMenu} ${
           isMenuOpen ? styles.mobileMenuOpen : ""
@@ -244,7 +233,6 @@ const Header = ({ user, userProfile }) => {
           <X size={24} />
         </button>
 
-        {/* User Info - Mobile (only if logged in) */}
         {user && (
           <div className={styles.mobileUserSection}>
             <div className={styles.mobileUserInfo}>
@@ -262,7 +250,6 @@ const Header = ({ user, userProfile }) => {
               </div>
             </div>
 
-            {/* Action Link */}
             {actionTo && ActionIcon && (
               <Link
                 to={actionTo}
@@ -274,7 +261,6 @@ const Header = ({ user, userProfile }) => {
               </Link>
             )}
 
-            {/* Profile */}
             <Link
               to="/profile"
               className={styles.mobileMenuItem}
@@ -284,7 +270,6 @@ const Header = ({ user, userProfile }) => {
               {t("header.profile")}
             </Link>
 
-            {/* Logout */}
             <button
               onClick={handleLogout}
               className={`${styles.mobileMenuItem} ${styles.logoutItemMobile}`}
@@ -295,7 +280,6 @@ const Header = ({ user, userProfile }) => {
           </div>
         )}
 
-        {/* Nav Links - Mobile (only if NOT logged in) */}
         {!user && (
           <>
             <ul className={styles.mobileNavList}>
@@ -321,7 +305,6 @@ const Header = ({ user, userProfile }) => {
               </li>
             </ul>
 
-            {/* Auth Buttons - Mobile */}
             <div className={styles.mobileAuthButtons}>
               <Link to="/login" onClick={closeMenu}>
                 <button className={styles.loginBtn}>{t("header.login")}</button>
@@ -333,7 +316,6 @@ const Header = ({ user, userProfile }) => {
           </>
         )}
 
-        {/* Language Toggle - Mobile */}
         <button onClick={toggleLanguage} className={styles.mobileLangBtn}>
           {i18n.language === "ar" ? "English" : "العربية"}
         </button>

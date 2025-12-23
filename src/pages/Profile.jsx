@@ -1,6 +1,11 @@
+// تمت
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-
+import { toast } from "react-toastify";
+import { toastConfig } from "../../../Wasel/src/lib/toastConfig.js";
+import { useAuth } from "../../../Wasel/src/context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
+import { profileAPI } from "../lib/apiService";
 import ProfileHeader from "../../../Wasel/src/components/profile/ProfileHeader.jsx";
 import ProfileBio from "../../../Wasel/src/components/profile/ProfileBio.jsx";
 import ProfilePortfolio from "../../../Wasel/src/components/profile/ProfilePortfolio.jsx";
@@ -9,10 +14,6 @@ import ProfileContact from "../../../Wasel/src/components/profile/ProfileContact
 import ProfileRoleSwitcher from "../../../Wasel/src/components/profile/ProfileRoleSwitcher.jsx";
 import styles from "./Profile.module.css";
 import { LoaderCircle } from "lucide-react";
-import { toast } from "react-toastify";
-import { toastConfig } from "../../../Wasel/src/lib/toastConfig.js";
-import { useAuth } from "../../../Wasel/src/context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
 
 const Profile = ({ user, userProfile, onProfileUpdate }) => {
   const { t } = useTranslation();
@@ -38,66 +39,58 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
   const auth = useAuth();
   const refreshProfile = auth?.refreshProfile;
 
-const handleUpdateProfile = async (updatedData) => {
-  try {
-    const userId = user?.id; // استخدم الـ id من user اللي بيرجعه السيرفر
-    if (!userId) throw new Error("User ID not found");
+  const handleUpdateProfile = async (updatedData) => {
+    try {
+      const userId = user?.id;
+      if (!userId) throw new Error("User ID not found");
 
-    const response = await fetch(`/api/profile/update/${userId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedData),
-    });
+      const response = await profileAPI.updateProfile(userId, updatedData);
+      const data = await response.json();
 
-    const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.message || "Failed to update profile");
 
-    if (!response.ok) throw new Error(data.message || "Failed to update profile");
+      setProfile({ ...profile, ...updatedData });
+      setIsEditing(false);
 
-    setProfile({ ...profile, ...updatedData });
-    setIsEditing(false);
+      if (refreshProfile) refreshProfile();
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
 
-    if (refreshProfile) refreshProfile();
-  } catch (error) {
-    console.error("Error updating profile:", error);
-  }
-};
-
-
- const handleSwitchRole = async () => {
-  const newRole = profile?.user_role === "provider" ? "client" : "provider";
-  setIsSwitching(true);
-  console.log(newRole);
-
-  try {
-    const userId = user?.id; // استخدم الـ id من السيرفر
-    if (!userId) throw new Error("User ID not found");
-
-    const response = await fetch(`/api/profile/update-role/${userId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_role: newRole }),
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to switch role");
-
-    setProfile({ ...profile, user_role: newRole });
-
-    if (refreshProfile) refreshProfile();
-    if (onProfileUpdate) onProfileUpdate();
+  const handleSwitchRole = async () => {
+    const newRole = profile?.user_role === "provider" ? "client" : "provider";
+    setIsSwitching(true);
+    console.log(newRole);
 
     try {
-      toast.success(t("profile.switch_success"), toastConfig);
-    } catch (err) {
-      console.warn("Toast failed:", err);
+      const userId = user?.id;
+      if (!userId) throw new Error("User ID not found");
+
+      const response = await profileAPI.switchRole(userId, newRole);
+      const data = await response.json();
+      
+      if (!response.ok)
+        throw new Error(data.message || "Failed to switch role");
+
+      setProfile({ ...profile, user_role: newRole });
+
+      if (refreshProfile) refreshProfile();
+      if (onProfileUpdate) onProfileUpdate();
+
+      try {
+        toast.success(t("profile.switch_success"), toastConfig);
+      } catch (err) {
+        console.warn("Toast failed:", err);
+      }
+    } catch (error) {
+      console.error("Error switching role:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    } finally {
+      setIsSwitching(false);
     }
-  } catch (error) {
-    console.error("Error switching role:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  } finally {
-    setIsSwitching(false);
-  }
-};
+  };
 
   if (loading) {
     return (
@@ -140,7 +133,7 @@ const handleUpdateProfile = async (updatedData) => {
 
             {/* Portfolio Section - Provider Only */}
             {isProvider && (
-              <ProfilePortfolio profile={profile} userId={user?.user?.id} />
+              <ProfilePortfolio profile={profile} userId={user?.id} />
             )}
           </div>
 

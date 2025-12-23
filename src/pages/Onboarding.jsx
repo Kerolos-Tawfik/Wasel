@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
-
+import { profileAPI } from "../lib/apiService";
 import {
   Briefcase,
   Wrench,
@@ -20,60 +20,56 @@ function Onboarding({ user, selectedRole, setSelectedRole, refreshProfile }) {
   const [step, setStep] = useState(1); // 1 = choose role, 2 = provider subtype
   const [providerType, setProviderType] = useState("");
 
-const handleContinue = async () => {
-  if (!selectedRole) return;
+  const handleContinue = async () => {
+    if (!selectedRole) return;
 
-  // If provider chosen and no providerType yet, go to step 2
-  if (selectedRole === "provider" && !providerType && step === 1) {
-    setStep(2);
-    return;
-  }
-
-  try {
-    setIsSubmitting(true);
-
-    const userId = user?.id; // عدلت هنا عشان تعتمد على user العادي من سيرفرك
-    const name = user?.full_name || "";
-    if (!userId) {
-      throw new Error("User ID not found");
+    // If provider chosen and no providerType yet, go to step 2
+    if (selectedRole === "provider" && !providerType && step === 1) {
+      setStep(2);
+      return;
     }
 
-    const payload = {
-      id: userId,
-      full_name: name,
-      user_role: selectedRole,
-      updated_at: new Date().toISOString(),
-    };
+    try {
+      setIsSubmitting(true);
 
-    if (selectedRole === "provider" && providerType) {
-      payload.provider_type = providerType;
+      const userId = user?.id;
+      const name = user?.full_name || "";
+      if (!userId) {
+        throw new Error("User ID not found");
+      }
+
+      const payload = {
+        id: userId,
+        full_name: name,
+        user_role: selectedRole,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (selectedRole === "provider" && providerType) {
+        payload.provider_type = providerType;
+      }
+
+      const response = await profileAPI.upsertProfile(payload);
+      const data = await response.json();
+      
+      if (!response.ok)
+        throw new Error(data.message || "Failed to update profile");
+
+      toast.success(t("onboarding.success"), toastConfig);
+
+      // Reload page to update App.jsx state
+      if (selectedRole === "client") {
+        window.location.href = "/addwork";
+      } else {
+        window.location.href = "/findwork";
+      }
+    } catch (error) {
+      console.error("Error saving role:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const response = await fetch("/api/profile/upsert", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to update profile");
-
-    toast.success(t("onboarding.success"), toastConfig);
-
-    if (refreshProfile) refreshProfile();
-
-    if (selectedRole === "client") {
-      navigate("/addwork");
-    } else {
-      navigate("/findwork");
-    }
-  } catch (error) {
-    console.error("Error saving role:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
 
   return (

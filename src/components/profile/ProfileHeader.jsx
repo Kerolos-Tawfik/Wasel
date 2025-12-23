@@ -1,5 +1,8 @@
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import { toastConfig } from "../../lib/toastConfig";
+import { profileAPI } from "../../lib/apiService";
 import {
   User,
   MapPin,
@@ -29,9 +32,9 @@ const ProfileHeader = ({
   const isProvider = profile?.user_role === "provider";
 
   const userName =
-    user?.user?.user_metadata?.full_name ||
+    user?.full_name ||
     profile?.full_name ||
-    user?.user?.email?.split("@")[0] ||
+    user?.email?.split("@")[0] ||
     t("profile.anonymous");
 
   const handleSaveTitle = () => {
@@ -48,47 +51,45 @@ const ProfileHeader = ({
   };
 
   const handleAvatarChange = async (e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
-    alert(t("profile.invalid_image"));
-    return;
-  }
+    if (!file.type.startsWith("image/")) {
+      alert(t("profile.invalid_image"));
+      return;
+    }
 
-  setIsUploadingAvatar(true);
+    setIsUploadingAvatar(true);
 
-  try {
-    const userId = user?.id;
-    if (!userId) throw new Error("User ID not found");
+    try {
+      const userId = user?.id;
+      if (!userId) throw new Error("User ID not found");
 
-    const formData = new FormData();
-    formData.append("avatar", file);
+      const formData = new FormData();
+      formData.append("avatar", file);
 
-    // Upload to server
-    const response = await fetch(`/api/profile/upload-avatar/${userId}`, {
-      method: "POST",
-      body: formData,
-    });
+      // Upload to server
+      const response = await profileAPI.uploadAvatar(userId, formData);
+      const data = await response.json();
+      
+      if (!response.ok)
+        throw new Error(data.message || "Failed to upload avatar");
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to upload avatar");
+      const newAvatarUrl = `${data.avatar_url}?t=${Date.now()}`;
+      setAvatarUrl(newAvatarUrl);
 
-    const newAvatarUrl = `${data.avatar_url}?t=${Date.now()}`;
-    setAvatarUrl(newAvatarUrl);
+      // Update profile in database (optional if server already returns updated profile)
+      if (onUpdate) await onUpdate({ avatar_url: newAvatarUrl });
 
-    // Update profile in database (optional if server already returns updated profile)
-    if (onUpdate) await onUpdate({ avatar_url: newAvatarUrl });
-
-    // Reset file input
-    e.target.value = null;
-  } catch (error) {
-    console.error("Error uploading avatar:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  } finally {
-    setIsUploadingAvatar(false);
-  }
-};
+      // Reset file input
+      e.target.value = null;
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
 
 
   return (

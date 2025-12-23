@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { toastConfig } from "../../lib/toastConfig";
 import { useTranslation } from "react-i18next";
-
+import { workRequestAPI } from "../../lib/apiService";
 import {
   MapPin,
   Briefcase,
@@ -137,61 +137,59 @@ function RequestWork({ user }) {
     setSearchQuery("");
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!category) {
-    toast.error(t("addWork.errors.category_required"), toastConfig);
-    return;
-  }
+    if (!category) {
+      toast.error(t("addWork.errors.category_required"), toastConfig);
+      return;
+    }
 
-  if (service === "local" && !pickCity) {
-    toast.error(t("addWork.errors.city_required"), toastConfig);
-    return;
-  }
+    if (service === "local" && !pickCity) {
+      toast.error(t("addWork.errors.city_required"), toastConfig);
+      return;
+    }
 
-  try {
-    const userId = user?.id; // استخدم الـ id من السيرفر أو من الـ JWT/session
-    if (!userId) throw new Error("User not authenticated");
+    try {
+      const userId = user?.id;
+      if (!userId) throw new Error("User not authenticated");
 
-    const payload = {
-      category,
-      full_name: user?.full_name || name,
-      work_title: titleMessage,
-      work_description: textareaMsg,
-      expected_date: date,
-      phone: user?.phone || tel,
-      service_type: service,
-      file_attachments: files ? Array.from(files).map((file) => file.name) : [],
-      city: pickCity,
-      user_id: userId,
-    };
+      const payload = {
+        category,
+        full_name: user?.full_name || name,
+        work_title: titleMessage,
+        work_description: textareaMsg,
+        expected_date: date,
+        phone: user?.phone || tel,
+        service_type: service,
+        file_attachments: files
+          ? Array.from(files).map((file) => file.name)
+          : [],
+        city: pickCity,
+        user_id: userId,
+      };
 
-    const response = await fetch("/api/work-request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+      const response = await workRequestAPI.createWorkRequest(payload);
+      const data = await response.json();
+      
+      if (!response.ok)
+        throw new Error(data.message || "Failed to add work request");
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to add work request");
+      // Reset form
+      setTitleMessage("");
+      setTextAreaMsg("");
+      setDate("");
+      setTel("");
+      setPickCity("");
+      setService("local");
+      setCategory("");
 
-    // Reset form
-    setTitleMessage("");
-    setTextAreaMsg("");
-    setDate("");
-    setTel("");
-    setPickCity("");
-    setService("local");
-    setCategory("");
-
-    toast.success(t("addWork.messages.success"), toastConfig);
-  } catch (error) {
-    console.error("Error adding work request:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  }
-};
-
+      toast.success(t("addWork.messages.success"), toastConfig);
+    } catch (error) {
+      console.error("Error adding work request:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    }
+  };
 
   return (
     <div className={styles.formContainer}>
@@ -354,7 +352,7 @@ function RequestWork({ user }) {
             <input
               type="text"
               className={styles.input}
-              value={user ? user.user.user_metadata.full_name : name}
+              value={user ? user.full_name : name}
               onChange={(e) => setName(e.target.value)}
               disabled={!!user}
               placeholder={t("addWork.labels.user")}
@@ -422,7 +420,7 @@ function RequestWork({ user }) {
               <input
                 type="tel"
                 className={styles.input}
-                value={user ? user.user.user_metadata.phone : tel}
+                value={user ? user.phone : tel}
                 onChange={(e) => setTel(e.target.value)}
                 placeholder={t("addWork.labels.phone")}
                 disabled={!!user}

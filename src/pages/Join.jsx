@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-
+import { authAPI } from "../lib/apiService";
 import PasswordStrength from "../../../Wasel/src/components/auth/PasswordStrength";
 import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
 import styles from "./Auth.module.css";
@@ -16,6 +16,7 @@ const Join = () => {
   const [fullName, setFullName] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const isPasswordValid = (pass) => {
     return (
@@ -27,45 +28,41 @@ const Join = () => {
   };
 
   const handleJoin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  console.log("handleJoin started");
+    e.preventDefault();
+    setLoading(true);
+    console.log("handleJoin started");
 
-  if (!isPasswordValid(password)) {
-    toast.error(t("auth.errors.weak_password"), toastConfig);
-    setLoading(false);
-    return;
-  }
+    if (!isPasswordValid(password)) {
+      toast.error(t("auth.errors.weak_password"), toastConfig);
+      setLoading(false);
+      return;
+    }
 
-  try {
-    const response = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    try {
+      const response = await authAPI.register({
         email,
         password,
         full_name: fullName,
         phone: phoneNum,
-      }),
-    });
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      toast.error(data.message || t("errors.default"), toastConfig);
-      return;
+      if (!response.ok) {
+        toast.error(data.message || t("errors.default"), toastConfig);
+        return;
+      }
+
+      console.log("Sign up successful");
+      toast.success(t("auth.join_success"), toastConfig);
+      navigate("/login");
+    } catch (error) {
+      console.error("Sign up error:", error);
+      toast.error(t("errors.default"), toastConfig);
+    } finally {
+      setLoading(false);
     }
-
-    console.log("Sign up successful");
-    toast.success(t("auth.join_success"), toastConfig);
-  } catch (error) {
-    console.error("Sign up error:", error);
-    toast.error(t("errors.default"), toastConfig);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className={styles.container}>

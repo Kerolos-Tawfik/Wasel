@@ -1,9 +1,11 @@
 import { Navigate } from "react-router-dom";
+
 const ProtectedRoute = ({ user, children }) => {
-  if (user) {
-    // window.location.href = "/login";
+  // If NO user, redirect to login
+  if (!user) {
     return <Navigate to="/login" />;
   }
+  // If user exists, show the protected content
   return children;
 };
 
