@@ -159,7 +159,7 @@ function RequestWork({ user }) {
         full_name: user?.full_name || name,
         work_title: titleMessage,
         work_description: textareaMsg,
-        expected_date: date,
+        expected_date: date ? new Date(date).toISOString().split('T')[0] : null,
         phone: user?.phone || tel,
         service_type: service,
         file_attachments: files

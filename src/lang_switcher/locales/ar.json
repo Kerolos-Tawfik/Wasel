@@ -1,10 +1,17 @@
 {
   "common": {
+    "save": "حفظ",
     "cancel": "إلغاء",
     "back": "رجوع",
     "finish": "إنهاء",
     "loading": "جاري التحميل...",
-    "clear_all": "مسح الكل"
+    "clear_all": "مسح الكل",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "details": "التفاصيل",
+    "confirm_delete": "هل أنت متأكد من حذف هذا العنصر؟",
+    "image": "صورة",
+    "images": "صور"
   },
   "cities": {
     "saihat": "سيهات",
@@ -28,24 +35,6 @@
     "provider_freelance_desc": "العمل عن بُعد وخدمة العملاء عبر الإنترنت",
     "provider_local": "محلي",
     "provider_local_desc": "تقديم الخدمات محلياً"
-  },
-  "categories": {
-    "all": "الكل",
-    "designers": "مصممين",
-    "content_writing": "كتابة محتوى",
-    "video_editing": "مونتاج",
-    "web_development": "تطوير مواقع",
-    "social_media": "ادارة سوشيال ميديا",
-    "translators": "مترجمين",
-    "digital_marketing": "تسويق رقمي",
-    "plumbing": "سباكة",
-    "electricity": "كهرباء",
-    "outdoor_photography": "تصوير خارجي (يتطلب حضور)",
-    "cleaning": "تنضيف",
-    "carpentry_smithing": "تجارة/حدادة",
-    "decoration_gypsum": "ديكور/جبس",
-    "light_contracting": "مقاولات خفيفة",
-    "car_services": "خدمات سيارات (غسيل, فحص, صيانة خارجية)"
   },
 
   "header": {
@@ -229,6 +218,13 @@
       "of": "من",
       "previous": "السابق",
       "next": "التالي"
+    },
+    "modal": {
+      "description": "الوصف",
+      "client": "العميل",
+      "location": "الموقع",
+      "posted": "نشر في",
+      "contact": "تواصل مع العميل"
     }
   },
   "addWork": {
@@ -306,6 +302,7 @@
     "add_more_images": "إضافة المزيد من الصور",
     "add_images": "إضافة صور",
     "project_link": "رابط المشروع",
+    "visit_project": "زيارة المشروع",
     "project_link_placeholder": "https://example.com",
     "save_project": "حفظ المشروع",
     "save_changes": "حفظ التغييرات",
@@ -340,12 +337,5 @@
     "provider_type_freelance": "مستقل",
     "provider_type_local": "محلي",
     "switch_success": "تم تغيير الدور بنجاح"
-  },
-  "common": {
-    "save": "حفظ",
-    "cancel": "إلغاء",
-    "back": "رجوع",
-    "finish": "إنهاء",
-    "loading": "يرجى الانتظار..."
   }
 }

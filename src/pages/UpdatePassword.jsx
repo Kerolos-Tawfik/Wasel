@@ -1,84 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import PasswordStrength from "../../../Wasel/src/components/auth/PasswordStrength";
-import { getAuthErrorMessage } from "../../../Wasel/src/lib/errorHelpers";
 import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
 import styles from "./Auth.module.css";
+// import { useAuth } from "../../context/AuthContext"; // Assuming you have AuthContext
 
 const UpdatePassword = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // const { user } = useAuth(); // If available
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isValidSession, setIsValidSession] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
 
-  // useEffect(() => {
-  //   let isMounted = true;
+  // Check if we are in Reset Mode (from email link) or Update Mode (logged in)
+  const resetToken = searchParams.get("token");
+  const email = searchParams.get("email");
+  const isResetMode = !!(resetToken && email);
 
-  //   // Listen for auth state changes
-  //   const {
-  //     data: { subscription },
-  //   } = supabase.auth.onAuthStateChange(async (event, session) => {
-  //     console.log("UpdatePassword auth event:", event, session);
-
-  //     if (!isMounted) return;
-
-  //     if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
-  //       setIsValidSession(true);
-  //       setCheckingSession(false);
-  //       // Clear the URL params/hash for security
-  //       window.history.replaceState(null, "", window.location.pathname);
-  //       return;
-  //     }
-  //   });
-
-  //   // Check for existing session (user was redirected here after code exchange)
-  //   const checkSession = async () => {
-  //     const {
-  //       data: { session },
-  //     } = await supabase.auth.getSession();
-
-  //     if (!isMounted) return;
-
-  //     if (session) {
-  //       setIsValidSession(true);
-  //       setCheckingSession(false);
-  //     } else {
-  //       // No session - redirect to forgot password
-  //       toast.error(t("auth.session_expired"), toastConfig);
-  //       navigate("/forgot-password");
-  //     }
-  //   };
-
-  //   return () => {
-  //     isMounted = false;
-  //     subscription.unsubscribe();
-  //     clearTimeout(timer);
-  //   };
-  // }, [navigate, t]);
-
-  // if (checkingSession) {
-  //   return (
-  //     <div className={styles.container}>
-  //       <div className={styles.card}>
-  //         <div className={styles.loadingState}>
-  //           <Loader2 size={32} className={styles.spinner} />
-  //           <p>{t("common.loading")}</p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
-  // if (!isValidSession) {
-  //   return null;
-  // }
+  // In a real app, you might want to verify the user is logged in if !isResetMode
+  // const user = JSON.parse(localStorage.getItem("user")); 
 
   const isPasswordValid = (pass) => {
     return (
@@ -89,43 +35,69 @@ const UpdatePassword = () => {
     );
   };
 
- const handleUpdate = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  if (!isPasswordValid(password)) {
-    toast.error(t("auth.password_requirements"), toastConfig);
-    setLoading(false);
-    return;
-  }
+    if (!isPasswordValid(password)) {
+      toast.error(t("auth.password_requirements_error") || "Password requirements not met", toastConfig);
+      setLoading(false);
+      return;
+    }
 
-  try {
-    const userId = user?.id; // ID المستخدم من السيرفر
-    if (!userId) throw new Error("User ID not found");
+    try {
+      let url, body, method;
 
-    const response = await fetch(`/api/user/update-password/${userId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
-    });
+      if (isResetMode) {
+        // Reset Password Flow
+        url = "http://localhost:8000/api/reset-password";
+        method = "POST";
+        body = { token: resetToken, email, password };
+      } else {
+        // Update Password Flow (Logged In)
+        // Retrieve user from storage if context not available
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user?.id) throw new Error("User not found or logged out");
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Failed to update password");
+        url = `http://localhost:8000/api/user/update-password/${user.id}`;
+        method = "PUT";
+        body = { password };
+      }
 
-    toast.success(t("auth.password_updated_success"), toastConfig);
-    navigate("/login");
-  } catch (error) {
-    console.error("Password update error:", error);
-    toast.error(error.message || t("errors.default"), toastConfig);
-  } finally {
-    setLoading(false);
-  }
-};
+      const response = await fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "Failed to update password");
+
+      toast.success(t("auth.password_updated_success"), toastConfig);
+      
+      // If reset, redirect to login. If update, maybe stay or go profile.
+      if (isResetMode) {
+        navigate("/login");
+      } else {
+        // Optional: Logout user after password change or just redirect
+        navigate("/profile"); 
+      }
+
+    } catch (error) {
+      console.error("Password update error:", error);
+      toast.error(error.message || t("errors.default"), toastConfig);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h1 className={styles.title}>{t("auth.update_password")}</h1>
+        <h1 className={styles.title}>
+          {isResetMode ? t("auth.reset_password_title") || "Reset Password" : t("auth.update_password")}
+        </h1>
 
         <form onSubmit={handleUpdate} className={styles.form}>
           <div className={styles.inputGroup}>
@@ -153,7 +125,7 @@ const UpdatePassword = () => {
             {loading ? (
               <Loader2 size={20} className={styles.spinner} />
             ) : (
-              t("auth.update_password_btn")
+              isResetMode ? "Reset Password" : t("auth.update_password_btn")
             )}
           </button>
         </form>

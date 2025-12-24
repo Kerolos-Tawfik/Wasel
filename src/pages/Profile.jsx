@@ -133,7 +133,7 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
 
             {/* Portfolio Section - Provider Only */}
             {isProvider && (
-              <ProfilePortfolio profile={profile} userId={user?.id} />
+              <ProfilePortfolio profile={profile} userId={user?.id} isOwner={true} />
             )}
           </div>
 

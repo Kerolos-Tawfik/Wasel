@@ -10,6 +10,7 @@ import {
   Briefcase,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 import styles from "./ClientsCard.module.css";
 import { useTranslation } from "react-i18next";
@@ -25,6 +26,18 @@ function ClientsCard({
 }) {
   const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedWork, setSelectedWork] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (work) => {
+    setSelectedWork(work);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedWork(null);
+  };
 
   const filteredData = savedData.filter((data) => {
     // 1. Filter by Service Type
@@ -107,11 +120,9 @@ function ClientsCard({
   return (
     <div className={styles.resultsContainer}>
       {/* Results Count */}
-      {/* <div className={styles.resultsHeader}> */}
       <h4 className={styles.resultsCount}>
         {filteredData.length} {t("findWork.card.results")}
       </h4>
-      {/* </div> */}
 
       <div className={styles.cardsGrid}>
         {paginatedData.length > 0 ? (
@@ -141,7 +152,10 @@ function ClientsCard({
 
               {/* Card Footer */}
               <div className={styles.cardFooter}>
-                <button className={styles.viewButton}>
+                <button 
+                  className={styles.viewButton}
+                  onClick={() => handleViewDetails(data)}
+                >
                   {t("findWork.card.view_details")}
                   <ArrowRight size={16} />
                 </button>
@@ -203,6 +217,75 @@ function ClientsCard({
             {t("findWork.pagination.page")} {currentPage}{" "}
             {t("findWork.pagination.of")} {totalPages}
           </span>
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {isModalOpen && selectedWork && (
+        <div className={styles.modalOverlay} onClick={handleCloseModal}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalTitleGroup}>
+                <div className={`
+                  ${styles.serviceTag} 
+                  ${selectedWork.service_type === 'freelance' ? styles.freelanceTag : styles.localTag}
+                `}>
+                  {selectedWork.service_type === 'freelance' ? <Briefcase size={14} /> : <User size={14} />} 
+                  <span>{t(`findWork.filters.${selectedWork.service_type}`)}</span>
+                </div>
+                <h3>{selectedWork.work_title}</h3>
+              </div>
+              <button onClick={handleCloseModal} className={styles.closeBtn}>
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className={styles.modalBody}>
+              <div className={styles.modalSection}>
+                <h4 className={styles.modalSubtitle}>{t("findWork.modal.description") || "Description"}</h4>
+                <p className={styles.modalText}>{selectedWork.work_description}</p>
+              </div>
+
+               <div className={styles.modalGrid}>
+                 <div className={styles.modalInfoItem}>
+                   <User size={18} />
+                   <div>
+                     <span className={styles.modalLabel}>{t("findWork.modal.client") || "Client"}</span>
+                     <p>{selectedWork.full_name}</p>
+                   </div>
+                 </div>
+                 
+                 {selectedWork.city && (
+                   <div className={styles.modalInfoItem}>
+                     <Earth size={18} />
+                     <div>
+                       <span className={styles.modalLabel}>{t("findWork.modal.location") || "Location"}</span>
+                       <p>{t(`cities.${selectedWork.city}`) || selectedWork.city}</p>
+                     </div>
+                   </div>
+                 )}
+
+                 {selectedWork.created_at && (
+                    <div className={styles.modalInfoItem}>
+                      <Calendar size={18} />
+                      <div>
+                        <span className={styles.modalLabel}>{t("findWork.modal.posted") || "Posted"}</span>
+                        <p>{new Date(selectedWork.created_at).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                 )}
+               </div>
+            </div>
+
+            <div className={styles.modalFooter}>
+               <button className={styles.contactBtn} onClick={() => {
+                  alert("Contact feature coming soon!");
+               }}>
+                  <Phone size={18} />
+                  {t("findWork.modal.contact") || "Contact Client"}
+               </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

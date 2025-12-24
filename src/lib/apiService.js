@@ -15,6 +15,7 @@ const apiFetch = async (endpoint, options = {}) => {
   
   const headers = {
     "Content-Type": "application/json",
+    "Accept": "application/json",
     ...options.headers,
   };
 
@@ -39,7 +40,10 @@ export const authAPI = {
   register: async (userData) => {
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify(userData),
     });
     return response;
@@ -48,7 +52,10 @@ export const authAPI = {
   login: async (credentials) => {
     const response = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify(credentials),
     });
     return response;
@@ -79,7 +86,10 @@ export const profileAPI = {
   updateProfile: async (userId, profileData) => {
     const response = await fetch(`${API_BASE_URL}/profile/update/${userId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify(profileData),
     });
     return response;
@@ -96,7 +106,10 @@ export const profileAPI = {
   switchRole: async (userId, newRole) => {
     const response = await fetch(`${API_BASE_URL}/profile/update-role/${userId}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify({ user_role: newRole }),
     });
     return response;
@@ -111,7 +124,10 @@ export const profileAPI = {
 
     const response = await fetch(`${API_BASE_URL}/profile/upload-avatar/${userId}`, {
       method: "POST",
-      headers,
+      headers: {
+        ...headers,
+        "Accept": "application/json"
+      },
       body: formData,
     });
     return response;
@@ -130,7 +146,10 @@ export const portfolioAPI = {
   addPortfolioItem: async (portfolioData) => {
     const response = await fetch(`${API_BASE_URL}/portfolio`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify(portfolioData),
     });
     return response;
@@ -139,7 +158,10 @@ export const portfolioAPI = {
   deletePortfolioItem: async (userId, itemId) => {
     const response = await fetch(`${API_BASE_URL}/portfolio/${userId}/${itemId}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
     });
     return response;
   },
@@ -157,7 +179,10 @@ export const workRequestAPI = {
   createWorkRequest: async (workRequestData) => {
     const response = await fetch(`${API_BASE_URL}/work-request`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
       body: JSON.stringify(workRequestData),
     });
     return response;

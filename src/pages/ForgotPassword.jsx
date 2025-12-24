@@ -13,28 +13,39 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
- const handleReset = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleReset = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const response = await fetch("/api/send-reset-link", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      const response = await fetch("http://localhost:8000/api/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) throw new Error(data.message || "Failed to send reset email");
+      if (!response.ok) throw new Error(data.message || "Failed to send reset email");
 
-    toast.success(t("auth.reset_email_sent"), toastConfig);
-  } catch (error) {
-    toast.error(error.message, toastConfig);
-  } finally {
-    setLoading(false);
-  }
-};
+      // DEV ONLY: Show current token in toast to copy
+      if (data.token) {
+        toast.info(
+          <div>
+            Reset Token (Click URL in real app): <br />
+            <strong>{data.token}</strong>
+          </div>,
+          { ...toastConfig, autoClose: false, closeOnClick: false }
+        );
+      }
+
+      toast.success(t("auth.reset_email_sent"), toastConfig);
+    } catch (error) {
+      toast.error(error.message, toastConfig);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
