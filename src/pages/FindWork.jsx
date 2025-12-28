@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Briefcase,
@@ -12,8 +13,10 @@ import Categories from "../../../Wasel/src/components/findwork/Categories.jsx";
 import ClientsCard from "../../../Wasel/src/components/findwork/ClientsCard.jsx";
 import styles from "./FindWork.module.css";
 
-function FindWork({ savedData, service, setService }) {
+function FindWork({ savedData, service, setService, user }) {
   const { t } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedCity, setSelectedCity] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,26 +24,32 @@ function FindWork({ savedData, service, setService }) {
   const [citySearchQuery, setCitySearchQuery] = useState("");
   const cityDropdownRef = useRef(null);
 
-  // City options
+  const initialWorkRequestId = location.state?.workRequestId;
+  const notificationType = location.state?.notificationType;
+
+  useEffect(() => {
+    if (initialWorkRequestId) {
+      // Clear state after reading it to prevent reopening loops
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [initialWorkRequestId, navigate, location.pathname]);
+
   const cities = [
     { id: "all", label: t("findWork.filters.all") },
     { id: "saihat", label: t("cities.saihat") },
     { id: "qatif", label: t("cities.qatif") },
   ];
 
-  // Filter cities based on search
   const filteredCities = cities.filter((city) =>
     city.label.toLowerCase().includes(citySearchQuery.toLowerCase())
   );
 
-  // Handle city select
   const handleCitySelect = (cityId) => {
     setSelectedCity(cityId);
     setCityDropdownOpen(false);
     setCitySearchQuery("");
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -54,13 +63,11 @@ function FindWork({ savedData, service, setService }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Reset category and city when service changes
   useEffect(() => {
     setSelectedCategory("all");
     setSelectedCity("all");
   }, [service]);
 
-  // Count requests by service type
   const localCount =
     savedData?.filter((d) => d.service_type === "local").length || 0;
   const freelanceCount =
@@ -68,7 +75,6 @@ function FindWork({ savedData, service, setService }) {
 
   return (
     <div className={styles.findWorkPage}>
-      {/* Hero Section */}
       <section className={styles.heroSection}>
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>
@@ -119,22 +125,22 @@ function FindWork({ savedData, service, setService }) {
 
       {/* Main Content */}
       <main className={styles.mainContent}>
+        {/* Categories Section - Always Visible */}
+        <section className={styles.categoriesSection}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>
+              {t("findWork.browse_categories")}
+            </h2>
+          </div>
+          <Categories
+            service={service}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
+        </section>
+
         {savedData && savedData.length > 0 ? (
           <>
-            {/* Categories Section */}
-            <section className={styles.categoriesSection}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  {t("findWork.browse_categories")}
-                </h2>
-              </div>
-              <Categories
-                service={service}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
-            </section>
-
             {/* City Filter for Local Services */}
             {service === "local" && (
               <div className={styles.cityFilterWrapper}>
@@ -239,6 +245,9 @@ function FindWork({ savedData, service, setService }) {
                 selectedCategory={selectedCategory}
                 selectedCity={selectedCity}
                 searchQuery={searchQuery}
+                currentUser={user}
+                initialWorkRequestId={initialWorkRequestId}
+                notificationType={notificationType}
               />
             </section>
           </>

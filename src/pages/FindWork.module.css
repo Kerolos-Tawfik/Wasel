@@ -153,6 +153,44 @@
   color: #047857;
 }
 
+/* Filter Toggles */
+.filterToggles {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.filterToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.filterToggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.filterToggle.activeToggle {
+  background: #fcd34d;
+  color: #1e293b;
+  border-color: #fcd34d;
+  box-shadow: 0 4px 12px rgba(252, 211, 77, 0.3);
+}
+
+.filterToggle svg {
+  color: inherit;
+}
+
 /* Main Content */
 .mainContent {
   max-width: 1200px;

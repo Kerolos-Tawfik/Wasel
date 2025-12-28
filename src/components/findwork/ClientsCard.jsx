@@ -11,9 +11,14 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
+  Sparkles,
 } from "lucide-react";
 import styles from "./ClientsCard.module.css";
 import { useTranslation } from "react-i18next";
+import ChatWindow from "../chat/ChatWindow";
+import { workStatusAPI } from "../../lib/apiService";
+import { toast } from "react-toastify";
+import ModalPortal from "../common/ModalPortal";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -23,11 +28,61 @@ function ClientsCard({
   selectedCategory,
   selectedCity,
   searchQuery = "",
+  currentUser,
+  showMyRequestsOnly,
+  initialWorkRequestId,
+  notificationType,
 }) {
   const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedWork, setSelectedWork] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+    if (initialWorkRequestId && savedData?.length > 0) {
+      const work = savedData.find(
+        (w) => String(w.id) === String(initialWorkRequestId)
+      );
+      if (work) {
+        // If it's a pending status notification, only open if there IS a pending status
+        if (notificationType === "status_pending" && !work.pending_status) {
+          return;
+        }
+        setSelectedWork(work);
+        setIsModalOpen(true);
+      }
+    }
+  }, [initialWorkRequestId, savedData, notificationType]);
+
+  // Check if current user is the developer/provider of this work
+  const isEngagedProvider = (work) => {
+    if (!currentUser || !work) return false;
+    if (Number(currentUser.id) === Number(work.user_id)) return false; // Is owner
+    // If work has a provider_id and it matches current user
+    if (work.provider_id && Number(work.provider_id) === Number(currentUser.id))
+      return true;
+    // If work has pending_status_changed_by and it's NOT current user,
+    // it means the owner or someone else requested it from current user (if they are the provider)
+    // Actually, if there is a pending_status and it wasn't changed by me,
+    // and I'm the one viewing it (as a provider candidate), I should be able to see it.
+    if (
+      work.pending_status &&
+      work.pending_status_changed_by &&
+      Number(work.pending_status_changed_by) !== Number(currentUser.id)
+    ) {
+      // If I'm already the provider, or if I'm engaged in chat (already handled by modal visibility usually)
+      return true;
+    }
+
+    if (
+      work.pending_status_changed_by &&
+      Number(work.pending_status_changed_by) === Number(currentUser.id)
+    )
+      return true;
+    return false;
+  };
 
   const handleViewDetails = (work) => {
     setSelectedWork(work);
@@ -39,41 +94,58 @@ function ClientsCard({
     setSelectedWork(null);
   };
 
-  const filteredData = savedData.filter((data) => {
-    // 1. Filter by Service Type
-    const isServiceMatch =
-      !service || service === "all" || data.service_type === service;
-
-    // 2. Filter by Category
-    const isCategoryMatch =
-      !selectedCategory ||
-      selectedCategory === "all" ||
-      data.category === selectedCategory;
-
-    // 3. Filter by City (only if service is local)
-    const isCityMatch =
-      !selectedCity ||
-      selectedCity === "all" ||
-      service !== "local" ||
-      data.city === selectedCity;
-
-    // 4. Filter by Search Query (search in title and category name)
-    const searchLower = searchQuery?.toLowerCase() || "";
-    const categoryName = data.category
-      ? t(`findWork.categories.${data.category}`).toLowerCase()
-      : "";
-    const isSearchMatch =
-      !searchQuery ||
-      data.work_title?.toLowerCase().includes(searchLower) ||
-      categoryName.includes(searchLower);
-
-    return isServiceMatch && isCategoryMatch && isCityMatch && isSearchMatch;
-  });
-
-  // Reset to page 1 when filters change
+  // Filter data whenever dependencies change
   useEffect(() => {
-    setCurrentPage(1);
-  }, [service, selectedCategory, selectedCity, searchQuery]);
+    let currentFilteredData = savedData.filter((data) => {
+      // 1. Filter by Service Type
+      const isServiceMatch =
+        !service || service === "all" || data.service_type === service;
+
+      // 2. Filter by Category
+      const isCategoryMatch =
+        !selectedCategory ||
+        selectedCategory === "all" ||
+        data.category === selectedCategory ||
+        (Array.isArray(data.category_ids) &&
+          data.category_ids.map(String).includes(String(selectedCategory))) ||
+        String(data.category_id) === String(selectedCategory);
+
+      // 3. Filter by City (only if service is local)
+      const isCityMatch =
+        !selectedCity ||
+        selectedCity === "all" ||
+        service !== "local" ||
+        String(data.city).toLowerCase() === String(selectedCity).toLowerCase();
+
+      // 4. Filter by Search Query (search in title and category name)
+      const searchLower = searchQuery?.toLowerCase() || "";
+
+      const isSearchMatch =
+        !searchQuery ||
+        data.work_title?.toLowerCase().includes(searchLower) ||
+        data.work_description?.toLowerCase().includes(searchLower);
+
+      return isServiceMatch && isCategoryMatch && isCityMatch && isSearchMatch;
+    });
+
+    // 5. Current User filter (My Requests)
+    if (showMyRequestsOnly && currentUser) {
+      currentFilteredData = currentFilteredData.filter(
+        (item) => item.user_id === currentUser.id
+      );
+    }
+
+    setFilteredData(currentFilteredData);
+    setCurrentPage(1); // Reset to page 1 when filters change
+  }, [
+    savedData,
+    service,
+    selectedCategory,
+    selectedCity,
+    searchQuery,
+    showMyRequestsOnly,
+    currentUser,
+  ]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -134,6 +206,13 @@ function ClientsCard({
                   <Briefcase size={14} />
                   <span>{t(`findWork.filters.${data.service_type}`)}</span>
                 </div>
+                <span
+                  className={`${styles.statusTag} ${
+                    styles[`status_${data.status || "new"}`]
+                  }`}
+                >
+                  {t(`findWork.status.${data.status || "new"}`)}
+                </span>
               </div>
 
               {/* Card Title */}
@@ -152,7 +231,7 @@ function ClientsCard({
 
               {/* Card Footer */}
               <div className={styles.cardFooter}>
-                <button 
+                <button
                   className={styles.viewButton}
                   onClick={() => handleViewDetails(data)}
                 >
@@ -222,71 +301,367 @@ function ClientsCard({
 
       {/* Details Modal */}
       {isModalOpen && selectedWork && (
-        <div className={styles.modalOverlay} onClick={handleCloseModal}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div className={styles.modalTitleGroup}>
-                <div className={`
-                  ${styles.serviceTag} 
-                  ${selectedWork.service_type === 'freelance' ? styles.freelanceTag : styles.localTag}
-                `}>
-                  {selectedWork.service_type === 'freelance' ? <Briefcase size={14} /> : <User size={14} />} 
-                  <span>{t(`findWork.filters.${selectedWork.service_type}`)}</span>
+        <ModalPortal>
+          <div className={styles.modalOverlay} onClick={handleCloseModal}>
+            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <div className={styles.modalTitleGroup}>
+                  <div className={styles.statusContainer}>
+                    <div
+                      className={`
+                      ${styles.serviceTag} 
+                      ${
+                        selectedWork.service_type === "freelance"
+                          ? styles.freelanceTag
+                          : styles.localTag
+                      }
+                    `}
+                    >
+                      {selectedWork.service_type === "freelance" ? (
+                        <Briefcase size={14} />
+                      ) : (
+                        <User size={14} />
+                      )}
+                      <span>
+                        {t(`findWork.filters.${selectedWork.service_type}`)}
+                      </span>
+                    </div>
+                    <span
+                      className={`${styles.statusTag} ${
+                        styles[`status_${selectedWork.status || "new"}`]
+                      }`}
+                    >
+                      {t(`findWork.status.${selectedWork.status || "new"}`)}
+                    </span>
+                  </div>
+                  <h3>{selectedWork.work_title}</h3>
                 </div>
-                <h3>{selectedWork.work_title}</h3>
-              </div>
-              <button onClick={handleCloseModal} className={styles.closeBtn}>
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className={styles.modalBody}>
-              <div className={styles.modalSection}>
-                <h4 className={styles.modalSubtitle}>{t("findWork.modal.description") || "Description"}</h4>
-                <p className={styles.modalText}>{selectedWork.work_description}</p>
+                <button onClick={handleCloseModal} className={styles.closeBtn}>
+                  <X size={24} />
+                </button>
               </div>
 
-               <div className={styles.modalGrid}>
-                 <div className={styles.modalInfoItem}>
-                   <User size={18} />
-                   <div>
-                     <span className={styles.modalLabel}>{t("findWork.modal.client") || "Client"}</span>
-                     <p>{selectedWork.full_name}</p>
-                   </div>
-                 </div>
-                 
-                 {selectedWork.city && (
-                   <div className={styles.modalInfoItem}>
-                     <Earth size={18} />
-                     <div>
-                       <span className={styles.modalLabel}>{t("findWork.modal.location") || "Location"}</span>
-                       <p>{t(`cities.${selectedWork.city}`) || selectedWork.city}</p>
-                     </div>
-                   </div>
-                 )}
+              <div className={styles.modalBody}>
+                {selectedWork.pending_status &&
+                  selectedWork.pending_status_changed_by !==
+                    currentUser?.id && (
+                    <div className={styles.pendingNotice}>
+                      <p>
+                        {t("findWork.pending_status_notice", {
+                          status: t(
+                            `findWork.status.${selectedWork.pending_status}`
+                          ),
+                        })}
+                      </p>
+                      <div className={styles.pendingActions}>
+                        <button
+                          className={styles.confirmBtn}
+                          onClick={async () => {
+                            const response = await workStatusAPI.updateStatus(
+                              selectedWork.id,
+                              {
+                                status: selectedWork.pending_status,
+                                confirm: true,
+                              }
+                            );
+                            if (response.ok) {
+                              const data = await response.json();
+                              setSelectedWork(data.work_request);
+                              toast.success(t("findWork.status_confirmed"));
+                              setIsModalOpen(false); // Auto close
+                            }
+                          }}
+                        >
+                          {t("common.confirm")}
+                        </button>
+                        <button
+                          className={styles.rejectBtn}
+                          onClick={async () => {
+                            const response = await workStatusAPI.updateStatus(
+                              selectedWork.id,
+                              {
+                                status: selectedWork.status || "new",
+                                reject: true,
+                              }
+                            );
+                            if (response.ok) {
+                              const data = await response.json();
+                              setSelectedWork(data.work_request);
+                              toast.success(
+                                t("findWork.status_rejected") ||
+                                  "Status change rejected"
+                              );
+                              setIsModalOpen(false); // Auto close
+                            }
+                          }}
+                        >
+                          {t("common.reject") || "Reject"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
-                 {selectedWork.created_at && (
+                <div className={styles.modalSection}>
+                  <h4 className={styles.modalSubtitle}>
+                    {t("findWork.modal.description") || "Description"}
+                  </h4>
+                  <p className={styles.modalText}>
+                    {selectedWork.work_description}
+                  </p>
+                </div>
+
+                <div className={styles.modalGrid}>
+                  <div className={styles.modalInfoItem}>
+                    <User size={18} />
+                    <div>
+                      <span className={styles.modalLabel}>
+                        {t("findWork.modal.client") || "Client"}
+                      </span>
+                      <p>{selectedWork.full_name}</p>
+                    </div>
+                  </div>
+
+                  {selectedWork.city && (
+                    <div className={styles.modalInfoItem}>
+                      <MapPin size={18} />
+                      <div>
+                        <span className={styles.modalLabel}>
+                          {t("findWork.modal.location") || "Location"}
+                        </span>
+                        <p>
+                          {t(`cities.${selectedWork.city}`) ||
+                            selectedWork.city}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedWork.budget_min !== null && (
+                    <div className={styles.modalInfoItem}>
+                      <Sparkles size={18} />
+                      <div>
+                        <span className={styles.modalLabel}>
+                          {t("findWork.modal.budget") || "Budget"}
+                        </span>
+                        <p>
+                          {selectedWork.budget_min} - {selectedWork.budget_max}{" "}
+                          SR
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedWork.duration && (
+                    <div className={styles.modalInfoItem}>
+                      <Timer size={18} />
+                      <div>
+                        <span className={styles.modalLabel}>
+                          {t("findWork.modal.duration") || "Duration"}
+                        </span>
+                        <p>{selectedWork.duration}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedWork.expected_date && (
                     <div className={styles.modalInfoItem}>
                       <Calendar size={18} />
                       <div>
-                        <span className={styles.modalLabel}>{t("findWork.modal.posted") || "Posted"}</span>
-                        <p>{new Date(selectedWork.created_at).toLocaleDateString()}</p>
+                        <span className={styles.modalLabel}>
+                          {t("findWork.modal.expected_date") || "Start Date"}
+                        </span>
+                        <p>
+                          {new Date(
+                            selectedWork.expected_date
+                          ).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
-                 )}
-               </div>
-            </div>
+                  )}
 
-            <div className={styles.modalFooter}>
-               <button className={styles.contactBtn} onClick={() => {
-                  alert("Contact feature coming soon!");
-               }}>
-                  <Phone size={18} />
-                  {t("findWork.modal.contact") || "Contact Client"}
-               </button>
+                  {selectedWork.created_at && (
+                    <div className={styles.modalInfoItem}>
+                      <Calendar size={18} />
+                      <div>
+                        <span className={styles.modalLabel}>
+                          {t("findWork.modal.posted") || "Posted"}
+                        </span>
+                        <p>
+                          {new Date(
+                            selectedWork.created_at
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.timelineContainer}>
+                  <h4 className={styles.timelineTitle}>
+                    <Timer size={18} />
+                    {t("findWork.modal.status_history") || "Status History"}
+                  </h4>
+                  <div className={styles.timeline}>
+                    {selectedWork.logs && selectedWork.logs.length > 0 ? (
+                      selectedWork.logs.map((log, index) => (
+                        <div key={index} className={styles.timelineItem}>
+                          <div className={styles.timelineDot}></div>
+                          <div className={styles.timelineContent}>
+                            <div className={styles.timelineMeta}>
+                              <span className={styles.timelineUser}>
+                                {log.changed_by?.full_name || "System"}
+                              </span>
+                              <span>
+                                {new Date(log.created_at).toLocaleString()}
+                              </span>
+                            </div>
+                            <div className={styles.statusChange}>
+                              <span
+                                className={`${styles.statusTag} ${
+                                  styles[`status_${log.old_status}`]
+                                }`}
+                              >
+                                {t(
+                                  `findWork.status.${log.old_status || "new"}`
+                                )}
+                              </span>
+                              <ArrowRight
+                                size={14}
+                                className={styles.arrowIcon}
+                              />
+                              <span
+                                className={`${styles.statusTag} ${
+                                  styles[`status_${log.new_status}`]
+                                }`}
+                              >
+                                {t(`findWork.status.${log.new_status}`)}
+                              </span>
+                            </div>
+                            {log.notes && (
+                              <p className={styles.timelineNotes}>
+                                {log.notes}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className={styles.timelineItem}>
+                        <div className={styles.timelineDot}></div>
+                        <div className={styles.timelineContent}>
+                          <p className={styles.timelineText}>
+                            {t("findWork.modal.no_history") ||
+                              "No history available yet."}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.modalFooter}>
+                {currentUser?.id === selectedWork.user_id ||
+                isEngagedProvider(selectedWork) ? (
+                  <div className={styles.ownerActions}>
+                    <label>
+                      {t("findWork.modal.update_status") || "Update Status"}
+                    </label>
+
+                    {selectedWork.pending_status &&
+                      selectedWork.pending_status_changed_by ===
+                        currentUser?.id && (
+                        <div className={styles.waitingNotice}>
+                          <p>
+                            {t("findWork.waiting_confirmation", {
+                              status: t(
+                                `findWork.status.${selectedWork.pending_status}`
+                              ),
+                            })}
+                          </p>
+                        </div>
+                      )}
+
+                    <select
+                      className={`${styles.statusSelect} ${
+                        selectedWork.pending_status ? styles.hasPending : ""
+                      }`}
+                      value={
+                        selectedWork.pending_status ||
+                        selectedWork.status ||
+                        "new"
+                      }
+                      onChange={async (e) => {
+                        try {
+                          const newStatus = e.target.value;
+                          const response = await workStatusAPI.updateStatus(
+                            selectedWork.id,
+                            {
+                              status: newStatus,
+                              notes: "Status change requested",
+                            }
+                          );
+                          if (response.ok) {
+                            const data = await response.json();
+                            setSelectedWork(data.work_request);
+                            toast.success(t("findWork.status_request_sent"));
+                          }
+                        } catch (error) {
+                          toast.error(
+                            t("findWork.status_error") ||
+                              "Failed to update status"
+                          );
+                        }
+                      }}
+                    >
+                      <option value="new">{t("findWork.status.new")}</option>
+                      <option value="in_progress">
+                        {t("findWork.status.in_progress")}
+                      </option>
+                      <option value="pending_payment">
+                        {t("findWork.status.pending_payment")}
+                      </option>
+                      <option value="delayed">
+                        {t("findWork.status.delayed")}
+                      </option>
+                      <option value="completed">
+                        {t("findWork.status.completed")}
+                      </option>
+                    </select>
+                  </div>
+                ) : (
+                  <button
+                    className={styles.contactBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsChatOpen(true);
+                    }}
+                  >
+                    <Phone size={18} />
+                    {t("findWork.modal.contact") || "Contact Client"}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </ModalPortal>
+      )}
+
+      {isChatOpen && selectedWork && (
+        <ModalPortal>
+          <ChatWindow
+            workRequestId={selectedWork.id}
+            receiverId={selectedWork.user_id}
+            otherUser={{
+              id: selectedWork.user_id,
+              full_name: selectedWork.full_name,
+              avatar_url: selectedWork.avatar_url,
+            }}
+            currentUser={currentUser}
+            workRequestInit={selectedWork}
+            onClose={() => setIsChatOpen(false)}
+          />
+        </ModalPortal>
       )}
     </div>
   );

@@ -14,16 +14,21 @@ import UpdatePassword from "./pages/UpdatePassword.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import FindWork from "./pages/FindWork.jsx";
 import AddWork from "./pages/AddWork.jsx";
+import EmailVerified from "./pages/EmailVerified.jsx";
+import VerifyError from "./pages/VerifyError.jsx";
+import Messages from "./pages/Messages.jsx";
 import Onboarding from "./pages/Onboarding.jsx";
 import Profile from "./pages/Profile.jsx";
+import MyRequests from "./pages/MyRequests.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import GuestRoute from "./components/GuestRoute.jsx";
 import styles from "./App.module.css";
 import { LoaderCircle } from "lucide-react";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 export default function App() {
   const { i18n, t } = useTranslation();
-  const [service, setService] = useState(false);
+  const [service, setService] = useState("local");
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -115,7 +120,6 @@ export default function App() {
     }
   }
 
-
   // turn on the session check on component mount
   useEffect(() => {
     getCurrentSession();
@@ -143,10 +147,33 @@ export default function App() {
               path="/"
               element={<Home user={user} selectedRole={selectedRole} />}
             />
-            <Route path="/login" element={<Login />} />
-            <Route path="/join" element={<Join />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/login"
+              element={
+                <GuestRoute user={user}>
+                  <Login />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/join"
+              element={
+                <GuestRoute user={user}>
+                  <Join />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <GuestRoute user={user}>
+                  <ForgotPassword />
+                </GuestRoute>
+              }
+            />
             <Route path="/update-password" element={<UpdatePassword />} />
+            <Route path="/email-verified" element={<EmailVerified />} />
+            <Route path="/verify-error" element={<VerifyError />} />
 
             <Route
               path="/findwork"
@@ -182,14 +209,44 @@ export default function App() {
                       onComplete={refreshProfile}
                     />
                   ) : (
-                    <AddWork user={user} />
+                    <AddWork user={user} onComplete={fetchWorkRequests} />
                   )}
                 </ProtectedRoute>
               }
             />
 
             <Route
+              path="/my-requests"
+              element={
+                <ProtectedRoute user={user}>
+                  <MyRequests user={user} />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/messages"
+              element={
+                <ProtectedRoute user={user}>
+                  <Messages user={user} />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
               path="/profile"
+              element={
+                <ProtectedRoute user={user}>
+                  <Profile
+                    user={user}
+                    userProfile={userProfile}
+                    onProfileUpdate={refreshProfile}
+                  />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/:id"
               element={
                 <ProtectedRoute user={user}>
                   <Profile

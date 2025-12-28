@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { toastConfig } from "../../lib/toastConfig";
 import { useTranslation } from "react-i18next";
-import { workRequestAPI } from "../../lib/apiService";
+import { workRequestAPI, categoriesAPI } from "../../lib/apiService";
+import MultiSelect from "../common/MultiSelect";
 import {
   MapPin,
   Briefcase,
@@ -12,26 +13,14 @@ import {
   Phone,
   Upload,
   Send,
-  Palette,
-  FileText as ContentIcon,
-  Video,
-  Code,
-  Share2,
-  Languages,
-  TrendingUp,
-  Wrench,
-  Zap,
-  Camera,
-  SprayCan,
-  Hammer,
-  PaintBucket,
-  Building2,
-  Car,
-  Search,
   X,
+  Clock,
+  DollarSign,
+  AlertCircle,
   ChevronDown,
+  Search,
 } from "lucide-react";
-import styles from "./requestwork.module.css";
+import styles from "./RequestWork.module.css";
 
 function RequestWork({ user }) {
   const { t } = useTranslation();
@@ -39,84 +28,51 @@ function RequestWork({ user }) {
   const [titleMessage, setTitleMessage] = useState("");
   const [textareaMsg, setTextAreaMsg] = useState("");
   const [date, setDate] = useState("");
+  const [duration, setDuration] = useState("");
+  const [budgetMin, setBudgetMin] = useState("");
+  const [budgetMax, setBudgetMax] = useState("");
   const [tel, setTel] = useState("");
   const [service, setService] = useState("local");
   const [pickCity, setPickCity] = useState("");
-  const [category, setCategory] = useState("");
-  const [files, setFiles] = useState(null);
-
-  // Search and dropdown states
-  const [searchQuery, setSearchQuery] = useState("");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [citySearchQuery, setCitySearchQuery] = useState("");
-  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
-  const searchInputRef = useRef(null);
-  const dropdownRef = useRef(null);
   const cityDropdownRef = useRef(null);
+  const [files, setFiles] = useState([]);
+  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const [citySearchQuery, setCitySearchQuery] = useState("");
 
   // City options
   const cities = [
-    { id: "saihat", icon: MapPin },
-    { id: "qatif", icon: MapPin },
+    { id: "riyadh", label: t("cities.riyadh"), icon: MapPin },
+    { id: "jeddah", label: t("cities.jeddah"), icon: MapPin },
+    { id: "mecca", label: t("cities.mecca"), icon: MapPin },
+    { id: "medina", label: t("cities.medina"), icon: MapPin },
+    { id: "dammam", label: t("cities.dammam"), icon: MapPin },
+    { id: "khobar", label: t("cities.khobar"), icon: MapPin },
+    { id: "saihat", label: t("cities.saihat"), icon: MapPin },
+    { id: "qatif", label: t("cities.qatif"), icon: MapPin },
+    { id: "abha", label: t("cities.abha"), icon: MapPin },
+    { id: "tabuk", label: t("cities.tabuk"), icon: MapPin },
+    { id: "hail", label: t("cities.hail"), icon: MapPin },
+    { id: "jazan", label: t("cities.jazan"), icon: MapPin },
+    { id: "najran", label: t("cities.najran"), icon: MapPin },
+    { id: "bahah", label: t("cities.bahah"), icon: MapPin },
+    { id: "sakaka", label: t("cities.sakaka"), icon: MapPin },
+    { id: "arar", label: t("cities.arar"), icon: MapPin },
+    { id: "buraydah", label: t("cities.buraydah"), icon: MapPin },
+    { id: "jubail", label: t("cities.jubail"), icon: MapPin },
+    { id: "yanbu", label: t("cities.yanbu"), icon: MapPin },
   ];
 
-  // Filter cities based on search query
   const filteredCities = cities.filter((city) =>
-    t(`cities.${city.id}`).toLowerCase().includes(citySearchQuery.toLowerCase())
+    city.label.toLowerCase().includes(citySearchQuery.toLowerCase())
   );
 
-  // Category configurations with icons
-  const freelanceCategories = [
-    { id: "designers", icon: Palette },
-    { id: "content_writing", icon: ContentIcon },
-    { id: "video_editing", icon: Video },
-    { id: "web_development", icon: Code },
-    { id: "social_media", icon: Share2 },
-    { id: "translators", icon: Languages },
-    { id: "digital_marketing", icon: TrendingUp },
-  ];
-
-  const localCategories = [
-    { id: "plumbing", icon: Wrench },
-    { id: "electricity", icon: Zap },
-    { id: "outdoor_photography", icon: Camera },
-    { id: "cleaning", icon: SprayCan },
-    { id: "carpentry_smithing", icon: Hammer },
-    { id: "decoration_gypsum", icon: PaintBucket },
-    { id: "light_contracting", icon: Building2 },
-    { id: "car_services", icon: Car },
-  ];
-
-  const categories =
-    service === "freelance" ? freelanceCategories : localCategories;
-
-  // Filter categories based on search query
-  const filteredCategories = categories.filter((cat) =>
-    t(`findWork.categories.${cat.id}`)
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
-  );
-
-  // Handle category select from dropdown
-  const handleCategorySelect = (catId) => {
-    setCategory(catId);
-    setDropdownOpen(false);
-    setSearchQuery("");
-  };
-
-  // Handle city select from dropdown
   const handleCitySelect = (cityId) => {
     setPickCity(cityId);
     setCityDropdownOpen(false);
-    setCitySearchQuery("");
   };
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
       if (
         cityDropdownRef.current &&
         !cityDropdownRef.current.contains(event.target)
@@ -127,20 +83,38 @@ function RequestWork({ user }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  const [selectedSkillIds, setSelectedSkillIds] = useState([]);
 
-  const handleChangeService = (newService) => {
-    setService(newService);
-    if (newService === "freelance") {
-      setPickCity("");
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await categoriesAPI.getCategories();
+        const data = await res.json();
+        if (res.ok) setCategories(data.categories || []);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchCats();
+  }, []);
+
+  const handleFileChange = (e) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setFiles((prev) => [...prev, ...newFiles]);
     }
-    setCategory("");
-    setSearchQuery("");
+  };
+
+  const removeFile = (index) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!category) {
+    if (selectedCategoryIds.length === 0) {
       toast.error(t("addWork.errors.category_required"), toastConfig);
       return;
     }
@@ -154,24 +128,33 @@ function RequestWork({ user }) {
       const userId = user?.id;
       if (!userId) throw new Error("User not authenticated");
 
-      const payload = {
-        category,
-        full_name: user?.full_name || name,
-        work_title: titleMessage,
-        work_description: textareaMsg,
-        expected_date: date ? new Date(date).toISOString().split('T')[0] : null,
-        phone: user?.phone || tel,
-        service_type: service,
-        file_attachments: files
-          ? Array.from(files).map((file) => file.name)
-          : [],
-        city: pickCity,
-        user_id: userId,
-      };
+      const formData = new FormData();
+      formData.append("user_id", userId);
+      formData.append("full_name", user?.full_name || name);
+      formData.append("work_title", titleMessage);
+      formData.append("work_description", textareaMsg);
+      formData.append("service_type", service);
+      formData.append("city", service === "local" ? pickCity : "");
+      if (date) formData.append("expected_date", date);
+      if (duration) formData.append("duration", duration);
+      if (budgetMin) formData.append("budget_min", budgetMin);
+      if (budgetMax) formData.append("budget_max", budgetMax);
+      if (tel) formData.append("phone", tel);
 
-      const response = await workRequestAPI.createWorkRequest(payload);
+      selectedCategoryIds.forEach((id, index) => {
+        formData.append(`category_ids[${index}]`, id);
+      });
+      selectedSkillIds.forEach((id, index) => {
+        formData.append(`skill_ids[${index}]`, id);
+      });
+
+      files.forEach((file) => {
+        formData.append("attachments[]", file);
+      });
+
+      const response = await workRequestAPI.createWorkRequest(formData);
       const data = await response.json();
-      
+
       if (!response.ok)
         throw new Error(data.message || "Failed to add work request");
 
@@ -179,10 +162,14 @@ function RequestWork({ user }) {
       setTitleMessage("");
       setTextAreaMsg("");
       setDate("");
+      setDuration("");
+      setBudgetMin("");
+      setBudgetMax("");
       setTel("");
       setPickCity("");
-      setService("local");
-      setCategory("");
+      setSelectedCategoryIds([]);
+      setSelectedSkillIds([]);
+      setFiles([]);
 
       toast.success(t("addWork.messages.success"), toastConfig);
     } catch (error) {
@@ -190,6 +177,14 @@ function RequestWork({ user }) {
       toast.error(error.message || t("errors.default"), toastConfig);
     }
   };
+
+  useEffect(() => {
+    setSelectedCategoryIds([]);
+    setSelectedSkillIds([]);
+  }, [service]);
+
+  // Filter categories by service type
+  const filteredCategories = categories.filter((cat) => cat.type === service);
 
   return (
     <div className={styles.formContainer}>
@@ -206,7 +201,7 @@ function RequestWork({ user }) {
               className={`${styles.serviceTab} ${
                 service === "local" ? styles.activeTab : ""
               }`}
-              onClick={() => handleChangeService("local")}
+              onClick={() => setService("local")}
             >
               <MapPin size={20} />
               <div className={styles.tabContent}>
@@ -223,7 +218,7 @@ function RequestWork({ user }) {
               className={`${styles.serviceTab} ${
                 service === "freelance" ? styles.activeTab : ""
               }`}
-              onClick={() => handleChangeService("freelance")}
+              onClick={() => setService("freelance")}
             >
               <Briefcase size={20} />
               <div className={styles.tabContent}>
@@ -245,92 +240,40 @@ function RequestWork({ user }) {
             {t("addWork.steps.choose_category")}
           </h3>
 
-          {/* Category Dropdown with Search */}
-          <div className={styles.categoryDropdownWrapper} ref={dropdownRef}>
-            <button
-              type="button"
-              className={`${styles.categoryDropdownBtn} ${
-                dropdownOpen ? styles.dropdownActive : ""
-              }`}
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              {category ? (
-                <>
-                  {(() => {
-                    const selectedCat = categories.find(
-                      (c) => c.id === category
-                    );
-                    const IconComp = selectedCat?.icon;
-                    return IconComp ? <IconComp size={20} /> : null;
-                  })()}
-                  <span>{t(`findWork.categories.${category}`)}</span>
-                </>
-              ) : (
-                <span className={styles.dropdownPlaceholder}>
-                  {t("addWork.select_category")}
-                </span>
-              )}
-              <ChevronDown
-                size={20}
-                className={`${styles.dropdownArrow} ${
-                  dropdownOpen ? styles.rotated : ""
-                }`}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+          >
+            <div>
+              <label
+                className={styles.inputLabel}
+                style={{ marginBottom: "0.5rem" }}
+              >
+                {t("addWork.labels.categories")}
+              </label>
+              <MultiSelect
+                placeholder={t("addWork.select_category")}
+                options={filteredCategories}
+                selectedIds={selectedCategoryIds}
+                onChange={setSelectedCategoryIds}
               />
-            </button>
+            </div>
 
-            {dropdownOpen && (
-              <div className={styles.categoryDropdownMenu}>
-                {/* Search Input Inside Dropdown */}
-                <div className={styles.dropdownSearchWrapper}>
-                  <Search size={18} className={styles.dropdownSearchIcon} />
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    className={styles.dropdownSearchInput}
-                    placeholder={t("addWork.search_category")}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      className={styles.dropdownSearchClear}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSearchQuery("");
-                      }}
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Category Options */}
-                <div className={styles.dropdownOptions}>
-                  {filteredCategories.map((cat) => {
-                    const IconComponent = cat.icon;
-                    return (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        className={`${styles.dropdownOption} ${
-                          category === cat.id ? styles.dropdownOptionActive : ""
-                        }`}
-                        onClick={() => handleCategorySelect(cat.id)}
-                      >
-                        <IconComponent size={20} />
-                        <span>{t(`findWork.categories.${cat.id}`)}</span>
-                      </button>
-                    );
-                  })}
-                  {filteredCategories.length === 0 && (
-                    <div className={styles.dropdownNoResults}>
-                      <Search size={20} />
-                      <span>{t("addWork.no_categories_found")}</span>
-                    </div>
-                  )}
-                </div>
+            {selectedCategoryIds.length > 0 && (
+              <div style={{ animation: "fadeIn 0.3s ease-out" }}>
+                <label
+                  className={styles.inputLabel}
+                  style={{ marginBottom: "0.5rem" }}
+                >
+                  {t("addWork.labels.skills")}
+                </label>
+                <MultiSelect
+                  placeholder={t("addWork.select_skills")}
+                  options={filteredCategories
+                    .filter((c) => selectedCategoryIds.includes(c.id))
+                    .flatMap((c) => c.skills)}
+                  selectedIds={selectedSkillIds}
+                  onChange={setSelectedSkillIds}
+                />
               </div>
             )}
           </div>
@@ -402,12 +345,59 @@ function RequestWork({ user }) {
               {t("addWork.labels.date_label")}
             </label>
             <input
-              type="text"
+              type="date"
               className={styles.input}
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
             />
+          </div>
+
+          {/* Duration */}
+          <div className={styles.inputGroup}>
+            <label className={styles.inputLabel}>
+              <Clock size={16} />
+              {t("addWork.labels.duration")}
+            </label>
+            <input
+              type="text"
+              className={styles.input}
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder={t("addWork.placeholders.duration")} // e.g. "5 Days"
+            />
+          </div>
+
+          {/* Budget */}
+          <div className={styles.row}>
+            <div className={`${styles.inputGroup} ${styles.col}`}>
+              <label className={styles.inputLabel}>
+                <DollarSign size={16} />
+                {t("addWork.labels.budget_min")}
+              </label>
+              <input
+                type="number"
+                className={styles.input}
+                value={budgetMin}
+                onChange={(e) => setBudgetMin(e.target.value)}
+                placeholder="0"
+                min="0"
+              />
+            </div>
+            <div className={`${styles.inputGroup} ${styles.col}`}>
+              <label className={styles.inputLabel}>
+                <DollarSign size={16} />
+                {t("addWork.labels.budget_max")}
+              </label>
+              <input
+                type="number"
+                className={styles.input}
+                value={budgetMax}
+                onChange={(e) => setBudgetMax(e.target.value)}
+                placeholder="0"
+                min="0"
+              />
+            </div>
           </div>
 
           {/* Phone Number */}
@@ -440,28 +430,35 @@ function RequestWork({ user }) {
               <Upload size={16} />
               {t("addWork.labels.attachments")}
             </label>
-            <div className={styles.fileUpload}>
-              <input
-                onChange={(e) => {
-                  setFiles(e.target.files);
-                }}
-                type="file"
-                name="workFiles"
-                accept="image/*,application/pdf"
-                multiple
-                className={styles.fileInput}
-                disabled={files ? true : false}
-              />
-              <div className={styles.fileUploadContent}>
-                {files ? (
-                  Array.from(files).map((file) => file.name)
-                ) : (
-                  <>
-                    <Upload size={24} />
-                    <span>{t("addWork.labels.upload_files")}</span>
-                  </>
-                )}
-              </div>
+            <div className={styles.fileUploadContainer}>
+              <label className={styles.fileUploadBox}>
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  multiple
+                  accept="image/*,application/pdf"
+                  className={styles.hiddenFileInput}
+                />
+                <Upload size={24} className={styles.uploadIcon} />
+                <span>{t("addWork.labels.upload_files")}</span>
+              </label>
+
+              {files.length > 0 && (
+                <div className={styles.fileList}>
+                  {files.map((file, index) => (
+                    <div key={index} className={styles.fileItem}>
+                      <span className={styles.fileName}>{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className={styles.removeFileBtn}
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -568,22 +565,29 @@ function RequestWork({ user }) {
         <button
           type="submit"
           className={`${styles.submitButton} ${
-            !category || (service === "local" && !pickCity)
+            selectedCategoryIds.length === 0 ||
+            (service === "local" && !pickCity)
               ? styles.submitDisabled
               : ""
           }`}
-          disabled={!category || (service === "local" && !pickCity)}
+          disabled={
+            selectedCategoryIds.length === 0 ||
+            (service === "local" && !pickCity)
+          }
         >
           <Send size={20} />
           {t("addWork.labels.submit")}
         </button>
 
         {/* Validation Hint */}
-        {(!category || (service === "local" && !pickCity)) && (
+        {(selectedCategoryIds.length === 0 ||
+          (service === "local" && !pickCity)) && (
           <p className={styles.validationHint}>
-            {!category && !pickCity && service === "local"
+            {selectedCategoryIds.length === 0 &&
+            !pickCity &&
+            service === "local"
               ? t("addWork.validation_hint")
-              : !category
+              : selectedCategoryIds.length === 0
               ? t("addWork.errors.category_required")
               : t("addWork.errors.city_required")}
           </p>

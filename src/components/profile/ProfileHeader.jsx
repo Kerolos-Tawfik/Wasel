@@ -22,6 +22,7 @@ const ProfileHeader = ({
   isEditing,
   setIsEditing,
   onUpdate,
+  isOwner,
 }) => {
   const { t } = useTranslation();
   const [title, setTitle] = useState(profile?.title || "");
@@ -32,8 +33,9 @@ const ProfileHeader = ({
   const isProvider = profile?.user_role === "provider";
 
   const userName =
-    user?.full_name ||
     profile?.full_name ||
+    user?.full_name ||
+    profile?.email?.split("@")[0] ||
     user?.email?.split("@")[0] ||
     t("profile.anonymous");
 
@@ -71,7 +73,7 @@ const ProfileHeader = ({
       // Upload to server
       const response = await profileAPI.uploadAvatar(userId, formData);
       const data = await response.json();
-      
+
       if (!response.ok)
         throw new Error(data.message || "Failed to upload avatar");
 
@@ -91,7 +93,6 @@ const ProfileHeader = ({
     }
   };
 
-
   return (
     <section className={styles.headerSection}>
       <div className={styles.headerBg}></div>
@@ -105,20 +106,24 @@ const ProfileHeader = ({
             ) : (
               <User size={48} />
             )}
-            <div className={styles.avatarOverlay}>
-              {isUploadingAvatar ? (
-                <div className={styles.avatarSpinner}></div>
-              ) : (
-                <Camera size={20} />
-              )}
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className={styles.avatarInput}
-            />
+            {isOwner && (
+              <div className={styles.avatarOverlay}>
+                {isUploadingAvatar ? (
+                  <div className={styles.avatarSpinner}></div>
+                ) : (
+                  <Camera size={20} />
+                )}
+              </div>
+            )}
+            {isOwner && (
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className={styles.avatarInput}
+              />
+            )}
           </div>
           <div className={styles.roleBadge}>
             {isProvider ? <Wrench size={14} /> : <Briefcase size={14} />}
@@ -168,7 +173,7 @@ const ProfileHeader = ({
               </div>
             ) : (
               <p className={styles.title}>
-                {profile?.title || t("profile.no_title")}
+                {profile?.title || (isOwner ? t("profile.no_title") : "")}
               </p>
             )}
           </div>
@@ -192,10 +197,10 @@ const ProfileHeader = ({
         </div>
 
         {/* Edit Button */}
-        {!isEditing && (
+        {!isEditing && isOwner && (
           <button onClick={() => setIsEditing(true)} className={styles.editBtn}>
             <Edit3 size={18} />
-            <span>{t("profile.edit")}</span>
+            <span>{t("profile.edit_profile")}</span>
           </button>
         )}
       </div>

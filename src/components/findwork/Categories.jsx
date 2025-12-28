@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import styles from "./Categories.module.css";
 import { useTranslation } from "react-i18next";
+import { categoriesAPI } from "../../lib/apiService";
 import {
   Palette,
   FileText,
@@ -19,40 +21,81 @@ import {
   LayoutGrid,
 } from "lucide-react";
 
+const iconMapping = {
+  // Freelance
+  Designers: Palette,
+  "Design & Creative": Palette,
+  "Content Writing": FileText,
+  "Writing & Translation": FileText,
+  "Video Editing": Video,
+  "Web Development": Code,
+  "Web & Programming": Code,
+  "Social Media Management": Share2,
+  "Marketing & Sales": TrendingUp,
+  Translators: Languages,
+  "Digital Marketing": TrendingUp,
+
+  // Local
+  Plumbing: Wrench,
+  Electricity: Zap,
+  "Outdoor Photography": Camera,
+  Cleaning: SprayCan,
+  "Carpentry & Smithing": Hammer,
+  "Decoration & Gypsum": PaintBucket,
+  "Light Contracting": Building2,
+  "Car Services": Car,
+};
+
 function Categories({ service, selectedCategory, setSelectedCategory }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [categories, setCategories] = useState([]);
 
-  const freelanceCategories = [
-    { id: "all", icon: LayoutGrid },
-    { id: "designers", icon: Palette },
-    { id: "content_writing", icon: FileText },
-    { id: "video_editing", icon: Video },
-    { id: "web_development", icon: Code },
-    { id: "social_media", icon: Share2 },
-    { id: "translators", icon: Languages },
-    { id: "digital_marketing", icon: TrendingUp },
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await categoriesAPI.getCategories();
+        if (res.ok) {
+          const data = await res.json();
+          // API returns { categories: [...] } or array?
+          // Previous usages suggest { categories: [...] }
+          setCategories(data.categories || data || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+    fetchCats();
+  }, []);
+
+  const filteredCategories = categories.filter((cat) => {
+    if (!service || service === "all") return true;
+    return cat.type === service;
+  });
+
+  // Always add "All" option
+  const displayCategories = [
+    {
+      id: "all",
+      name_en: "All",
+      name_ar: t("findWork.categories.all"),
+      icon: LayoutGrid,
+    },
+    ...filteredCategories,
   ];
-
-  const localCategories = [
-    { id: "all", icon: LayoutGrid },
-    { id: "plumbing", icon: Wrench },
-    { id: "electricity", icon: Zap },
-    { id: "outdoor_photography", icon: Camera },
-    { id: "cleaning", icon: SprayCan },
-    { id: "carpentry_smithing", icon: Hammer },
-    { id: "decoration_gypsum", icon: PaintBucket },
-    { id: "light_contracting", icon: Building2 },
-    { id: "car_services", icon: Car },
-  ];
-
-  const categories =
-    service === "freelance" ? freelanceCategories : localCategories;
 
   return (
     <div className={styles.categoriesGrid}>
-      {categories.map((category) => {
-        const IconComponent = category.icon;
+      {displayCategories.map((category) => {
+        const IconComponent =
+          category.icon || iconMapping[category.name_en] || LayoutGrid;
         const isActive = selectedCategory === category.id;
+        const label =
+          i18n.language === "ar"
+            ? category.name_ar || category.name_en
+            : category.name_en;
+
+        // Should we translate "All"? Yes handled above.
+        // For others, use name from DB.
 
         return (
           <button
@@ -66,7 +109,7 @@ function Categories({ service, selectedCategory, setSelectedCategory }) {
               <IconComponent size={24} />
             </div>
             <span className={styles.categoryLabel}>
-              {t(`findWork.categories.${category.id}`)}
+              {category.id === "all" ? t(`findWork.categories.all`) : label}
             </span>
           </button>
         );

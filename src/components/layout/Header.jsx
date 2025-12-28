@@ -11,24 +11,69 @@ import {
   Wrench,
   PlusCircle,
   Search,
+  MessageSquare,
+  Bell,
 } from "lucide-react";
 
 import styles from "./Header.module.css";
 import { toast } from "react-toastify";
 import { toastConfig } from "../../lib/toastConfig.js";
+import { notificationAPI } from "../../lib/apiService";
 
 const Header = ({ user, userProfile }) => {
   const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const notifRef = useRef(null);
   const navigate = useNavigate();
 
-  // Close dropdown when clicking outside
+  const fetchNotifications = async () => {
+    try {
+      const response = await notificationAPI.getNotifications();
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+        setUnreadCount(data.unread_count || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    let interval;
+    const startPolling = () => {
+      if (user?.id && document.visibilityState === "visible") {
+        fetchNotifications();
+        if (!interval) {
+          interval = setInterval(fetchNotifications, 60000);
+        }
+      } else {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
+
+    startPolling();
+    document.addEventListener("visibilitychange", startPolling);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", startPolling);
+    };
+  }, [user?.id]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotifOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -53,9 +98,26 @@ const Header = ({ user, userProfile }) => {
       console.error("Logout error:", err);
     }
     toast.success(t("header.logout_success"), toastConfig);
-    
-    // Reload the page to clear all state
+
     window.location.href = "/";
+  };
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      await notificationAPI.markAsRead(id);
+      fetchNotifications();
+    } catch (error) {
+      console.error("Error marking as read:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await notificationAPI.markAllAsRead();
+      fetchNotifications();
+    } catch (error) {
+      console.error("Error marking all as read:", error);
+    }
   };
 
   const toggleLanguage = () => {
@@ -100,13 +162,7 @@ const Header = ({ user, userProfile }) => {
     <header className={styles.header}>
       <Link
         to={
-          user
-            ? isProvider
-              ? "/findwork"
-              : isClient
-              ? "/addwork"
-              : "/"
-            : "/"
+          user ? (isProvider ? "/findwork" : isClient ? "/addwork" : "/") : "/"
         }
       >
         <img
@@ -136,6 +192,84 @@ const Header = ({ user, userProfile }) => {
       )}
 
       <div className={styles.desktopRight}>
+        {user && (
+          <div className={styles.notifContainer} ref={notifRef}>
+            <button
+              className={styles.notifBtn}
+              onClick={() => setIsNotifOpen(!isNotifOpen)}
+            >
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className={styles.notifBadge}>{unreadCount}</span>
+              )}
+            </button>
+
+            {isNotifOpen && (
+              <div className={styles.notifDropdown}>
+                <div className={styles.notifHeader}>
+                  <h3>{t("notifications.title") || "Notifications"}</h3>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={handleMarkAllAsRead}
+                      className={styles.markAllBtn}
+                    >
+                      {t("notifications.mark_all") || "Mark all as read"}
+                    </button>
+                  )}
+                </div>
+                <div className={styles.notifList}>
+                  {notifications.length === 0 ? (
+                    <div className={styles.emptyNotif}>
+                      {t("notifications.empty") || "No notifications"}
+                    </div>
+                  ) : (
+                    notifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className={`${styles.notifItem} ${
+                          !notif.read_at ? styles.unread : ""
+                        }`}
+                        onClick={() => {
+                          handleMarkAsRead(notif.id);
+                          if (notif.type === "new_message") {
+                            navigate("/messages");
+                          } else if (
+                            notif.type === "status_update" ||
+                            notif.type === "status_pending" ||
+                            notif.type === "status_confirmed" ||
+                            notif.type === "status_rejected"
+                          ) {
+                            const target =
+                              userProfile?.user_role === "client"
+                                ? "/my-requests"
+                                : "/findwork";
+                            navigate(target, {
+                              state: {
+                                workRequestId: notif.data?.work_request_id,
+                                notificationType: notif.type,
+                              },
+                            });
+                          }
+                          setIsNotifOpen(false);
+                        }}
+                      >
+                        <div className={styles.notifText}>
+                          <p className={styles.notifTitle}>{notif.title}</p>
+                          <p className={styles.notifMessage}>{notif.message}</p>
+                          <span className={styles.notifTime}>
+                            {new Date(notif.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {!notif.read_at && <div className={styles.unreadDot} />}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         <button onClick={toggleLanguage} className={styles.langBtn}>
           {i18n.language === "ar" ? "English" : "العربية"}
         </button>
@@ -178,6 +312,26 @@ const Header = ({ user, userProfile }) => {
                   >
                     <ActionIcon size={16} />
                     {actionLabel}
+                  </Link>
+                )}
+
+                <Link
+                  to="/messages"
+                  className={styles.dropdownItem}
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <MessageSquare size={16} />
+                  {t("header.messages") || "Messages"}
+                </Link>
+
+                {isClient && (
+                  <Link
+                    to="/my-requests"
+                    className={styles.dropdownItem}
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    <Briefcase size={16} />
+                    {t("header.my_requests") || "My Requests"}
                   </Link>
                 )}
 
@@ -260,6 +414,15 @@ const Header = ({ user, userProfile }) => {
                 {actionLabel}
               </Link>
             )}
+
+            <Link
+              to="/messages"
+              className={styles.mobileMenuItem}
+              onClick={closeMenu}
+            >
+              <MessageSquare size={18} />
+              {t("header.messages") || "Messages"}
+            </Link>
 
             <Link
               to="/profile"

@@ -3,7 +3,7 @@ import { PlusCircle, Sparkles } from "lucide-react";
 import RequestWork from "../../../Wasel/src/components/addwork/RequestWork.jsx";
 import styles from "./AddWork.module.css";
 
-function AddWork({ user }) {
+function AddWork({ user, onComplete }) {
   const { t } = useTranslation();
 
   return (
@@ -21,7 +21,7 @@ function AddWork({ user }) {
 
       {/* Main Content */}
       <main className={styles.mainContent}>
-        <RequestWork user={user} />
+        <RequestWork user={user} onComplete={onComplete} />
       </main>
     </div>
   );

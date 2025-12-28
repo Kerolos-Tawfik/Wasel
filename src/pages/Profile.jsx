@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { toastConfig } from "../../../Wasel/src/lib/toastConfig.js";
 import { useAuth } from "../../../Wasel/src/context/AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { profileAPI } from "../lib/apiService";
 import ProfileHeader from "../../../Wasel/src/components/profile/ProfileHeader.jsx";
 import ProfileBio from "../../../Wasel/src/components/profile/ProfileBio.jsx";
@@ -12,25 +12,52 @@ import ProfilePortfolio from "../../../Wasel/src/components/profile/ProfilePortf
 import ProfileRating from "../../../Wasel/src/components/profile/ProfileRating.jsx";
 import ProfileContact from "../../../Wasel/src/components/profile/ProfileContact.jsx";
 import ProfileRoleSwitcher from "../../../Wasel/src/components/profile/ProfileRoleSwitcher.jsx";
+import ModalPortal from "../components/common/ModalPortal";
+import ReviewModal from "../components/reviews/ReviewModal";
 import styles from "./Profile.module.css";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Star } from "lucide-react";
 
 const Profile = ({ user, userProfile, onProfileUpdate }) => {
   const { t } = useTranslation();
+  const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSwitching, setIsSwitching] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const navigate = useNavigate();
 
+  const isOwner = !id || String(id) === String(user?.id);
+
   useEffect(() => {
-    if (userProfile) {
-      setProfile(userProfile);
-      setLoading(false);
-    } else {
-      navigate("/");
-    }
-  }, [userProfile]);
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        const profileId = id || user?.id;
+        if (!profileId) {
+          navigate("/");
+          return;
+        }
+
+        const response = await profileAPI.getProfile(profileId);
+        const data = await response.json();
+
+        if (response.ok) {
+          setProfile(data.profile);
+        } else {
+          toast.error(data.message || "Profile not found", toastConfig);
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        toast.error("Error loading profile", toastConfig);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [id, user?.id]);
 
   const isProvider = profile?.user_role === "provider";
   const isClient = profile?.user_role === "client";
@@ -70,7 +97,7 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
 
       const response = await profileAPI.switchRole(userId, newRole);
       const data = await response.json();
-      
+
       if (!response.ok)
         throw new Error(data.message || "Failed to switch role");
 
@@ -119,6 +146,7 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
           isEditing={isEditing}
           setIsEditing={setIsEditing}
           onUpdate={handleUpdateProfile}
+          isOwner={isOwner}
         />
 
         <div className={styles.contentGrid}>
@@ -129,18 +157,23 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
               profile={profile}
               isEditing={isEditing}
               onUpdate={handleUpdateProfile}
+              isOwner={isOwner}
             />
 
             {/* Portfolio Section - Provider Only */}
             {isProvider && (
-              <ProfilePortfolio profile={profile} userId={user?.id} isOwner={true} />
+              <ProfilePortfolio
+                profile={profile}
+                userId={profile.id}
+                isOwner={isOwner}
+              />
             )}
           </div>
 
           {/* Right Column */}
           <div className={styles.rightColumn}>
             {/* Rating Section - Provider Only */}
-            {isProvider && <ProfileRating profile={profile} />}
+            {isProvider && <ProfileRating profile={profile} user={user} />}
 
             {/* Contact Section - hidden for freelance providers */}
             {!(isProvider && profile?.provider_type === "freelance") && (
@@ -149,18 +182,45 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
                 user={user}
                 isEditing={isEditing}
                 onUpdate={handleUpdateProfile}
+                isOwner={isOwner}
               />
             )}
 
-            {/* Role Switcher Section */}
-            <ProfileRoleSwitcher
-              isProvider={isProvider}
-              onSwitchRole={handleSwitchRole}
-              isSwitching={isSwitching}
-            />
+            {/* Role Switcher Section - Only for Owner */}
+            {isOwner && (
+              <ProfileRoleSwitcher
+                isProvider={isProvider}
+                onSwitchRole={handleSwitchRole}
+                isSwitching={isSwitching}
+              />
+            )}
+
+            {/* Rate Button - Only for Non-Owner and Only for Providers */}
+            {!isOwner && profile?.user_role === "provider" && (
+              <button
+                className={styles.rateBtn}
+                onClick={() => setShowReviewModal(true)}
+              >
+                <Star size={18} />
+                <span>{t("profile.rate_user") || "Rate User"}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
+
+      {showReviewModal && (
+        <ModalPortal>
+          <ReviewModal
+            revieweeId={profile.id}
+            onClose={() => setShowReviewModal(false)}
+            onReviewSubmitted={() => {
+              // Refresh reviews list in ProfileRating if possible
+              window.location.reload();
+            }}
+          />
+        </ModalPortal>
+      )}
     </main>
   );
 };

@@ -1,0 +1,217 @@
+.messagesPage {
+  max-width: 900px;
+  margin: 100px auto 40px;
+  padding: 0 20px;
+}
+
+.header {
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+.conversationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.conversationCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.conversationCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  border-color: #e2e8f0;
+}
+
+.convIcon {
+  width: 56px;
+  height: 56px;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.convMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.convHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.convHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.convTime {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.convPreview {
+  margin-bottom: 12px;
+}
+
+.convPreview p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.convMeta {
+  display: flex;
+  gap: 20px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.arrow {
+  color: #cbd5e1;
+  transition: transform 0.2s;
+}
+
+.conversationCard:hover .arrow {
+  color: #2563eb;
+  transform: translateX(4px);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 80px 20px;
+  background: #f8fafc;
+  border-radius: 20px;
+  border: 2px dashed #e2e8f0;
+  color: #64748b;
+}
+
+.emptyState h2 {
+  margin: 20px 0 10px;
+  color: #1e293b;
+}
+
+.loadingContainer {
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: #2563eb;
+  width: 40px;
+  height: 40px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.convHeaderMain {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.projectStatus {
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.status_new {
+  background: #ecfdf5;
+  color: #059669;
+}
+.status_in_progress {
+  background: #fffbeb;
+  color: #d97706;
+}
+.status_pending_payment {
+  background: #eff6ff;
+  color: #2563eb;
+}
+.status_delayed {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.status_completed {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.projectContext {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.contextItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+[dir="rtl"] .arrow {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .conversationCard:hover .arrow {
+  transform: rotate(180deg) translateX(4px);
+}

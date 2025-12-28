@@ -12,10 +12,10 @@ const getAuthToken = () => {
  */
 const apiFetch = async (endpoint, options = {}) => {
   const token = getAuthToken();
-  
+
   const headers = {
     "Content-Type": "application/json",
-    "Accept": "application/json",
+    Accept: "application/json",
     ...options.headers,
   };
 
@@ -29,7 +29,7 @@ const apiFetch = async (endpoint, options = {}) => {
   };
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-  
+
   return response;
 };
 
@@ -40,9 +40,9 @@ export const authAPI = {
   register: async (userData) => {
     const response = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify(userData),
     });
@@ -52,9 +52,9 @@ export const authAPI = {
   login: async (credentials) => {
     const response = await fetch(`${API_BASE_URL}/login`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify(credentials),
     });
@@ -86,9 +86,9 @@ export const profileAPI = {
   updateProfile: async (userId, profileData) => {
     const response = await fetch(`${API_BASE_URL}/profile/update/${userId}`, {
       method: "PUT",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify(profileData),
     });
@@ -104,14 +104,17 @@ export const profileAPI = {
   },
 
   switchRole: async (userId, newRole) => {
-    const response = await fetch(`${API_BASE_URL}/profile/update-role/${userId}`, {
-      method: "PUT",
-      headers: { 
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify({ user_role: newRole }),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/profile/update-role/${userId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ user_role: newRole }),
+      }
+    );
     return response;
   },
 
@@ -122,14 +125,17 @@ export const profileAPI = {
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}/profile/upload-avatar/${userId}`, {
-      method: "POST",
-      headers: {
-        ...headers,
-        "Accept": "application/json"
-      },
-      body: formData,
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/profile/upload-avatar/${userId}`,
+      {
+        method: "POST",
+        headers: {
+          ...headers,
+          Accept: "application/json",
+        },
+        body: formData,
+      }
+    );
     return response;
   },
 };
@@ -146,9 +152,9 @@ export const portfolioAPI = {
   addPortfolioItem: async (portfolioData) => {
     const response = await fetch(`${API_BASE_URL}/portfolio`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        Accept: "application/json",
       },
       body: JSON.stringify(portfolioData),
     });
@@ -156,13 +162,23 @@ export const portfolioAPI = {
   },
 
   deletePortfolioItem: async (userId, itemId) => {
-    const response = await fetch(`${API_BASE_URL}/portfolio/${userId}/${itemId}`, {
-      method: "DELETE",
-      headers: { 
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/portfolio/${userId}/${itemId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    return response;
+  },
+};
+
+export const categoriesAPI = {
+  getCategories: async () => {
+    const response = await fetch(`${API_BASE_URL}/categories`);
     return response;
   },
 };
@@ -177,13 +193,110 @@ export const workRequestAPI = {
   },
 
   createWorkRequest: async (workRequestData) => {
+    const token = getAuthToken();
+    const headers = {
+      Accept: "application/json",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const isFormData = workRequestData instanceof FormData;
+
     const response = await fetch(`${API_BASE_URL}/work-request`, {
       method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(workRequestData),
+      headers,
+      body: isFormData ? workRequestData : JSON.stringify(workRequestData),
+    });
+    return response;
+  },
+
+  getMyRequests: async () => {
+    const response = await apiFetch("/work-requests/my");
+    return response;
+  },
+};
+
+export const workStatusAPI = {
+  updateStatus: async (id, statusData) => {
+    const response = await apiFetch(`/work-request/${id}/status`, {
+      method: "PUT",
+      body: JSON.stringify(statusData),
+    });
+    return response;
+  },
+
+  assignProvider: async (id, providerData) => {
+    const response = await apiFetch(`/work-request/${id}/assign-provider`, {
+      method: "PUT",
+      body: JSON.stringify(providerData),
+    });
+    return response;
+  },
+
+  getMyRequests: async () => {
+    const response = await apiFetch("/work-requests/my");
+    return response;
+  },
+};
+
+export const reviewAPI = {
+  submitReview: async (reviewData) => {
+    const response = await apiFetch("/reviews", {
+      method: "POST",
+      body: JSON.stringify(reviewData),
+    });
+    return response;
+  },
+
+  updateReview: async (id, reviewData) => {
+    const response = await apiFetch(`/reviews/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(reviewData),
+    });
+    return response;
+  },
+
+  getUserReviews: async (userId) => {
+    const response = await apiFetch(`/reviews/user/${userId}`);
+    return response;
+  },
+};
+
+export const chatAPI = {
+  getConversations: async () => {
+    const response = await apiFetch("/chat/conversations");
+    return response;
+  },
+
+  getMessages: async (workRequestId) => {
+    const response = await apiFetch(`/chat/${workRequestId}`);
+    return response;
+  },
+
+  sendMessage: async (messageData) => {
+    const response = await apiFetch("/chat", {
+      method: "POST",
+      body: JSON.stringify(messageData),
+    });
+    return response;
+  },
+};
+
+export const notificationAPI = {
+  getNotifications: async () => {
+    const response = await apiFetch("/notifications");
+    return response;
+  },
+  markAsRead: async (id) => {
+    const response = await apiFetch(`/notifications/${id}/read`, {
+      method: "POST",
+    });
+    return response;
+  },
+  markAllAsRead: async () => {
+    const response = await apiFetch("/notifications/read-all", {
+      method: "POST",
     });
     return response;
   },

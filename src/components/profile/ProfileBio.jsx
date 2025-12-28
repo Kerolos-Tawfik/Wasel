@@ -1,15 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { FileText, Edit3, Check, X } from "lucide-react";
+import { FileText, Edit3, Check, X, Tag } from "lucide-react";
 import styles from "./ProfileBio.module.css";
+import { categoriesAPI } from "../../lib/apiService";
+import MultiSelect from "../common/MultiSelect";
 
-const ProfileBio = ({ profile, isEditing, onUpdate }) => {
-  const { t } = useTranslation();
+const ProfileBio = ({ profile, isEditing, onUpdate, isOwner }) => {
+  const { t, i18n } = useTranslation();
   const [bio, setBio] = useState(profile?.bio || "");
   const [isEditingBio, setIsEditingBio] = useState(false);
 
+  // Categories & Skills State
+  const [allCategories, setAllCategories] = useState([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+  const [selectedSkillIds, setSelectedSkillIds] = useState([]);
+
+  useEffect(() => {
+    if (isEditingBio) {
+      // Fetch categories when entering edit mode
+      const fetchCats = async () => {
+        try {
+          const res = await categoriesAPI.getCategories();
+          if (res.ok) {
+            const data = await res.json();
+            setAllCategories(data.categories || data || []);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      fetchCats();
+
+      // Initialize selections from profile
+      setSelectedCategoryIds(profile?.categories?.map((c) => c.id) || []);
+      setSelectedSkillIds(profile?.skills?.map((s) => s.id) || []);
+    }
+  }, [isEditingBio, profile]);
+
+  const handleCategoryChange = (newCats) => {
+    setSelectedCategoryIds(newCats);
+    if (allCategories.length > 0) {
+      // Get all allowed skill IDs for the new categories
+      const allowedSkillIds = allCategories
+        .filter((c) => newCats.includes(c.id))
+        .flatMap((c) => c.skills.map((s) => s.id));
+
+      // Filter current selected skills
+      setSelectedSkillIds((prev) =>
+        prev.filter((id) => allowedSkillIds.includes(id))
+      );
+    }
+  };
+
   const handleSave = () => {
-    onUpdate({ bio });
+    onUpdate({
+      bio,
+      category_ids: selectedCategoryIds,
+      skill_ids: selectedSkillIds,
+    });
     setIsEditingBio(false);
   };
 
@@ -18,6 +66,8 @@ const ProfileBio = ({ profile, isEditing, onUpdate }) => {
     setIsEditingBio(false);
   };
 
+  const isClient = profile?.user_role === "client";
+
   return (
     <section className={styles.bioSection}>
       <div className={styles.sectionHeader}>
@@ -25,7 +75,7 @@ const ProfileBio = ({ profile, isEditing, onUpdate }) => {
           <FileText size={20} />
           <h2>{t("profile.bio_title")}</h2>
         </div>
-        {!isEditingBio && (
+        {!isEditingBio && isOwner && (
           <button
             onClick={() => setIsEditingBio(true)}
             className={styles.editBtn}
@@ -45,6 +95,38 @@ const ProfileBio = ({ profile, isEditing, onUpdate }) => {
               className={styles.bioTextarea}
               rows={5}
             />
+
+            {!isClient && (
+              <div className={styles.skillsEditSection}>
+                <label className={styles.inputLabel}>
+                  {t("profile.categories")}
+                </label>
+                <MultiSelect
+                  placeholder={t("addWork.select_category")}
+                  options={allCategories.filter(
+                    (cat) => cat.type === profile?.provider_type
+                  )}
+                  selectedIds={selectedCategoryIds}
+                  onChange={handleCategoryChange}
+                />
+
+                <label
+                  className={styles.inputLabel}
+                  style={{ marginTop: "1rem", display: "block" }}
+                >
+                  {t("profile.skills")}
+                </label>
+                <MultiSelect
+                  placeholder={t("addWork.select_skills")}
+                  options={allCategories
+                    .filter((c) => selectedCategoryIds.includes(c.id))
+                    .flatMap((c) => c.skills)}
+                  selectedIds={selectedSkillIds}
+                  onChange={setSelectedSkillIds}
+                />
+              </div>
+            )}
+
             <div className={styles.editActions}>
               <button onClick={handleSave} className={styles.saveBtn}>
                 <Check size={16} />
@@ -57,9 +139,69 @@ const ProfileBio = ({ profile, isEditing, onUpdate }) => {
             </div>
           </div>
         ) : (
-          <p className={styles.bioText}>
-            {profile?.bio || t("profile.no_bio")}
-          </p>
+          <div className={styles.viewContainer}>
+            <p className={styles.bioText}>
+              {profile?.bio || (isOwner ? t("profile.no_bio") : "")}
+            </p>
+
+            {!isClient &&
+              (profile?.categories?.length > 0 ||
+                profile?.skills?.length > 0) && (
+                <div className={styles.skillsDisplay}>
+                  {profile.categories?.filter(
+                    (cat) => cat.type === profile?.provider_type
+                  ).length > 0 && (
+                    <div className={styles.skillGroup}>
+                      <h4 className={styles.skillGroupTitle}>
+                        {t("profile.categories")}
+                      </h4>
+                      <div className={styles.tagsWrapper}>
+                        {profile.categories
+                          .filter((cat) => cat.type === profile?.provider_type)
+                          .map((cat) => (
+                            <span key={cat.id} className={styles.categoryTag}>
+                              {i18n.language === "ar"
+                                ? cat.name_ar || cat.name_en
+                                : cat.name_en}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {profile.skills?.filter((s) =>
+                    profile.categories
+                      ?.filter((cat) => cat.type === profile?.provider_type)
+                      .map((cat) => cat.id)
+                      .includes(s.category_id)
+                  ).length > 0 && (
+                    <div className={styles.skillGroup}>
+                      <h4 className={styles.skillGroupTitle}>
+                        {t("profile.skills")}
+                      </h4>
+                      <div className={styles.tagsWrapper}>
+                        {profile.skills
+                          .filter((s) =>
+                            profile.categories
+                              ?.filter(
+                                (cat) => cat.type === profile?.provider_type
+                              )
+                              .map((cat) => cat.id)
+                              .includes(s.category_id)
+                          )
+                          .map((skill) => (
+                            <span key={skill.id} className={styles.skillTag}>
+                              {i18n.language === "ar"
+                                ? skill.name_ar || skill.name_en
+                                : skill.name_en}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+          </div>
         )}
       </div>
     </section>

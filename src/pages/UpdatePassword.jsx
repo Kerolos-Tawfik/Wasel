@@ -24,7 +24,35 @@ const UpdatePassword = () => {
   const isResetMode = !!(resetToken && email);
 
   // In a real app, you might want to verify the user is logged in if !isResetMode
-  // const user = JSON.parse(localStorage.getItem("user")); 
+  // const user = JSON.parse(localStorage.getItem("user"));
+
+  useEffect(() => {
+    const validateToken = async () => {
+      if (isResetMode) {
+        setLoading(true);
+        try {
+          const response = await fetch(
+            "http://localhost:8000/api/reset-password-validate",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token: resetToken, email }),
+            }
+          );
+
+          if (!response.ok) {
+            navigate("/verify-error");
+          }
+        } catch (error) {
+          navigate("/verify-error");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    validateToken();
+  }, [isResetMode, resetToken, email, navigate]);
 
   const isPasswordValid = (pass) => {
     return (
@@ -40,7 +68,11 @@ const UpdatePassword = () => {
     setLoading(true);
 
     if (!isPasswordValid(password)) {
-      toast.error(t("auth.password_requirements_error") || "Password requirements not met", toastConfig);
+      toast.error(
+        t("auth.password_requirements_error") ||
+          "Password requirements not met",
+        toastConfig
+      );
       setLoading(false);
       return;
     }
@@ -72,18 +104,18 @@ const UpdatePassword = () => {
 
       const data = await response.json();
 
-      if (!response.ok) throw new Error(data.message || "Failed to update password");
+      if (!response.ok)
+        throw new Error(data.message || "Failed to update password");
 
       toast.success(t("auth.password_updated_success"), toastConfig);
-      
+
       // If reset, redirect to login. If update, maybe stay or go profile.
       if (isResetMode) {
         navigate("/login");
       } else {
         // Optional: Logout user after password change or just redirect
-        navigate("/profile"); 
+        navigate("/profile");
       }
-
     } catch (error) {
       console.error("Password update error:", error);
       toast.error(error.message || t("errors.default"), toastConfig);
@@ -96,7 +128,9 @@ const UpdatePassword = () => {
     <div className={styles.container}>
       <div className={styles.card}>
         <h1 className={styles.title}>
-          {isResetMode ? t("auth.reset_password_title") || "Reset Password" : t("auth.update_password")}
+          {isResetMode
+            ? t("auth.reset_password_title")
+            : t("auth.update_password")}
         </h1>
 
         <form onSubmit={handleUpdate} className={styles.form}>
@@ -124,8 +158,10 @@ const UpdatePassword = () => {
           <button type="submit" className={styles.submitBtn} disabled={loading}>
             {loading ? (
               <Loader2 size={20} className={styles.spinner} />
+            ) : isResetMode ? (
+              t("auth.reset_password_btn")
             ) : (
-              isResetMode ? "Reset Password" : t("auth.update_password_btn")
+              t("auth.update_password_btn")
             )}
           </button>
         </form>

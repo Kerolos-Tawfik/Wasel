@@ -3,16 +3,15 @@ import { useTranslation } from "react-i18next";
 import { Phone, MapPin, Edit3, Check, X, Lock } from "lucide-react";
 import styles from "./ProfileContact.module.css";
 
-const ProfileContact = ({ profile, user, isEditing, onUpdate }) => {
+const ProfileContact = ({ profile, user, isEditing, onUpdate, isOwner }) => {
   const { t } = useTranslation();
   const [isEditingContact, setIsEditingContact] = useState(false);
   const [contactData, setContactData] = useState({
     city: profile?.city || "",
   });
 
-  // Get phone from user metadata (read-only)
-  const phoneFromMetadata =
-    user?.user?.user_metadata?.phone || user?.user?.phone || "";
+  // Get phone from profile or user object
+  const displayPhone = profile?.phone || "";
 
   const handleSave = () => {
     onUpdate({ city: contactData.city });
@@ -33,7 +32,7 @@ const ProfileContact = ({ profile, user, isEditing, onUpdate }) => {
           <Phone size={20} />
           <h2>{t("profile.contact_title")}</h2>
         </div>
-        {!isEditingContact && (
+        {!isEditingContact && isOwner && (
           <button
             onClick={() => setIsEditingContact(true)}
             className={styles.editBtn}
@@ -58,7 +57,7 @@ const ProfileContact = ({ profile, user, isEditing, onUpdate }) => {
               </label>
               <input
                 type="tel"
-                value={phoneFromMetadata}
+                value={displayPhone}
                 disabled
                 className={`${styles.input} ${styles.readOnlyInput}`}
                 placeholder={t("profile.no_phone")}
@@ -100,8 +99,8 @@ const ProfileContact = ({ profile, user, isEditing, onUpdate }) => {
             {/* Phone from Metadata */}
             <div className={styles.contactItem}>
               <Phone size={18} />
-              <span>{phoneFromMetadata || t("profile.no_phone")}</span>
-              {phoneFromMetadata && (
+              <span>{displayPhone || t("profile.no_phone")}</span>
+              {displayPhone && (
                 <span className={styles.lockedIcon}>
                   <Lock size={14} />
                 </span>
@@ -116,7 +115,7 @@ const ProfileContact = ({ profile, user, isEditing, onUpdate }) => {
               </div>
             )}
 
-            {!phoneFromMetadata && !profile?.city && (
+            {!displayPhone && !profile?.city && (
               <p className={styles.noContact}>{t("profile.no_contact")}</p>
             )}
           </div>

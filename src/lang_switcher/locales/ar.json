@@ -9,13 +9,33 @@
     "delete": "حذف",
     "edit": "تعديل",
     "details": "التفاصيل",
+    "confirm": "تأكيد",
+    "reject": "رفض",
+    "error": "حدث خطأ ما، يرجى المحاولة مرة أخرى",
     "confirm_delete": "هل أنت متأكد من حذف هذا العنصر؟",
     "image": "صورة",
     "images": "صور"
   },
   "cities": {
     "saihat": "سيهات",
-    "qatif": "القطيف"
+    "qatif": "القطيف",
+    "riyadh": "الرياض",
+    "jeddah": "جدة",
+    "mecca": "مكة المكرمة",
+    "medina": "المدينة المنورة",
+    "dammam": "الدمام",
+    "khobar": "الخبر",
+    "abha": "أبها",
+    "tabuk": "تبوك",
+    "hail": "حائل",
+    "jazan": "جازان",
+    "najran": "نجران",
+    "bahah": "الباحة",
+    "sakaka": "سكاكا",
+    "arar": "عرعر",
+    "buraydah": "بريدة",
+    "jubail": "الجبيل",
+    "yanbu": "ينبع"
   },
 
   "onboarding": {
@@ -34,7 +54,9 @@
     "provider_freelance": "مستقل (عبر الإنترنت)",
     "provider_freelance_desc": "العمل عن بُعد وخدمة العملاء عبر الإنترنت",
     "provider_local": "محلي",
-    "provider_local_desc": "تقديم الخدمات محلياً"
+    "provider_local_desc": "تقديم الخدمات محلياً",
+    "step3_title": "اختر تخصصاتك",
+    "step3_desc": "أخبرنا بما تتقنه لنتمكن من العثور على العمل المناسب لك."
   },
 
   "header": {
@@ -48,6 +70,7 @@
     "login": "دخول",
     "join": "انضم إلينا",
     "logout": "تسجيل الخروج",
+    "messages": "الرسائل",
     "add_work": "اضافة عمل",
     "browse_work": "تصفح اعمال",
     "profile": "الملف الشخصي",
@@ -55,6 +78,7 @@
     "role_client": "عميل",
     "role_provider": "مقدم خدمة",
     "logout_success": "تم تسجيل الخروج بنجاح",
+    "my_requests": "طلباتي",
     "user": "المستخدم"
   },
   "hero": {
@@ -153,6 +177,15 @@
     "join_success": "تحقق من بريدك الإلكتروني لتأكيد الحساب!",
     "email_verified": "تم التحقق من البريد الإلكتروني بنجاح! مرحباً بك في LocalServices.",
     "email_verified_login": "تم التحقق من البريد الإلكتروني بنجاح! يرجى تسجيل الدخول للمتابعة.",
+    "reset_password_title": "إعادة تعيين كلمة المرور",
+    "reset_password_btn": "إعادة تعيين كلمة المرور",
+    "email_verified_title": "تم تأكيد لايميل بنجاح!",
+    "email_verified_message": "شكراً لتاكيد بريدك الإلكتروني. حسابك نشط بالكامل الان.",
+    "email_verified_button": "المتابعة لتسجيل الدخول",
+    "verify_error_title": "فشل التحقق",
+    "verify_error_message": "لم نتمكن من التحقق من بريدك الإلكتروني. قد يكون الرابط منتهي الصلاحية أو غير صالح.",
+    "verify_error_button": "العودة لتسجيل الدخول",
+    "verify_error_home": "الذهاب للرئيسية",
     "errors": {
       "invalid_login_credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
       "user_already_registered": "هذا البريد الإلكتروني مسجل بالفعل.",
@@ -182,7 +215,8 @@
       "local": "محلي",
       "freelance": "مستقل (اونلاين)",
       "choose_service": "اختار محلي او مستقل",
-      "choose_city": "اختار المدينة"
+      "choose_city": "اختار المدينة",
+      "my_requests": "طلباتي"
     },
     "categories": {
       "all": "الكل",
@@ -224,8 +258,48 @@
       "client": "العميل",
       "location": "الموقع",
       "posted": "نشر في",
-      "contact": "تواصل مع العميل"
-    }
+      "contact": "تواصل مع العميل",
+      "budget": "الميزانية",
+      "duration": "المدة",
+      "expected_date": "تاريخ البدء",
+      "open_chat": "محادثة داخلية",
+      "status_history": "سجل الحالة",
+      "no_history": "لا يوجد سجل متاح بعد.",
+      "update_status": "تحديث حالة الطلب",
+      "manage": "إدارة الطلب"
+    },
+    "status": {
+      "new": "جديد",
+      "in_progress": "قيد التنفيذ",
+      "pending_payment": "بانتظار الدفع",
+      "delayed": "متأخر",
+      "completed": "مكتمل"
+    },
+    "city_not_specified": "المدينة غير محددة",
+    "date_not_specified": "التاريخ غير محدد",
+    "status_updated_successfully": "تم تحديث الحالة بنجاح",
+    "status_request_sent": "تم إرسال طلب تغيير الحالة للطرف الآخر",
+    "status_confirmed": "تم تأكيد تغيير الحالة بنجاح",
+    "pending_status_notice": "طلب الطرف الآخر تغيير الحالة إلى {{status}}. هل توافق؟",
+    "waiting_confirmation": "في انتظار تأكيد الطرف الآخر على حالة: {{status}}",
+    "status_rejected": "تم رفض طلب تغيير الحالة",
+    "status_error": "خطأ في تحديث الحالة"
+  },
+  "chat": {
+    "title": "المحادثة الداخلية",
+    "no_messages": "ابدأ المحادثة الآن!",
+    "placeholder": "اكتب رسالة...",
+    "error_sending": "فشل في إرسال الرسالة",
+    "send": "إرسال",
+    "assign_provider": "تعيين كمقدم خدمة",
+    "provider_assigned": "تم تعيين مقدم الخدمة",
+    "confirm_assign": "هل أنت متأكد من تعيين هذا الشخص لإنجاز الطلب؟"
+  },
+  "messages": {
+    "title": "الرسائل",
+    "no_messages": "لا توجد رسائل بعد",
+    "empty_desc": "ابدأ محادثة من صفحة البحث عن عمل!",
+    "no_content": "لا توجد رسائل بعد"
   },
   "addWork": {
     "title": "انشئ طلبك",
@@ -236,7 +310,10 @@
       "service_type": "اختر نوع الخدمة",
       "choose_category": "اختر التصنيف",
       "work_details": "تفاصيل العمل",
-      "select_city": "اختر مدينتك"
+      "select_city": "اختر مدينتك",
+      "select_specializations": "اختر التخصصات",
+      "select_skills": "اختر المهارات",
+      "limit_reached": "لقد وصلت إلى الحد الأقصى المسموح به للمشاريع (4 مشاريع)."
     },
     "labels": {
       "local": "خدمات محلية",
@@ -259,7 +336,15 @@
       "attachments": "المرفقات (اختياري)",
       "upload_files": "اضغط لرفع الملفات",
       "submit": "إرسال الطلب",
-      "city": "اختر المدينة"
+      "categories": "التصنيفات",
+      "skills": "المهارات",
+      "city": "اختر المدينة",
+      "duration": "مدة التنفيذ المتوقعة",
+      "budget_min": "أقل ميزانية",
+      "budget_max": "أعلى ميزانية"
+    },
+    "placeholders": {
+      "duration": "مثال: ٥ أيام، أسبوع"
     },
     "messages": {
       "success": "تم انشاء طلب العمل بنجاح"
@@ -271,6 +356,7 @@
     "validation_hint": "يرجى اختيار التصنيف والمدينة للمتابعة",
     "search_category": "ابحث عن التصنيف...",
     "select_category": "اختر تصنيف",
+    "select_skills": "اختر مهارات",
     "no_categories_found": "لا توجد تصنيفات",
     "search_city": "ابحث عن المدينة...",
     "select_city": "اختر مدينة",
@@ -279,7 +365,9 @@
   "profile": {
     "not_found": "الملف الشخصي غير موجود",
     "anonymous": "مستخدم مجهول",
-    "edit": "تعديل الملف",
+    "edit_profile": "تعديل الملف",
+    "categories": "التخصصات",
+    "skills": "المهارات المهنية",
     "title_placeholder": "مثال: مطور واجهات أمامية",
     "no_title": "أضف لقبك المهني",
     "bio_title": "نبذة عني",
@@ -318,6 +406,8 @@
     "rating_title": "التقييم والمراجعات",
     "reviews": "مراجعات",
     "completed_jobs": "الأعمال المكتملة",
+    "recent_reviews": "أحدث المراجعات",
+    "no_reviews": "لا توجد مراجعات بعد",
     "contact_title": "معلومات التواصل",
     "phone": "الهاتف",
     "phone_placeholder": "+966 5XX XXX XXXX",
@@ -337,5 +427,26 @@
     "provider_type_freelance": "مستقل",
     "provider_type_local": "محلي",
     "switch_success": "تم تغيير الدور بنجاح"
+  },
+  "notifications": {
+    "title": "التنبيهات",
+    "mark_all": "تحديد الكل كمقروء",
+    "empty": "لا توجد تنبيهات",
+    "new_message": "رسالة جديدة",
+    "status_update": "تحديث حالة الطلب",
+    "view_profile": "عرض الملف الشخصي"
+  },
+  "reviews": {
+    "title": "التقييمات",
+    "rate_now": "قيم الآن",
+    "rate_provider": "قيم مقدم الخدمة",
+    "rate_subtitle": "كيف كانت تجربتك مع هذا المقدم؟",
+    "comment_placeholder": "أضف تعليقك هنا (اختياري)...",
+    "submit": "إرسال التقييم",
+    "can_rate_now": "الطلب مكتمل! يمكنك الآن تقييم مقدم الخدمة.",
+    "leave_review": "اترك مراجعة",
+    "rating_saved": "تم حفظ التقييم بنجاح",
+    "edit_review": "تعديل التقييم",
+    "update_review": "تحديث التقييم"
   }
 }

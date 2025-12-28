@@ -10,7 +10,8 @@
     "details": "Details",
     "confirm_delete": "Are you sure you want to delete this item?",
     "image": "image",
-    "images": "images"
+    "images": "images",
+    "save": "Save"
   },
   "cities": {
     "saihat": "Saihat",
@@ -28,9 +29,11 @@
     "login": "Log In",
     "join": "Join",
     "logout": "Logout",
+    "messages": "Messages",
     "logout_success": "Logged out successfully",
-    "add_work": "Add Work",
-    "browse_work": "Browse Work",
+    "my_requests": "My Requests",
+    "add_work": "Request Work",
+    "browse_work": "Find Work",
     "profile": "Profile",
     "settings": "Settings",
     "role_client": "Client",
@@ -94,7 +97,11 @@
     "provider_freelance": "Freelance (Online)",
     "provider_freelance_desc": "Work remotely and serve clients online",
     "provider_local": "Local",
-    "provider_local_desc": "Provide services locally"
+    "provider_local_desc": "Provide services locally",
+    "step2_title": "How will you provide your services?",
+    "step2_desc": "Choose if you work locally or as an online freelancer.",
+    "step3_title": "Select your specializations",
+    "step3_desc": "Tell us what you're good at so we can find you the right work."
   },
   "footer": {
     "about_us": "About Us",
@@ -148,6 +155,15 @@
     "join_success": "Check your email for the confirmation link!",
     "email_verified": "Email verified successfully! Welcome to LocalServices.",
     "email_verified_login": "Email verified successfully! Please log in to continue.",
+    "reset_password_title": "Reset Password",
+    "reset_password_btn": "Reset Password",
+    "email_verified_title": "Email Verified!",
+    "email_verified_message": "Thank you for verifying your email address. Your account is now fully active.",
+    "email_verified_button": "Continue to Login",
+    "verify_error_title": "Verification Failed",
+    "verify_error_message": "We couldn't verify your email address. The link may have expired or is invalid.",
+    "verify_error_button": "Back to Login",
+    "verify_error_home": "Go via Home",
     "errors": {
       "invalid_login_credentials": "Invalid email or password.",
       "user_already_registered": "This email is already registered.",
@@ -177,7 +193,8 @@
       "local": "Local",
       "freelance": "Freelance (Online)",
       "choose_service": "Choose Local or Freelance",
-      "choose_city": "Choose City"
+      "choose_city": "Choose City",
+      "my_requests": "My Requests"
     },
     "categories": {
       "all": "All",
@@ -221,8 +238,37 @@
       "client": "Client",
       "location": "Location",
       "posted": "Posted",
-      "contact": "Contact Client"
-    }
+      "contact": "Contact Client",
+      "budget": "Budget",
+      "duration": "Duration",
+      "expected_date": "Start Date",
+      "open_chat": "Internal Chat",
+      "status_history": "Status History",
+      "no_history": "No history available yet.",
+      "update_status": "Update Status"
+    },
+    "status": {
+      "new": "New",
+      "in_progress": "In Progress",
+      "pending_payment": "Pending Payment",
+      "delayed": "Delayed",
+      "completed": "Completed"
+    },
+    "status_updated": "Status updated successfully!",
+    "status_error": "Failed to update status."
+  },
+  "chat": {
+    "title": "Internal Chat",
+    "no_messages": "Start the conversation!",
+    "placeholder": "Type a message...",
+    "error_sending": "Failed to send message",
+    "send": "Send"
+  },
+  "messages": {
+    "title": "Messages",
+    "no_messages": "No messages yet",
+    "empty_desc": "Start a conversation from the Find Work page!",
+    "no_content": "No messages yet"
   },
   "addWork": {
     "title": "Create Your Request",
@@ -233,7 +279,9 @@
       "service_type": "Choose Service Type",
       "choose_category": "Select Category",
       "work_details": "Work Details",
-      "select_city": "Select Your City"
+      "select_city": "Select Your City",
+      "select_specializations": "Select Specializations",
+      "select_skills": "Select Skills"
     },
     "labels": {
       "local": "Local Services",
@@ -256,7 +304,15 @@
       "attachments": "Attachments (Optional)",
       "upload_files": "Click to upload files",
       "submit": "Submit Request",
-      "city": "Choose City"
+      "categories": "Categories",
+      "skills": "Skills",
+      "city": "Choose City",
+      "duration": "Expected Duration",
+      "budget_min": "Min Budget",
+      "budget_max": "Max Budget"
+    },
+    "placeholders": {
+      "duration": "e.g. 5 days, 1 week"
     },
     "messages": {
       "success": "Work request submitted successfully!"
@@ -268,6 +324,7 @@
     "validation_hint": "Please select a category and city to continue",
     "search_category": "Search categories...",
     "select_category": "Select a category",
+    "select_skills": "Select skills",
     "no_categories_found": "No categories found",
     "search_city": "Search cities...",
     "select_city": "Select a city",
@@ -276,7 +333,9 @@
   "profile": {
     "not_found": "Profile not found",
     "anonymous": "Anonymous User",
-    "edit": "Edit Profile",
+    "edit_profile": "Edit Profile",
+    "categories": "Specializations",
+    "skills": "Professional Skills",
     "title_placeholder": "e.g. Front-end Web Developer",
     "no_title": "Add your professional title",
     "bio_title": "About Me",
@@ -333,12 +392,5 @@
     "provider_type_freelance": "Freelance",
     "provider_type_local": "Local",
     "switch_success": "Role switched successfully"
-  },
-  "common": {
-    "save": "Save",
-    "cancel": "Cancel",
-    "back": "Back",
-    "finish": "Finish",
-    "loading": "Loading..."
   }
 }

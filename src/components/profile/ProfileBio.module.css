@@ -135,6 +135,96 @@
   color: #475569;
 }
 
+/* Categories & Skills */
+.skillsEditSection {
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.subTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.viewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.skillsSection {
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.skillGroup {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.icon {
+  color: #94a3b8;
+  margin-top: 0.3rem;
+  flex-shrink: 0;
+}
+
+.tagsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.categoryTag {
+  background-color: #eff6ff;
+  color: #2563eb;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #dbeafe;
+  transition: all 0.2s;
+}
+
+.categoryTag:hover {
+  background-color: #dbeafe;
+  transform: translateY(-1px);
+}
+
+.skillTag {
+  background-color: #f8fafc;
+  color: #64748b;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.skillTag:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.skillsDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+
+.skillGroupTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */
