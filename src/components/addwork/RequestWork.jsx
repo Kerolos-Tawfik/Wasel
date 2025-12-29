@@ -172,6 +172,7 @@ function RequestWork({ user }) {
       setFiles([]);
 
       toast.success(t("addWork.messages.success"), toastConfig);
+      
     } catch (error) {
       console.error("Error adding work request:", error);
       toast.error(error.message || t("errors.default"), toastConfig);
