@@ -10,6 +10,19 @@ const Home = ({ user, selectedRole }) => {
   const location = useLocation();
 
   useEffect(() => {
+    // Redirect logged-in users
+    if (user) {
+      if (selectedRole === "client") {
+        navigate("/addwork");
+      } else if (selectedRole === "provider") {
+        navigate("/findwork");
+      } else {
+        // Fallback or default
+        navigate("/findwork");
+      }
+      return;
+    }
+
     // Check for scroll request
     if (location.state?.scrollTo) {
       const element = document.getElementById(location.state.scrollTo);
@@ -19,7 +32,7 @@ const Home = ({ user, selectedRole }) => {
         navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [location]);
+  }, [location, user, selectedRole, navigate]);
 
   return (
     <>

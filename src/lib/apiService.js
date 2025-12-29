@@ -269,8 +269,12 @@ export const chatAPI = {
     return response;
   },
 
-  getMessages: async (workRequestId) => {
-    const response = await apiFetch(`/chat/${workRequestId}`);
+  getMessages: async (workRequestId, receiverId) => {
+    let url = `/chat/${workRequestId}`;
+    if (receiverId) {
+      url += `?other_user_id=${receiverId}`;
+    }
+    const response = await apiFetch(url);
     return response;
   },
 

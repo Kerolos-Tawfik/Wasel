@@ -30,7 +30,8 @@ function ChatWindow({
 
   const fetchMessages = async () => {
     try {
-      const response = await chatAPI.getMessages(workRequestId);
+      // Pass receiverId to filter messages for specific conversation (if Owner has multiple chats)
+      const response = await chatAPI.getMessages(workRequestId, receiverId);
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
@@ -122,7 +123,7 @@ function ChatWindow({
                     );
                     const response = await workStatusAPI.assignProvider(
                       workRequestId,
-                      receiverId
+                      { provider_id: receiverId }
                     );
                     const data = await response.json();
                     if (response.ok) {

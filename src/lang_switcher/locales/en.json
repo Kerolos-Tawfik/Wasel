@@ -70,6 +70,15 @@
       }
     }
   },
+  "notifications": {
+    "title": "Notifications",
+    "mark_all": "Mark all as read",
+    "empty": "No notifications",
+    "new_message_title": "New Message",
+    "new_message_body": "You have a new message from {{sender_name}}",
+    "status_update": "Status Update",
+    "view_profile": "View Profile"
+  },
   "categories": {
     "title": "Browse by Category",
     "subtitle": "Find the right expert for any task",
@@ -169,6 +178,7 @@
       "user_already_registered": "This email is already registered.",
       "email_not_confirmed": "Please confirm your email address.",
       "weak_password": "Password is too weak.",
+      "phone_invalid": "Invalid phone number. Must be at least 10 digits.",
       "over_request_rate_limit": "Too many requests. Please try again later.",
       "default": "An error occurred. Please try again."
     }

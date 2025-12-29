@@ -152,3 +152,105 @@
 .link:hover {
   text-decoration: underline;
 }
+
+/* Phone Input Styles */
+.phoneInputContainer {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  transition: border-color 0.2s;
+  background-color: white;
+  position: relative;
+}
+
+.phoneInputContainer:focus-within {
+  border-color: var(--primary-color);
+}
+
+.countrySelect {
+  position: relative;
+  border-right: 1px solid var(--border-color);
+}
+
+[dir="rtl"] .countrySelect {
+  border-right: none;
+  border-left: 1px solid var(--border-color);
+}
+
+.countryBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  font-size: 1rem;
+  height: 100%;
+}
+
+.countryMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: max-content; /* Or fixed width */
+  min-width: 200px;
+  max-height: 250px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+}
+
+[dir="rtl"] .countryMenu {
+  left: auto;
+  right: 0;
+}
+
+.countryOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: inherit;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.countryOption:hover {
+  background-color: #f3f4f6;
+}
+
+.flag {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.dialCode {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.phoneInput {
+  flex: 1;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0 0.5rem 0.5rem 0; /* Align radius */
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+}
+
+[dir="rtl"] .phoneInput {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
