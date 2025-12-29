@@ -11,16 +11,12 @@ const Footer = ({ user }) => {
   const location = useLocation();
 
   const scrollToSection = (id) => {
-    // if (location.pathname !== "/") {
-    //   navigate("/");
-    //   setTimeout(() => {
-    //     const element = document.getElementById(id);
-    //     if (element) element.scrollIntoView({ behavior: "smooth" });
-    //   }, 100);
-    // } else {
-    //   const element = document.getElementById(id);
-    //   if (element) element.scrollIntoView({ behavior: "smooth" });
-    // }
+    if (location.pathname !== "/") {
+      navigate("/", { state: { scrollTo: id } });
+    } else {
+      const element = document.getElementById(id);
+      if (element) element.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (

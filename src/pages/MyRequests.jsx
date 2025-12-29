@@ -126,14 +126,16 @@ const MyRequests = ({ user }) => {
 
                 <div className={styles.cardFooter}>
                   <div className={styles.metaInfo}>
-                    <div className={styles.metaItem}>
-                      <MapPin size={16} />
-                      <span>
-                        {t(`cities.${request.city}`) ||
-                          request.city ||
-                          t("findWork.city_not_specified")}
-                      </span>
-                    </div>
+                    {request.service_type === "local" && (
+                      <div className={styles.metaItem}>
+                        <MapPin size={16} />
+                        <span>
+                          {t(`cities.${request.city}`) ||
+                            request.city ||
+                            t("findWork.city_not_specified")}
+                        </span>
+                      </div>
+                    )}
                     <div className={styles.metaItem}>
                       <Calendar size={16} />
                       <span>
@@ -291,14 +293,16 @@ const DetailModal = ({ work, onUpdate, onClose, currentUser }) => {
               <strong>{t("findWork.modal.description")}: </strong>
               <p>{work.work_description}</p>
             </div>
-            <div className={styles.infoRow}>
-              <MapPin size={16} />
-              <span>
-                {t(`cities.${work.city}`) ||
-                  work.city ||
-                  t("findWork.city_not_specified")}
-              </span>
-            </div>
+            {work.service_type === "local" && (
+              <div className={styles.infoRow}>
+                <MapPin size={16} />
+                <span>
+                  {t(`cities.${work.city}`) ||
+                    work.city ||
+                    t("findWork.city_not_specified")}
+                </span>
+              </div>
+            )}
             <div className={styles.infoRow}>
               <Calendar size={16} />
               <span>

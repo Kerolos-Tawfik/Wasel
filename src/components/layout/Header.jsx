@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Menu,
   X,
@@ -158,6 +158,20 @@ const Header = ({ user, userProfile }) => {
     : null;
   const ActionIcon = isClient ? PlusCircle : isProvider ? Search : null;
 
+  const location = useLocation();
+
+  const scrollToSection = (id) => {
+    setIsMenuOpen(false); // Close mobile menu
+    if (location.pathname === "/") {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate("/", { state: { scrollTo: id } });
+    }
+  };
+
   return (
     <header className={styles.header}>
       <Link
@@ -172,24 +186,37 @@ const Header = ({ user, userProfile }) => {
         />
       </Link>
 
-      {!user && (
-        <nav className={styles.desktopNav}>
-          <ul className={styles.navList}>
-            <li>
-              <Link to="/">{t("header.home")}</Link>
-            </li>
-            <li>
-              <a href="#why-choose-us">{t("header.why_choose_us")}</a>
-            </li>
-            <li>
-              <a href="#services">{t("header.services")}</a>
-            </li>
-            <li>
-              <a href="#contact">{t("header.contact")}</a>
-            </li>
-          </ul>
-        </nav>
-      )}
+      <nav className={styles.desktopNav}>
+        <ul className={styles.navList}>
+          <li>
+            <Link to="/">{t("header.home")}</Link>
+          </li>
+          <li>
+            <button
+              onClick={() => scrollToSection("why-choose-us")}
+              className={styles.navLinkBtn}
+            >
+              {t("header.why_choose_us")}
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => scrollToSection("services")}
+              className={styles.navLinkBtn}
+            >
+              {t("header.services")}
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => scrollToSection("contact")}
+              className={styles.navLinkBtn}
+            >
+              {t("header.contact")}
+            </button>
+          </li>
+        </ul>
+      </nav>
 
       <div className={styles.desktopRight}>
         {user && (
@@ -443,40 +470,47 @@ const Header = ({ user, userProfile }) => {
           </div>
         )}
 
-        {!user && (
-          <>
-            <ul className={styles.mobileNavList}>
-              <li>
-                <Link to="/" onClick={closeMenu}>
-                  {t("header.home")}
-                </Link>
-              </li>
-              <li>
-                <a href="#why-choose-us" onClick={closeMenu}>
-                  {t("header.why_choose_us")}
-                </a>
-              </li>
-              <li>
-                <a href="#services" onClick={closeMenu}>
-                  {t("header.services")}
-                </a>
-              </li>
-              <li>
-                <a href="#contact" onClick={closeMenu}>
-                  {t("header.contact")}
-                </a>
-              </li>
-            </ul>
+        <ul className={styles.mobileNavList}>
+          <li>
+            <Link to="/" onClick={closeMenu}>
+              {t("header.home")}
+            </Link>
+          </li>
+          <li>
+            <button
+              onClick={() => scrollToSection("why-choose-us")}
+              className={styles.mobileNavLinkBtn}
+            >
+              {t("header.why_choose_us")}
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => scrollToSection("services")}
+              className={styles.mobileNavLinkBtn}
+            >
+              {t("header.services")}
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => scrollToSection("contact")}
+              className={styles.mobileNavLinkBtn}
+            >
+              {t("header.contact")}
+            </button>
+          </li>
+        </ul>
 
-            <div className={styles.mobileAuthButtons}>
-              <Link to="/login" onClick={closeMenu}>
-                <button className={styles.loginBtn}>{t("header.login")}</button>
-              </Link>
-              <Link to="/join" onClick={closeMenu}>
-                <button className={styles.joinBtn}>{t("header.join")}</button>
-              </Link>
-            </div>
-          </>
+        {!user && (
+          <div className={styles.mobileAuthButtons}>
+            <Link to="/login" onClick={closeMenu}>
+              <button className={styles.loginBtn}>{t("header.login")}</button>
+            </Link>
+            <Link to="/join" onClick={closeMenu}>
+              <button className={styles.joinBtn}>{t("header.join")}</button>
+            </Link>
+          </div>
         )}
 
         <button onClick={toggleLanguage} className={styles.mobileLangBtn}>

@@ -392,5 +392,20 @@
     "provider_type_freelance": "Freelance",
     "provider_type_local": "Local",
     "switch_success": "Role switched successfully"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have questions? We'd love to hear from you.",
+    "email": "Email Us",
+    "phone": "Call Us",
+    "address": "Visit Us",
+    "name": "Your Name",
+    "name_placeholder": "John Doe",
+    "email_label": "Email Address",
+    "message": "Message",
+    "message_placeholder": "How can we help you?",
+    "send": "Send Message",
+    "success": "Your message has been sent successfully!",
+    "error": "Failed to send message. Please try again."
   }
 }

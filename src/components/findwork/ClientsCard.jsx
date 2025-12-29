@@ -12,6 +12,7 @@ import {
   ChevronRight,
   X,
   Sparkles,
+  MapPin,
 } from "lucide-react";
 import styles from "./ClientsCard.module.css";
 import { useTranslation } from "react-i18next";

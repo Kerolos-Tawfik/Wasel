@@ -758,3 +758,20 @@
     margin-top: 0;
   }
 }
+
+.navLinkBtn,
+.mobileNavLinkBtn {
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+  width: 100%;
+  text-align: left;
+}
+
+.navLinkBtn:hover,
+.mobileNavLinkBtn:hover {
+  color: var(--primary-color);
+}
