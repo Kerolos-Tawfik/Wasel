@@ -191,6 +191,10 @@ const MyRequests = ({ user }) => {
             }}
             currentUser={user}
             notificationId={targetNotificationId}
+            onRate={(providerId) => {
+              setRevieweeId(providerId);
+              setShowReviewModal(true);
+            }}
           />
         </ModalPortal>
       )}
@@ -217,6 +221,7 @@ const DetailModal = ({
   onClose,
   currentUser,
   notificationId,
+  onRate,
 }) => {
   const { t } = useTranslation();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -231,7 +236,7 @@ const DetailModal = ({
       });
       if (response.ok) {
         const data = await response.json();
-        setCurrentStatus(data.work_request.status); 
+        setCurrentStatus(data.work_request.status);
         toast.info(
           t("findWork.status_request_sent") || "Status change requested",
           toastConfig
@@ -358,7 +363,11 @@ const DetailModal = ({
               <button
                 className={styles.rateBtn}
                 onClick={() => {
-                  toast.info("Select a provider to rate");
+                  if (work.provider_id) {
+                    onRate(work.provider_id);
+                  } else {
+                    toast.info("Select a provider to rate");
+                  }
                 }}
               >
                 {t("reviews.rate_now") || "Rate Now"}

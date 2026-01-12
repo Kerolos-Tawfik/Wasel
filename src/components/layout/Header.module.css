@@ -762,14 +762,47 @@
 
   .notifDropdown {
     position: fixed;
-    top: 60px;
-    left: 10px;
-    right: 10px;
+    top: 70px;
+    left: 1rem;
+    right: 1rem;
     width: auto;
-    margin-top: 0;
+    max-width: 400px; /* Keep max width for larger mobile screens/tablets */
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: none;
     z-index: 9999;
+    background: white;
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: block;
+    border: none;
+  }
+
+  .notifHeader {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: block;
+    background: transparent;
+  }
+
+  .notifList {
+    overflow-y: visible;
+  }
+
+  /* Ensure it doesn't get cut off on very small screens */
+  @media (max-width: 380px) {
+    .notifDropdown {
+      left: 0.5rem;
+      right: 0.5rem;
+    }
   }
 }
+
+/* Ensure backdrop exists for mobile menu but here we might need one for notif too.
+   Since we can't easily add a DOM element, we'll style the box to look isolated. */
 
 .navLinkBtn,
 .mobileNavLinkBtn {
@@ -799,18 +832,11 @@
   margin-right: 15px; /* Add some spacing from the menu button */
 }
 
-.mobileNotifDropdown {
-  right: -50px; /* Adjust based on position */
-  width: 300px;
-  max-width: 90vw;
-  position: absolute;
-  top: 100%;
-  margin-top: 10px;
-}
+/* removed mobileNotifDropdown to defer to responsive .notifDropdown */
 
 [dir="rtl"] .mobileNotifDropdown {
-  right: auto;
-  left: -50px;
+  right: 64px;
+  left: 69px;
 }
 
 @media (min-width: 1201px) {

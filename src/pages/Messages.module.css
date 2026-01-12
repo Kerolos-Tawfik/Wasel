@@ -215,3 +215,60 @@
 [dir="rtl"] .conversationCard:hover .arrow {
   transform: rotate(180deg) translateX(4px);
 }
+
+@media (max-width: 768px) {
+  .messagesPage {
+    margin-top: 80px;
+    padding: 0 15px;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .conversationCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .convIcon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 5px;
+  }
+
+  .convMain {
+    width: 100%;
+  }
+
+  .convHeader {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+
+  .convHeaderMain {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .convTime {
+    font-size: 0.75rem;
+  }
+
+  .projectContext {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .convMeta {
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .arrow {
+    display: none;
+  }
+}

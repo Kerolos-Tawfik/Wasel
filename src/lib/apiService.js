@@ -175,6 +175,18 @@ export const portfolioAPI = {
     );
     return response;
   },
+
+  updatePortfolioItem: async (itemId, portfolioData) => {
+    const response = await fetch(`${API_BASE_URL}/portfolio/items/${itemId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(portfolioData),
+    });
+    return response;
+  },
 };
 
 export const categoriesAPI = {

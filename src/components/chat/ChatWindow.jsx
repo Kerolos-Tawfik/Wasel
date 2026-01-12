@@ -147,7 +147,10 @@ function ChatWindow({
                     const data = await response.json();
                     if (response.ok) {
                       toast.success(t("chat.provider_assigned"));
-                      setWorkRequest(data.work_request);
+                      setWorkRequest({
+                        ...data.work_request,
+                        provider_id: receiverId,
+                      });
                     } else {
                       toast.error(data.message);
                     }

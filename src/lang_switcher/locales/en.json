@@ -266,7 +266,8 @@
     },
     "status_updated": "Status updated successfully!",
     "status_error": "Failed to update status.",
-    "current_status": "Current Status"
+    "current_status": "Current Status",
+    "client_requested_status": "Client requested to change status to {{status}}"
   },
   "chat": {
     "title": "Internal Chat",
