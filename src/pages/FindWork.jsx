@@ -24,15 +24,20 @@ function FindWork({ savedData, service, setService, user }) {
   const [citySearchQuery, setCitySearchQuery] = useState("");
   const cityDropdownRef = useRef(null);
 
-  const initialWorkRequestId = location.state?.workRequestId;
-  const notificationType = location.state?.notificationType;
+  const [targetWorkRequestId, setTargetWorkRequestId] = useState(null);
+  const [targetNotificationId, setTargetNotificationId] = useState(null);
+  const [targetNotificationType, setTargetNotificationType] = useState(null);
 
   useEffect(() => {
-    if (initialWorkRequestId) {
-      // Clear state after reading it to prevent reopening loops
+    if (location.state?.workRequestId) {
+      setTargetWorkRequestId(location.state.workRequestId);
+      setTargetNotificationId(location.state.notificationId);
+      setTargetNotificationType(location.state.notificationType);
+
+      // Clear navigation state safely
       navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [initialWorkRequestId, navigate, location.pathname]);
+  }, [location.state, navigate, location.pathname]);
 
   const cities = [
     { id: "all", label: t("findWork.filters.all") },
@@ -246,8 +251,9 @@ function FindWork({ savedData, service, setService, user }) {
                 selectedCity={selectedCity}
                 searchQuery={searchQuery}
                 currentUser={user}
-                initialWorkRequestId={initialWorkRequestId}
-                notificationType={notificationType}
+                initialWorkRequestId={targetWorkRequestId}
+                notificationType={targetNotificationType}
+                notificationId={targetNotificationId}
               />
             </section>
           </>

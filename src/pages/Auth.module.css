@@ -249,8 +249,40 @@
   outline: none;
   font-size: 1rem;
   background: transparent;
+  min-width: 0;
+  text-align: left;
 }
 
 [dir="rtl"] .phoneInput {
   border-radius: 0.5rem 0 0 0.5rem;
+  text-align: left;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1.75rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form {
+    gap: 1.25rem;
+  }
+
+  .input,
+  .phoneInput {
+    padding: 0.65rem;
+  }
+
+  .countryBtn {
+    padding: 0.65rem;
+  }
 }

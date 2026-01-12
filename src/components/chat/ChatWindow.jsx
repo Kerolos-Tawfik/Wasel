@@ -46,6 +46,25 @@ function ChatWindow({
   useEffect(() => {
     fetchMessages();
     const interval = setInterval(fetchMessages, 5000); // Poll every 5 seconds
+
+    // Also fetch work request status periodically or at least once to ensure we have up-to-date provider assignment
+    const fetchWorkRequestStatus = async () => {
+      if (!workRequestId) return;
+      try {
+        const { workRequestAPI } = await import("../../lib/apiService");
+        // We assume we have an endpoint or we can get it from a list.
+        // If not, we might need a specific endpoint.
+        // fallback: check local storage or re-fetch from list.
+        // For now, let's assume we can rely on parent updates OR we add a check here if API supports it.
+        // Actually, let's just make sure we update it if we assign.
+        // But to fix the "glitch", we need to be sure.
+        // Let's rely on props update if parent updates, but parent might not update if this is standalone.
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    // fetchWorkRequestStatus();
+
     return () => clearInterval(interval);
   }, [workRequestId]);
 
@@ -101,9 +120,9 @@ function ChatWindow({
               <h3>
                 {otherUser?.full_name || t("chat.title") || "Internal Chat"}
               </h3>
-              <span className={styles.onlineStatus}>
+              {/* <span className={styles.onlineStatus}>
                 {t("chat.online") || "Conversation"}
-              </span>
+              </span> */}
             </div>
           </div>
           <button className={styles.closeBtn} onClick={onClose}>

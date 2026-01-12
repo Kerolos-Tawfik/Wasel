@@ -413,6 +413,101 @@ const Header = ({ user, userProfile }) => {
         )}
       </div>
 
+      {user && (
+        <div className={styles.mobileHeaderNotif} ref={notifRef}>
+          <button
+            className={styles.notifBtn}
+            onClick={() => setIsNotifOpen(!isNotifOpen)}
+          >
+            <Bell size={24} />
+            {unreadCount > 0 && (
+              <span className={styles.notifBadge}>{unreadCount}</span>
+            )}
+          </button>
+
+          {isNotifOpen && (
+            <div
+              className={`${styles.notifDropdown} ${styles.mobileNotifDropdown}`}
+            >
+              <div className={styles.notifHeader}>
+                <h3>{t("notifications.title") || "Notifications"}</h3>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={handleMarkAllAsRead}
+                    className={styles.markAllBtn}
+                  >
+                    {t("notifications.mark_all") || "Mark all as read"}
+                  </button>
+                )}
+              </div>
+              <div className={styles.notifList}>
+                {notifications.length === 0 ? (
+                  <div className={styles.emptyNotif}>
+                    {t("notifications.empty") || "No notifications"}
+                  </div>
+                ) : (
+                  notifications.map((notif) => (
+                    <div
+                      key={notif.id}
+                      className={`${styles.notifItem} ${
+                        !notif.read_at ? styles.unread : ""
+                      }`}
+                      onClick={() => {
+                        handleMarkAsRead(notif.id);
+                        if (notif.type === "new_message") {
+                          navigate("/messages");
+                        } else if (
+                          notif.type === "status_update" ||
+                          notif.type === "status_pending" ||
+                          notif.type === "status_confirmed" ||
+                          notif.type === "status_rejected"
+                        ) {
+                          const target =
+                            userProfile?.user_role === "client"
+                              ? "/my-requests"
+                              : "/findwork";
+                          navigate(target, {
+                            state: {
+                              workRequestId: notif.data?.work_request_id,
+                              notificationType: notif.type,
+                              notificationId: notif.id,
+                            },
+                          });
+                        }
+                        setIsNotifOpen(false);
+                      }}
+                    >
+                      <div className={styles.notifText}>
+                        <p className={styles.notifTitle}>
+                          {notif.title === "New Message"
+                            ? t("notifications.new_message_title")
+                            : t(notif.title, notif.data)}
+                        </p>
+                        <p className={styles.notifMessage}>
+                          {notif.message &&
+                          notif.message.includes("You have a new message from")
+                            ? t("notifications.new_message_body", {
+                                sender_name:
+                                  notif.data?.sender_name ||
+                                  notif.message.split("from ")[1] ||
+                                  "User",
+                              })
+                            : t(notif.message, notif.data)}
+                        </p>
+                        <span className={styles.notifTime}>
+                          {new Date(notif.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {!notif.read_at && <div className={styles.unreadDot} />}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <button
         className={styles.menuBtn}
         onClick={() => setIsMenuOpen(true)}
@@ -457,6 +552,17 @@ const Header = ({ user, userProfile }) => {
               >
                 <ActionIcon size={18} />
                 {actionLabel}
+              </Link>
+            )}
+
+            {isClient && (
+              <Link
+                to="/my-requests"
+                className={styles.mobileMenuItem}
+                onClick={closeMenu}
+              >
+                <Briefcase size={18} />
+                {t("header.my_requests") || "My Requests"}
               </Link>
             )}
 

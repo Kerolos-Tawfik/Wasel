@@ -164,6 +164,23 @@ function RequestWork({ user }) {
       if (duration) formData.append("duration", duration);
       if (budgetMin) formData.append("budget_min", budgetMin);
       if (budgetMax) formData.append("budget_max", budgetMax);
+
+      // Validate budget
+      if (Number(budgetMin) < 50 || Number(budgetMax) < 50) {
+        toast.error(
+          t("addWork.errors.budget_too_low") || "Budget should be at least 50",
+          toastConfig
+        );
+        return;
+      }
+      if (Number(budgetMax) < Number(budgetMin)) {
+        toast.error(
+          t("addWork.errors.budget_invalid") ||
+            "Max budget cannot be less than min budget",
+          toastConfig
+        );
+        return;
+      }
       if (tel) formData.append("phone", selectedCountry.dial_code + tel);
 
       selectedCategoryIds.forEach((id, index) => {

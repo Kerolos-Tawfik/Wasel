@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
 
 /**
  * Get authentication token from localStorage
@@ -189,6 +190,11 @@ export const categoriesAPI = {
 export const workRequestAPI = {
   getAllWorkRequests: async () => {
     const response = await fetch(`${API_BASE_URL}/work-requests`);
+    return response;
+  },
+
+  getWorkRequestById: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/work-requests/${id}`);
     return response;
   },
 

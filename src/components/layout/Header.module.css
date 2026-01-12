@@ -308,7 +308,7 @@
 
 @media (min-width: 320px) and (max-width: 1200px) {
   .header {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
   }
 
   .logo {
@@ -351,7 +351,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 280px;
+    width: 320px;
     max-width: 85vw;
     background-color: var(--bg-color);
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
@@ -361,6 +361,8 @@
     transition: transform 0.3s ease-in-out;
     z-index: 100;
     overflow-y: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   [dir="rtl"] .mobileMenu {
@@ -387,8 +389,8 @@
   }
 
   [dir="rtl"] .closeMenuBtn {
-    right: auto;
-    left: 1rem;
+    right: 1rem;
+    left: auto;
   }
 
   /* Mobile User Section */
@@ -495,20 +497,24 @@
     gap: 0;
   }
 
-  .mobileNavList li {
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .mobileNavList li a {
+  .mobileNavList li a,
+  .mobileNavList li button {
     display: block;
     padding: 1rem;
     color: var(--text-color);
     text-decoration: none;
     font-weight: 500;
     transition: background-color 0.2s;
+    text-align: start;
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
   }
 
-  .mobileNavList li a:hover {
+  .mobileNavList li a:hover,
+  .mobileNavList li button:hover {
     background: #f8fafc;
     color: var(--primary-color);
   }
@@ -532,7 +538,7 @@
 
   /* Mobile Language Button */
   .mobileLangBtn {
-    margin-top: auto;
+    margin-top: 1.5rem;
     padding: 1rem;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -749,6 +755,11 @@
 }
 
 @media (max-width: 768px) {
+  .notifContainer {
+    position: static;
+    margin: 0;
+  }
+
   .notifDropdown {
     position: fixed;
     top: 60px;
@@ -756,6 +767,7 @@
     right: 10px;
     width: auto;
     margin-top: 0;
+    z-index: 9999;
   }
 }
 
@@ -768,10 +780,41 @@
   padding: 0;
   color: inherit;
   width: 100%;
-  text-align: left;
+  text-align: start;
 }
 
 .navLinkBtn:hover,
 .mobileNavLinkBtn:hover {
   color: var(--primary-color);
+}
+
+/* Mobile Notifications in Header */
+.mobileHeaderNotif {
+  display: flex; /* Flex to align */
+  align-items: center;
+  position: relative;
+  /* margin-right: 0.5rem; in LTR, margin-left in RTL */
+  margin-inline-end: 0.5rem;
+  height: 100%; /* Ensure full height alignment if needed */
+  margin-right: 15px; /* Add some spacing from the menu button */
+}
+
+.mobileNotifDropdown {
+  right: -50px; /* Adjust based on position */
+  width: 300px;
+  max-width: 90vw;
+  position: absolute;
+  top: 100%;
+  margin-top: 10px;
+}
+
+[dir="rtl"] .mobileNotifDropdown {
+  right: auto;
+  left: -50px;
+}
+
+@media (min-width: 1201px) {
+  .mobileHeaderNotif {
+    display: none;
+  }
 }

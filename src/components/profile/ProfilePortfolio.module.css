@@ -458,7 +458,7 @@
 /* Portfolio Grid */
 .portfolioGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 
@@ -471,7 +471,7 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 100%;
   max-width: 100%;
 }
 
@@ -1417,8 +1417,12 @@
   transform: translateY(-50%) scale(1.1);
 }
 
-.prevBtn { left: 1rem; }
-.nextBtn { right: 1rem; }
+.prevBtn {
+  left: 1rem;
+}
+.nextBtn {
+  right: 1rem;
+}
 
 .thumbnails {
   display: flex;
@@ -1483,11 +1487,6 @@
 .projectLink:hover {
   background: #dbeafe;
   transform: translateY(-1px);
-}
-
-.editBtn {
-  background: #eff6ff;
-  color: #2563eb;
 }
 
 .editBtn:hover {

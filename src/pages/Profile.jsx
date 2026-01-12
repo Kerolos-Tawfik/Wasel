@@ -202,7 +202,7 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
                 onClick={() => setShowReviewModal(true)}
               >
                 <Star size={18} />
-                <span>{t("profile.rate_user") || "Rate User"}</span>
+                <span>{t("reviews.rate_user") || "Rate User"}</span>
               </button>
             )}
           </div>

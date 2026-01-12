@@ -27,33 +27,37 @@ const MyRequests = ({ user }) => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [revieweeId, setRevieweeId] = useState(null);
 
-  const initialWorkRequestId = location.state?.workRequestId;
-  const notificationType = location.state?.notificationType;
+  const [targetWorkRequestId, setTargetWorkRequestId] = useState(null);
+  const [targetNotificationId, setTargetNotificationId] = useState(null);
+  const [targetNotificationType, setTargetNotificationType] = useState(null);
 
   useEffect(() => {
-    if (!loading && requests.length > 0 && initialWorkRequestId) {
-      const workId = initialWorkRequestId;
-      const work = requests.find((r) => String(r.id) === String(workId));
+    if (location.state?.workRequestId) {
+      setTargetWorkRequestId(location.state.workRequestId);
+      setTargetNotificationId(location.state.notificationId);
+      setTargetNotificationType(location.state.notificationType);
+
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate, location.pathname]);
+
+  useEffect(() => {
+    if (!loading && requests.length > 0 && targetWorkRequestId) {
+      const work = requests.find(
+        (r) => String(r.id) === String(targetWorkRequestId)
+      );
       if (work) {
-        // If it's a pending status notification, only open if there IS a pending status
-        if (notificationType === "status_pending" && !work.pending_status) {
-          return;
+        if (
+          targetNotificationType === "status_pending" &&
+          !work.pending_status
+        ) {
         }
 
         setSelectedWork(work);
         setIsModalOpen(true);
-        // Clear state to prevent modal from reopening on every refresh/interaction
-        navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [
-    loading,
-    requests,
-    initialWorkRequestId,
-    navigate,
-    location.pathname,
-    notificationType,
-  ]);
+  }, [loading, requests, targetWorkRequestId, targetNotificationType]);
 
   const fetchMyRequests = async () => {
     try {
@@ -182,9 +186,11 @@ const MyRequests = ({ user }) => {
             }}
             onClose={() => {
               setIsModalOpen(false);
+              setTargetWorkRequestId(null); // Clear target so it doesn't reopen
               fetchMyRequests();
             }}
             currentUser={user}
+            notificationId={targetNotificationId}
           />
         </ModalPortal>
       )}
@@ -205,43 +211,36 @@ const MyRequests = ({ user }) => {
   );
 };
 
-// Internal component to handle the detailed view and status update
-// We'll extract this from ClientsCard or just use a simplified version here
-const DetailModal = ({ work, onUpdate, onClose, currentUser }) => {
+const DetailModal = ({
+  work,
+  onUpdate,
+  onClose,
+  currentUser,
+  notificationId,
+}) => {
   const { t } = useTranslation();
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(work.status);
 
-  const handleStatusChange = async (
-    newStatus,
-    confirm = false,
-    reject = false
-  ) => {
+  // Client only REQUESTS status change (no confirm/reject)
+  const handleStatusChangeRequest = async (newStatus) => {
     setIsUpdating(true);
     try {
       const response = await workStatusAPI.updateStatus(work.id, {
         status: newStatus,
-        confirm: confirm,
-        reject: reject,
       });
       if (response.ok) {
         const data = await response.json();
-        setCurrentStatus(data.work_request.status);
-        toast.success(
-          confirm
-            ? t("findWork.status_confirmed")
-            : reject
-            ? t("findWork.status_rejected") || "Status change rejected"
-            : t("findWork.status_request_sent"),
+        setCurrentStatus(data.work_request.status); 
+        toast.info(
+          t("findWork.status_request_sent") || "Status change requested",
           toastConfig
         );
-        onUpdate(); // refresh parent
-        onClose(); // Auto close modal
+        onUpdate();
+        onClose();
       } else {
-        toast.error(
-          t("findWork.status_error") || "Failed to update status",
-          toastConfig
-        );
+        const data = await response.json();
+        toast.error(data.message || "Failed to update status", toastConfig);
       }
     } catch (error) {
       console.error("Status update error:", error);
@@ -261,33 +260,7 @@ const DetailModal = ({ work, onUpdate, onClose, currentUser }) => {
           </button>
         </div>
         <div className={styles.modalBody}>
-          {work.pending_status &&
-            work.pending_status_changed_by !== currentUser?.id && (
-              <div className={styles.pendingNotice}>
-                <p>
-                  {t("findWork.pending_status_notice", {
-                    status: t(`findWork.status.${work.pending_status}`),
-                  }) ||
-                    `The other party requested to change status to ${work.pending_status}.`}
-                </p>
-                <div className={styles.pendingActions}>
-                  <button
-                    onClick={() =>
-                      handleStatusChange(work.pending_status, true)
-                    }
-                    className={styles.confirmBtn}
-                  >
-                    {t("common.confirm") || "Confirm"}
-                  </button>
-                  <button
-                    onClick={() => handleStatusChange(work.status, false, true)}
-                    className={styles.rejectBtn}
-                  >
-                    {t("common.reject") || "Reject"}
-                  </button>
-                </div>
-              </div>
-            )}
+          {/* Project Info */}
           <div className={styles.projectInfo}>
             <div className={styles.infoRow}>
               <strong>{t("findWork.modal.description")}: </strong>
@@ -329,22 +302,35 @@ const DetailModal = ({ work, onUpdate, onClose, currentUser }) => {
           <div className={styles.statusSection}>
             <h3>{t("findWork.modal.update_status") || "Update Status"}</h3>
 
-            {work.pending_status &&
-              work.pending_status_changed_by === currentUser?.id && (
-                <div className={styles.waitingNotice}>
-                  <p>
-                    {t("findWork.waiting_confirmation", {
-                      status: t(`findWork.status.${work.pending_status}`),
-                    }) ||
-                      `Waiting for the other party to confirm status change to ${work.pending_status}.`}
-                  </p>
-                </div>
-              )}
+            {/* If pending status exists, Client sees 'Waiting for confirmation' */}
+            {work.pending_status && (
+              <div className={styles.waitingNotice}>
+                <p>
+                  {t("findWork.waiting_confirmation", {
+                    status: t(`findWork.status.${work.pending_status}`),
+                  }) ||
+                    `Waiting for provider to confirm change to ${work.pending_status}.`}
+                </p>
+              </div>
+            )}
 
+            {/* Dropdown - Disabled if pending status exists or no provider assigned */}
             <select
               value={work.pending_status || currentStatus}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              disabled={isUpdating}
+              onChange={(e) => handleStatusChangeRequest(e.target.value)}
+              disabled={
+                isUpdating ||
+                work.pending_status || // Block if pending
+                !work.provider_id // Block if no provider assigned (unless status is 'new' and we want to allow, but keep strict for now)
+              }
+              title={
+                !work.provider_id
+                  ? t("findWork.assign_provider_first") ||
+                    "Please assign a provider first"
+                  : work.pending_status
+                  ? "Waiting for confirmation"
+                  : ""
+              }
               className={`${styles.statusSelect} ${
                 work.pending_status ? styles.hasPending : ""
               }`}
@@ -372,9 +358,6 @@ const DetailModal = ({ work, onUpdate, onClose, currentUser }) => {
               <button
                 className={styles.rateBtn}
                 onClick={() => {
-                  // In a real app, we'd need to know who the provider is.
-                  // For now, let's assume we have a way to get the revieweeId (e.g. from the task assignment)
-                  // We'll look for the last 'engaged' person in chat or similar if not explicitly assigned.
                   toast.info("Select a provider to rate");
                 }}
               >

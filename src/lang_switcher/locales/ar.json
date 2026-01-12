@@ -284,7 +284,8 @@
     "pending_status_notice": "طلب الطرف الآخر تغيير الحالة إلى {{status}}. هل توافق؟",
     "waiting_confirmation": "في انتظار تأكيد الطرف الآخر على حالة: {{status}}",
     "status_rejected": "تم رفض طلب تغيير الحالة",
-    "status_error": "خطأ في تحديث الحالة"
+    "status_error": "خطأ في تحديث الحالة",
+    "current_status": "الحالة الحالية"
   },
   "chat": {
     "title": "المحادثة الداخلية",
@@ -294,7 +295,8 @@
     "send": "إرسال",
     "assign_provider": "تعيين كمقدم خدمة",
     "provider_assigned": "تم تعيين مقدم الخدمة",
-    "confirm_assign": "هل أنت متأكد من تعيين هذا الشخص لإنجاز الطلب؟"
+    "confirm_assign": "هل أنت متأكد من تعيين هذا الشخص لإنجاز الطلب؟",
+    "online": "متصل الآن"
   },
   "messages": {
     "title": "الرسائل",
@@ -352,7 +354,8 @@
     },
     "errors": {
       "category_required": "يرجى اختيار التصنيف",
-      "city_required": "يرجى اختيار المدينة للخدمات المحلية"
+      "city_required": "يرجى اختيار المدينة للخدمات المحلية",
+      "budget_too_low": "يجب أن تكون الميزانية 50 على الأقل"
     },
     "validation_hint": "يرجى اختيار التصنيف والمدينة للمتابعة",
     "search_category": "ابحث عن التصنيف...",
@@ -450,7 +453,8 @@
     "leave_review": "اترك مراجعة",
     "rating_saved": "تم حفظ التقييم بنجاح",
     "edit_review": "تعديل التقييم",
-    "update_review": "تحديث التقييم"
+    "update_review": "تحديث التقييم",
+    "rate_user": "قيم المستخدم"
   },
   "contact": {
     "title": "تواصل معنا",
