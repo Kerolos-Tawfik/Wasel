@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, ChevronDown } from "lucide-react";
 import { authAPI } from "../lib/apiService";
 import PasswordStrength from "../../../Wasel/src/components/auth/PasswordStrength";
 import { toastConfig } from "../../../Wasel/src/lib/toastConfig";
+import { arabCountries, validatePhone } from "../lib/phoneUtils";
 import styles from "./Auth.module.css";
 
 const Join = () => {
@@ -15,6 +16,8 @@ const Join = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(arabCountries[0]); // Default Saudi Arabia
+  const [showCountryMenu, setShowCountryMenu] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -30,10 +33,15 @@ const Join = () => {
   const handleJoin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log("handleJoin started");
 
     if (!isPasswordValid(password)) {
       toast.error(t("auth.errors.weak_password"), toastConfig);
+      setLoading(false);
+      return;
+    }
+
+    if (!validatePhone(phoneNum, selectedCountry.code)) {
+      toast.error(t("auth.errors.phone_invalid"), toastConfig);
       setLoading(false);
       return;
     }
@@ -43,7 +51,7 @@ const Join = () => {
         email,
         password,
         full_name: fullName,
-        phone: phoneNum,
+        phone: selectedCountry.dial_code + phoneNum, // Send full number
       });
 
       const data = await response.json();
@@ -93,16 +101,58 @@ const Join = () => {
               required
             />
           </div>
+
           <div className={styles.inputGroup}>
             <label className={styles.label}>{t("auth.phone")}</label>
-            <input
-              type="tel"
-              onChange={(e) => setPhoneNum(e.target.value)}
-              className={styles.input}
-              value={phoneNum}
-              placeholder="123-456-789"
-              required
-            />
+            <div className={styles.phoneInputContainer}>
+              {/* Country Dropdown */}
+              <div className={styles.countrySelect}>
+                <button
+                  type="button"
+                  className={styles.countryBtn}
+                  onClick={() => setShowCountryMenu(!showCountryMenu)}
+                >
+                  <span className={styles.flag}>{selectedCountry.flag}</span>
+                  <span className={styles.dialCode}>
+                    {selectedCountry.dial_code}
+                  </span>
+                  <ChevronDown size={14} />
+                </button>
+
+                {showCountryMenu && (
+                  <div className={styles.countryMenu}>
+                    {arabCountries.map((country) => (
+                      <button
+                        key={country.code}
+                        type="button"
+                        className={styles.countryOption}
+                        onClick={() => {
+                          setSelectedCountry(country);
+                          setShowCountryMenu(false);
+                        }}
+                      >
+                        <span className={styles.flag}>{country.flag}</span>
+                        <span>{country.name}</span>
+                        <span className={styles.dialCode}>
+                          {country.dial_code}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Phone Number Input */}
+              <input
+                type="tel"
+                onChange={(e) => setPhoneNum(e.target.value)}
+                className={styles.phoneInput}
+                value={phoneNum}
+                placeholder={selectedCountry.placeholder || "05xxxxxxxx"}
+                required
+                dir="ltr"
+              />
+            </div>
           </div>
 
           <div className={styles.inputGroup}>

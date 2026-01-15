@@ -26,7 +26,11 @@ function Messages({ user }) {
       const response = await chatAPI.getConversations();
       if (response.ok) {
         const data = await response.json();
-        setConversations(data.conversations || []);
+        // Filter out conversations with no messages
+        const validConversations = (data.conversations || []).filter(
+          (c) => c.last_message
+        );
+        setConversations(validConversations);
       }
     } catch (error) {
       console.error("Error fetching conversations:", error);
@@ -44,22 +48,10 @@ function Messages({ user }) {
   const [selectedOtherUser, setSelectedOtherUser] = useState(null);
 
   const openConversation = (conv) => {
-    setSelectedWorkId(conv.id);
-
-    let otherUser = conv.user; // Default to owner
-    let receiverId = conv.user_id;
-
-    if (conv.user_id === user?.id && conv.last_message) {
-      // If I'm the owner, the other user is whoever messaged me
-      otherUser =
-        conv.last_message.sender_id === user?.id
-          ? conv.last_message.receiver
-          : conv.last_message.sender;
-      receiverId = otherUser?.id;
-    }
-
-    setSelectedOtherUser(otherUser);
-    setSelectedReceiverId(receiverId);
+    setSelectedWorkId(conv.work_request_id);
+    setSelectedOtherUser(conv.other_user);
+    // The backend now provides the specific 'other' user ID in conv.user_id (or we can use conv.other_user.id)
+    setSelectedReceiverId(conv.other_user?.id);
     setIsChatOpen(true);
   };
 
@@ -121,14 +113,16 @@ function Messages({ user }) {
                 </div>
 
                 <div className={styles.projectContext}>
-                  <div className={styles.contextItem}>
-                    <MapPin size={14} />
-                    <span>
-                      {t(`cities.${conv.city}`) ||
-                        conv.city ||
-                        t("findWork.city_not_specified")}
-                    </span>
-                  </div>
+                  {conv.service_type === "local" && (
+                    <div className={styles.contextItem}>
+                      <MapPin size={14} />
+                      <span>
+                        {t(`cities.${conv.city}`) ||
+                          conv.city ||
+                          t("findWork.city_not_specified")}
+                      </span>
+                    </div>
+                  )}
                   {conv.expected_date && (
                     <div className={styles.contextItem}>
                       <Calendar size={14} />
@@ -163,16 +157,7 @@ function Messages({ user }) {
                   <div className={styles.metaItem}>
                     <User size={14} />
                     <span>
-                      {(() => {
-                        if (conv.user_id !== user?.id) {
-                          return conv.user?.full_name;
-                        } else if (conv.last_message) {
-                          return conv.last_message.sender_id === user?.id
-                            ? conv.last_message.receiver?.full_name
-                            : conv.last_message.sender?.full_name;
-                        }
-                        return t("common.anonymous");
-                      })()}
+                      {conv.other_user?.full_name || t("common.anonymous")}
                     </span>
                   </div>
                   <div className={styles.metaItem}>

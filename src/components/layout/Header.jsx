@@ -84,7 +84,7 @@ const Header = ({ user, userProfile }) => {
     setIsMenuOpen(false);
     try {
       const token = localStorage.getItem("authToken");
-      await fetch("http://localhost:8000/api/logout", {
+      await fetch("https://waselp.com/api/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -186,37 +186,39 @@ const Header = ({ user, userProfile }) => {
         />
       </Link>
 
-      <nav className={styles.desktopNav}>
-        <ul className={styles.navList}>
-          <li>
-            <Link to="/">{t("header.home")}</Link>
-          </li>
-          <li>
-            <button
-              onClick={() => scrollToSection("why-choose-us")}
-              className={styles.navLinkBtn}
-            >
-              {t("header.why_choose_us")}
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => scrollToSection("services")}
-              className={styles.navLinkBtn}
-            >
-              {t("header.services")}
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className={styles.navLinkBtn}
-            >
-              {t("header.contact")}
-            </button>
-          </li>
-        </ul>
-      </nav>
+      {!user && (
+        <nav className={styles.desktopNav}>
+          <ul className={styles.navList}>
+            <li>
+              <Link to="/">{t("header.home")}</Link>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("why-choose-us")}
+                className={styles.navLinkBtn}
+              >
+                {t("header.why_choose_us")}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("services")}
+                className={styles.navLinkBtn}
+              >
+                {t("header.services")}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("contact")}
+                className={styles.navLinkBtn}
+              >
+                {t("header.contact")}
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
 
       <div className={styles.desktopRight}>
         {user && (
@@ -281,8 +283,24 @@ const Header = ({ user, userProfile }) => {
                         }}
                       >
                         <div className={styles.notifText}>
-                          <p className={styles.notifTitle}>{notif.title}</p>
-                          <p className={styles.notifMessage}>{notif.message}</p>
+                          <p className={styles.notifTitle}>
+                            {notif.title === "New Message"
+                              ? t("notifications.new_message_title")
+                              : t(notif.title, notif.data)}
+                          </p>
+                          <p className={styles.notifMessage}>
+                            {notif.message &&
+                            notif.message.includes(
+                              "You have a new message from"
+                            )
+                              ? t("notifications.new_message_body", {
+                                  sender_name:
+                                    notif.data?.sender_name ||
+                                    notif.message.split("from ")[1] ||
+                                    "User",
+                                })
+                              : t(notif.message, notif.data)}
+                          </p>
                           <span className={styles.notifTime}>
                             {new Date(notif.created_at).toLocaleDateString()}
                           </span>
@@ -470,37 +488,39 @@ const Header = ({ user, userProfile }) => {
           </div>
         )}
 
-        <ul className={styles.mobileNavList}>
-          <li>
-            <Link to="/" onClick={closeMenu}>
-              {t("header.home")}
-            </Link>
-          </li>
-          <li>
-            <button
-              onClick={() => scrollToSection("why-choose-us")}
-              className={styles.mobileNavLinkBtn}
-            >
-              {t("header.why_choose_us")}
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => scrollToSection("services")}
-              className={styles.mobileNavLinkBtn}
-            >
-              {t("header.services")}
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className={styles.mobileNavLinkBtn}
-            >
-              {t("header.contact")}
-            </button>
-          </li>
-        </ul>
+        {!user && (
+          <ul className={styles.mobileNavList}>
+            <li>
+              <Link to="/" onClick={closeMenu}>
+                {t("header.home")}
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("why-choose-us")}
+                className={styles.mobileNavLinkBtn}
+              >
+                {t("header.why_choose_us")}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("services")}
+                className={styles.mobileNavLinkBtn}
+              >
+                {t("header.services")}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("contact")}
+                className={styles.mobileNavLinkBtn}
+              >
+                {t("header.contact")}
+              </button>
+            </li>
+          </ul>
+        )}
 
         {!user && (
           <div className={styles.mobileAuthButtons}>

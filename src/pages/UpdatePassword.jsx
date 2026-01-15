@@ -32,7 +32,7 @@ const UpdatePassword = () => {
         setLoading(true);
         try {
           const response = await fetch(
-            "http://localhost:8000/api/reset-password-validate",
+            "https://waselp.com/api/reset-password-validate",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -82,7 +82,7 @@ const UpdatePassword = () => {
 
       if (isResetMode) {
         // Reset Password Flow
-        url = "http://localhost:8000/api/reset-password";
+        url = "https://waselp.com/api/reset-password";
         method = "POST";
         body = { token: resetToken, email, password };
       } else {
@@ -91,7 +91,7 @@ const UpdatePassword = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user?.id) throw new Error("User not found or logged out");
 
-        url = `http://localhost:8000/api/user/update-password/${user.id}`;
+        url = `https://waselp.com/api/user/update-password/${user.id}`;
         method = "PUT";
         body = { password };
       }

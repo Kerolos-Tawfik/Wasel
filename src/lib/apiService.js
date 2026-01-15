@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = "https://waselp.com/api";
 
 /**
  * Get authentication token from localStorage
@@ -269,8 +269,12 @@ export const chatAPI = {
     return response;
   },
 
-  getMessages: async (workRequestId) => {
-    const response = await apiFetch(`/chat/${workRequestId}`);
+  getMessages: async (workRequestId, receiverId) => {
+    let url = `/chat/${workRequestId}`;
+    if (receiverId) {
+      url += `?other_user_id=${receiverId}`;
+    }
+    const response = await apiFetch(url);
     return response;
   },
 

@@ -191,6 +191,7 @@ export default function App() {
                       savedData={formData}
                       service={service}
                       setService={setService}
+                      user={user}
                     />
                   )}
                 </ProtectedRoute>

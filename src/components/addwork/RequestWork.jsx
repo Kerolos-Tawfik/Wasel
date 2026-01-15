@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { toastConfig } from "../../lib/toastConfig";
 import { useTranslation } from "react-i18next";
 import { workRequestAPI, categoriesAPI } from "../../lib/apiService";
 import MultiSelect from "../common/MultiSelect";
+import { arabCountries, validatePhone } from "../../lib/phoneUtils";
 import {
   MapPin,
   Briefcase,
@@ -24,6 +26,7 @@ import styles from "./RequestWork.module.css";
 
 function RequestWork({ user }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [titleMessage, setTitleMessage] = useState("");
   const [textareaMsg, setTextAreaMsg] = useState("");
@@ -32,12 +35,16 @@ function RequestWork({ user }) {
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
   const [tel, setTel] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState(arabCountries[0]);
+  const [showCountryMenu, setShowCountryMenu] = useState(false);
   const [service, setService] = useState("local");
   const [pickCity, setPickCity] = useState("");
   const cityDropdownRef = useRef(null);
+  const countryRef = useRef(null);
   const [files, setFiles] = useState([]);
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const [citySearchQuery, setCitySearchQuery] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // City options
   const cities = [
@@ -79,10 +86,14 @@ function RequestWork({ user }) {
       ) {
         setCityDropdownOpen(false);
       }
+      if (countryRef.current && !countryRef.current.contains(event.target)) {
+        setShowCountryMenu(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
   const [categories, setCategories] = useState([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [selectedSkillIds, setSelectedSkillIds] = useState([]);
@@ -113,6 +124,7 @@ function RequestWork({ user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitted(true);
 
     if (selectedCategoryIds.length === 0) {
       toast.error(t("addWork.errors.category_required"), toastConfig);
@@ -121,6 +133,19 @@ function RequestWork({ user }) {
 
     if (service === "local" && !pickCity) {
       toast.error(t("addWork.errors.city_required"), toastConfig);
+      return;
+    }
+
+    // Phone validation for local service if not using user's phone
+    if (
+      service === "local" &&
+      !user &&
+      !validatePhone(tel, selectedCountry.code)
+    ) {
+      toast.error(
+        t("auth.errors.phone_invalid") || "Invalid phone number",
+        toastConfig
+      );
       return;
     }
 
@@ -139,7 +164,7 @@ function RequestWork({ user }) {
       if (duration) formData.append("duration", duration);
       if (budgetMin) formData.append("budget_min", budgetMin);
       if (budgetMax) formData.append("budget_max", budgetMax);
-      if (tel) formData.append("phone", tel);
+      if (tel) formData.append("phone", selectedCountry.dial_code + tel);
 
       selectedCategoryIds.forEach((id, index) => {
         formData.append(`category_ids[${index}]`, id);
@@ -173,6 +198,8 @@ function RequestWork({ user }) {
 
       toast.success(t("addWork.messages.success"), toastConfig);
       
+      // Redirect to My Requests page after successful submission
+      navigate("/my-requests");
     } catch (error) {
       console.error("Error adding work request:", error);
       toast.error(error.message || t("errors.default"), toastConfig);
@@ -408,19 +435,68 @@ function RequestWork({ user }) {
                 <Phone size={16} />
                 {t("addWork.labels.phone_label")}
               </label>
-              <input
-                type="tel"
-                className={styles.input}
-                value={user ? user.phone : tel}
-                onChange={(e) => setTel(e.target.value)}
-                placeholder={t("addWork.labels.phone")}
-                disabled={!!user}
-                required
-              />
-              {user && (
-                <span className={styles.inputHint}>
-                  {t("addWork.labels.number_from_account")}
-                </span>
+
+              {user ? (
+                <>
+                  <input
+                    type="tel"
+                    className={styles.input}
+                    value={user.phone}
+                    disabled
+                  />
+                  <span className={styles.inputHint}>
+                    {t("addWork.labels.number_from_account")}
+                  </span>
+                </>
+              ) : (
+                <div className={styles.phoneInputContainer} ref={countryRef}>
+                  <div className={styles.countrySelect}>
+                    <button
+                      type="button"
+                      className={styles.countryBtn}
+                      onClick={() => setShowCountryMenu(!showCountryMenu)}
+                    >
+                      <span className={styles.flag}>
+                        {selectedCountry.flag}
+                      </span>
+                      <span className={styles.dialCode}>
+                        {selectedCountry.dial_code}
+                      </span>
+                      <ChevronDown size={14} />
+                    </button>
+
+                    {showCountryMenu && (
+                      <div className={styles.countryMenu}>
+                        {arabCountries.map((country) => (
+                          <button
+                            key={country.code}
+                            type="button"
+                            className={styles.countryOption}
+                            onClick={() => {
+                              setSelectedCountry(country);
+                              setShowCountryMenu(false);
+                            }}
+                          >
+                            <span className={styles.flag}>{country.flag}</span>
+                            <span>{country.name}</span>
+                            <span className={styles.dialCode}>
+                              {country.dial_code}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    type="tel"
+                    className={styles.phoneInput}
+                    value={tel}
+                    onChange={(e) => setTel(e.target.value)}
+                    placeholder={selectedCountry.placeholder || "05xxxxxxxx"}
+                    dir="ltr"
+                    required
+                  />
+                </div>
               )}
             </div>
           ) : null}
@@ -581,18 +657,19 @@ function RequestWork({ user }) {
         </button>
 
         {/* Validation Hint */}
-        {(selectedCategoryIds.length === 0 ||
-          (service === "local" && !pickCity)) && (
-          <p className={styles.validationHint}>
-            {selectedCategoryIds.length === 0 &&
-            !pickCity &&
-            service === "local"
-              ? t("addWork.validation_hint")
-              : selectedCategoryIds.length === 0
-              ? t("addWork.errors.category_required")
-              : t("addWork.errors.city_required")}
-          </p>
-        )}
+        {isSubmitted &&
+          (selectedCategoryIds.length === 0 ||
+            (service === "local" && !pickCity)) && (
+            <p className={styles.validationHint}>
+              {selectedCategoryIds.length === 0 &&
+              !pickCity &&
+              service === "local"
+                ? t("addWork.validation_hint")
+                : selectedCategoryIds.length === 0
+                ? t("addWork.errors.category_required")
+                : t("addWork.errors.city_required")}
+            </p>
+          )}
       </form>
     </div>
   );
