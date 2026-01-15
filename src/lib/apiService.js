@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 const API_BASE_URL = "https://waselp.com/api";
+=======
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+>>>>>>> f6b337d1edad2c855d6357286650f980cbaea225
 
 /**
  * Get authentication token from localStorage
@@ -174,6 +179,18 @@ export const portfolioAPI = {
     );
     return response;
   },
+
+  updatePortfolioItem: async (itemId, portfolioData) => {
+    const response = await fetch(`${API_BASE_URL}/portfolio/items/${itemId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(portfolioData),
+    });
+    return response;
+  },
 };
 
 export const categoriesAPI = {
@@ -189,6 +206,11 @@ export const categoriesAPI = {
 export const workRequestAPI = {
   getAllWorkRequests: async () => {
     const response = await fetch(`${API_BASE_URL}/work-requests`);
+    return response;
+  },
+
+  getWorkRequestById: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/work-requests/${id}`);
     return response;
   },
 

@@ -104,7 +104,7 @@ const ContactUs = () => {
               </div>
               <div className={styles.infoContent}>
                 <h3>{t("contact.phone") || "Call Us"}</h3>
-                <p>+966 50 000 0000</p>
+                <p dir="ltr">+966 50 000 0000</p>
               </div>
             </div>
 

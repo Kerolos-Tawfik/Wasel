@@ -308,7 +308,7 @@
 
 @media (min-width: 320px) and (max-width: 1200px) {
   .header {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1rem;
   }
 
   .logo {
@@ -351,7 +351,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 280px;
+    width: 320px;
     max-width: 85vw;
     background-color: var(--bg-color);
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
@@ -361,6 +361,8 @@
     transition: transform 0.3s ease-in-out;
     z-index: 100;
     overflow-y: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   [dir="rtl"] .mobileMenu {
@@ -387,8 +389,8 @@
   }
 
   [dir="rtl"] .closeMenuBtn {
-    right: auto;
-    left: 1rem;
+    right: 1rem;
+    left: auto;
   }
 
   /* Mobile User Section */
@@ -495,20 +497,24 @@
     gap: 0;
   }
 
-  .mobileNavList li {
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .mobileNavList li a {
+  .mobileNavList li a,
+  .mobileNavList li button {
     display: block;
     padding: 1rem;
     color: var(--text-color);
     text-decoration: none;
     font-weight: 500;
     transition: background-color 0.2s;
+    text-align: start;
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
   }
 
-  .mobileNavList li a:hover {
+  .mobileNavList li a:hover,
+  .mobileNavList li button:hover {
     background: #f8fafc;
     color: var(--primary-color);
   }
@@ -532,7 +538,7 @@
 
   /* Mobile Language Button */
   .mobileLangBtn {
-    margin-top: auto;
+    margin-top: 1.5rem;
     padding: 1rem;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
@@ -749,15 +755,54 @@
 }
 
 @media (max-width: 768px) {
+  .notifContainer {
+    position: static;
+    margin: 0;
+  }
+
   .notifDropdown {
     position: fixed;
-    top: 60px;
-    left: 10px;
-    right: 10px;
+    top: 70px;
+    left: 1rem;
+    right: 1rem;
     width: auto;
-    margin-top: 0;
+    max-width: 400px; /* Keep max width for larger mobile screens/tablets */
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: none;
+    z-index: 9999;
+    background: white;
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: block;
+    border: none;
+  }
+
+  .notifHeader {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: block;
+    background: transparent;
+  }
+
+  .notifList {
+    overflow-y: visible;
+  }
+
+  /* Ensure it doesn't get cut off on very small screens */
+  @media (max-width: 380px) {
+    .notifDropdown {
+      left: 0.5rem;
+      right: 0.5rem;
+    }
   }
 }
+
+/* Ensure backdrop exists for mobile menu but here we might need one for notif too.
+   Since we can't easily add a DOM element, we'll style the box to look isolated. */
 
 .navLinkBtn,
 .mobileNavLinkBtn {
@@ -768,10 +813,34 @@
   padding: 0;
   color: inherit;
   width: 100%;
-  text-align: left;
+  text-align: start;
 }
 
 .navLinkBtn:hover,
 .mobileNavLinkBtn:hover {
   color: var(--primary-color);
+}
+
+/* Mobile Notifications in Header */
+.mobileHeaderNotif {
+  display: flex; /* Flex to align */
+  align-items: center;
+  position: relative;
+  /* margin-right: 0.5rem; in LTR, margin-left in RTL */
+  margin-inline-end: 0.5rem;
+  height: 100%; /* Ensure full height alignment if needed */
+  margin-right: 15px; /* Add some spacing from the menu button */
+}
+
+/* removed mobileNotifDropdown to defer to responsive .notifDropdown */
+
+[dir="rtl"] .mobileNotifDropdown {
+  right: 64px;
+  left: 69px;
+}
+
+@media (min-width: 1201px) {
+  .mobileHeaderNotif {
+    display: none;
+  }
 }

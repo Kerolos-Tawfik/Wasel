@@ -34,16 +34,40 @@
 
 @media (max-width: 768px) {
   .section {
-    padding: 3rem 1rem;
+    padding: 2.5rem 1rem;
+  }
+
+  .header {
+    margin-bottom: 2.5rem;
   }
 
   .title {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .grid {
     grid-template-columns: 1fr;
     padding: 0 1rem;
+    gap: 1.5rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .iconWrapper {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+
+  .cardTitle {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cardDesc {
+    font-size: 0.95rem;
   }
 }
 

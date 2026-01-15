@@ -34,6 +34,7 @@ function ClientsCard({
   showMyRequestsOnly,
   initialWorkRequestId,
   notificationType,
+  notificationId,
 }) {
   const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,20 +44,36 @@ function ClientsCard({
   const [filteredData, setFilteredData] = useState([]);
 
   useEffect(() => {
-    if (initialWorkRequestId && savedData?.length > 0) {
-      const work = savedData.find(
-        (w) => String(w.id) === String(initialWorkRequestId)
-      );
-      if (work) {
-        // If it's a pending status notification, only open if there IS a pending status
-        if (notificationType === "status_pending" && !work.pending_status) {
-          return;
+    const fetchSpecificWork = async () => {
+      if (initialWorkRequestId) {
+        try {
+          // Always fetch fresh data to ensure status is up to date (handling notifications)
+          const { workRequestAPI } = await import("../../lib/apiService");
+          const response = await workRequestAPI.getWorkRequestById(
+            initialWorkRequestId
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const work = data.work_request;
+
+            // If it's a pending status notification, only open if there IS a pending status
+            if (notificationType === "status_pending" && !work.pending_status) {
+              return;
+            }
+            setSelectedWork(work);
+            setIsModalOpen(true);
+          } else {
+            // Fallback to searching savedData if fetch fails? Or just log error.
+            console.error("Failed to fetch fresh work request");
+          }
+        } catch (error) {
+          console.error("Error fetching specific work request", error);
         }
-        setSelectedWork(work);
-        setIsModalOpen(true);
       }
-    }
-  }, [initialWorkRequestId, savedData, notificationType]);
+    };
+
+    fetchSpecificWork();
+  }, [initialWorkRequestId, notificationType]);
 
   // Check if current user is the developer/provider of this work
   const isEngagedProvider = (work) => {
@@ -344,65 +361,6 @@ function ClientsCard({
               </div>
 
               <div className={styles.modalBody}>
-                {selectedWork.pending_status &&
-                  selectedWork.pending_status_changed_by !==
-                    currentUser?.id && (
-                    <div className={styles.pendingNotice}>
-                      <p>
-                        {t("findWork.pending_status_notice", {
-                          status: t(
-                            `findWork.status.${selectedWork.pending_status}`
-                          ),
-                        })}
-                      </p>
-                      <div className={styles.pendingActions}>
-                        <button
-                          className={styles.confirmBtn}
-                          onClick={async () => {
-                            const response = await workStatusAPI.updateStatus(
-                              selectedWork.id,
-                              {
-                                status: selectedWork.pending_status,
-                                confirm: true,
-                              }
-                            );
-                            if (response.ok) {
-                              const data = await response.json();
-                              setSelectedWork(data.work_request);
-                              toast.success(t("findWork.status_confirmed"));
-                              setIsModalOpen(false); // Auto close
-                            }
-                          }}
-                        >
-                          {t("common.confirm")}
-                        </button>
-                        <button
-                          className={styles.rejectBtn}
-                          onClick={async () => {
-                            const response = await workStatusAPI.updateStatus(
-                              selectedWork.id,
-                              {
-                                status: selectedWork.status || "new",
-                                reject: true,
-                              }
-                            );
-                            if (response.ok) {
-                              const data = await response.json();
-                              setSelectedWork(data.work_request);
-                              toast.success(
-                                t("findWork.status_rejected") ||
-                                  "Status change rejected"
-                              );
-                              setIsModalOpen(false); // Auto close
-                            }
-                          }}
-                        >
-                          {t("common.reject") || "Reject"}
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
                 <div className={styles.modalSection}>
                   <h4 className={styles.modalSubtitle}>
                     {t("findWork.modal.description") || "Description"}
@@ -563,31 +521,30 @@ function ClientsCard({
               </div>
 
               <div className={styles.modalFooter}>
-                {currentUser?.id === selectedWork.user_id ||
-                isEngagedProvider(selectedWork) ? (
+                {currentUser?.id === selectedWork.user_id ? (
+                  // OWNER VIEW: Request Status Change
                   <div className={styles.ownerActions}>
                     <label>
                       {t("findWork.modal.update_status") || "Update Status"}
                     </label>
 
-                    {selectedWork.pending_status &&
-                      selectedWork.pending_status_changed_by ===
-                        currentUser?.id && (
-                        <div className={styles.waitingNotice}>
-                          <p>
-                            {t("findWork.waiting_confirmation", {
-                              status: t(
-                                `findWork.status.${selectedWork.pending_status}`
-                              ),
-                            })}
-                          </p>
-                        </div>
-                      )}
+                    {selectedWork.pending_status && (
+                      <div className={styles.waitingNotice}>
+                        <p>
+                          {t("findWork.waiting_confirmation", {
+                            status: t(
+                              `findWork.status.${selectedWork.pending_status}`
+                            ),
+                          })}
+                        </p>
+                      </div>
+                    )}
 
                     <select
                       className={`${styles.statusSelect} ${
                         selectedWork.pending_status ? styles.hasPending : ""
                       }`}
+                      disabled={selectedWork.pending_status} // Block if pending
                       value={
                         selectedWork.pending_status ||
                         selectedWork.status ||
@@ -607,6 +564,9 @@ function ClientsCard({
                             const data = await response.json();
                             setSelectedWork(data.work_request);
                             toast.success(t("findWork.status_request_sent"));
+                          } else {
+                            const data = await response.json();
+                            toast.error(data.message);
                           }
                         } catch (error) {
                           toast.error(
@@ -630,6 +590,109 @@ function ClientsCard({
                         {t("findWork.status.completed")}
                       </option>
                     </select>
+                  </div>
+                ) : isEngagedProvider(selectedWork) ||
+                  (currentUser &&
+                    selectedWork.provider_id &&
+                    Number(selectedWork.provider_id) ===
+                      Number(currentUser.id)) ? (
+                  // PROVIDER VIEW: Confirm/Reject ONLY
+                  <div className={styles.ownerActions}>
+                    {selectedWork.pending_status ? (
+                      <div className={styles.pendingActionsContainer}>
+                        <p className={styles.actionPrompt}>
+                          {t("findWork.client_requested_status", {
+                            status: t(
+                              `findWork.status.${selectedWork.pending_status}`
+                            ),
+                          }) ||
+                            `Client requested to change status to ${selectedWork.pending_status}`}
+                        </p>
+                        <div className={styles.pendingActions}>
+                          <button
+                            className={styles.confirmBtn}
+                            onClick={async () => {
+                              const response = await workStatusAPI.updateStatus(
+                                selectedWork.id,
+                                {
+                                  status: selectedWork.pending_status,
+                                  confirm: true,
+                                }
+                              );
+                              if (response.ok) {
+                                const data = await response.json();
+                                setSelectedWork(data.work_request);
+                                toast.success(t("findWork.status_confirmed"));
+
+                                if (notificationId) {
+                                  try {
+                                    const { notificationAPI } = await import(
+                                      "../../lib/apiService"
+                                    );
+                                    await notificationAPI.markAsRead(
+                                      notificationId
+                                    );
+                                  } catch (e) {
+                                    console.error(
+                                      "Failed to mark notification read",
+                                      e
+                                    );
+                                  }
+                                }
+                                // Close modal or update UI?
+                              }
+                            }}
+                          >
+                            {t("common.confirm")}
+                          </button>
+                          <button
+                            className={styles.rejectBtn}
+                            onClick={async () => {
+                              const response = await workStatusAPI.updateStatus(
+                                selectedWork.id,
+                                {
+                                  status: selectedWork.status || "new",
+                                  reject: true,
+                                }
+                              );
+                              if (response.ok) {
+                                const data = await response.json();
+                                setSelectedWork(data.work_request);
+                                toast.success(
+                                  t("findWork.status_rejected") ||
+                                    "Status change rejected"
+                                );
+
+                                if (notificationId) {
+                                  try {
+                                    const { notificationAPI } = await import(
+                                      "../../lib/apiService"
+                                    );
+                                    await notificationAPI.markAsRead(
+                                      notificationId
+                                    );
+                                  } catch (e) {
+                                    console.error(
+                                      "Failed to mark notification read",
+                                      e
+                                    );
+                                  }
+                                }
+                              }
+                            }}
+                          >
+                            {t("common.reject") || "Reject"}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={styles.readOnlyStatus}>
+                        <span>
+                          {t("findWork.current_status")}:{" "}
+                          {t(`findWork.status.${selectedWork.status}`)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <button

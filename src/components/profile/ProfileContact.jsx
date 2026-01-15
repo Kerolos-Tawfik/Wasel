@@ -111,7 +111,9 @@ const ProfileContact = ({ profile, user, isEditing, onUpdate, isOwner }) => {
             {profile?.city && (
               <div className={styles.contactItem}>
                 <MapPin size={18} />
-                <span>{t(`cities.${profile.city}`) || profile.city}</span>
+                <span>
+                  {t(`cities.${profile.city.toLowerCase()}`) || profile.city}
+                </span>
               </div>
             )}
 

@@ -253,6 +253,17 @@
 
 .modalBody {
   padding: 24px;
+  overflow-y: auto;
+  max-height: calc(90vh - 70px); /* Adjust based on header height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure long text breaks */
+.infoRow p,
+.projectInfo p {
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .statusSection {

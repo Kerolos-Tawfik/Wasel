@@ -182,7 +182,9 @@ const ProfileHeader = ({
           {profile?.city && (
             <div className={styles.location}>
               <MapPin size={16} />
-              <span>{t(`cities.${profile.city}`) || profile.city}</span>
+              <span>
+                {t(`cities.${profile.city.toLowerCase()}`) || profile.city}
+              </span>
             </div>
           )}
 

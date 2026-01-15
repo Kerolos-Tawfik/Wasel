@@ -265,14 +265,17 @@
       "completed": "Completed"
     },
     "status_updated": "Status updated successfully!",
-    "status_error": "Failed to update status."
+    "status_error": "Failed to update status.",
+    "current_status": "Current Status",
+    "client_requested_status": "Client requested to change status to {{status}}"
   },
   "chat": {
     "title": "Internal Chat",
     "no_messages": "Start the conversation!",
     "placeholder": "Type a message...",
     "error_sending": "Failed to send message",
-    "send": "Send"
+    "send": "Send",
+    "online": "Online"
   },
   "messages": {
     "title": "Messages",
@@ -329,7 +332,8 @@
     },
     "errors": {
       "category_required": "Please select a category",
-      "city_required": "Please select a city for local services"
+      "city_required": "Please select a city for local services",
+      "budget_too_low": "Budget must be at least 50"
     },
     "validation_hint": "Please select a category and city to continue",
     "search_category": "Search categories...",
@@ -381,6 +385,7 @@
     "no_images": "No images",
     "no_portfolio": "No projects added yet. Showcase your work!",
     "rating_title": "Rating & Reviews",
+    "rate_user": "Rate User",
     "reviews": "reviews",
     "completed_jobs": "Completed Jobs",
     "contact_title": "Contact Information",
