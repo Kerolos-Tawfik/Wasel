@@ -11,7 +11,7 @@ import ProfileBio from "../../../Wasel/src/components/profile/ProfileBio.jsx";
 import ProfilePortfolio from "../../../Wasel/src/components/profile/ProfilePortfolio.jsx";
 import ProfileRating from "../../../Wasel/src/components/profile/ProfileRating.jsx";
 import ProfileContact from "../../../Wasel/src/components/profile/ProfileContact.jsx";
-import ProfileRoleSwitcher from "../../../Wasel/src/components/profile/ProfileRoleSwitcher.jsx";
+
 import ModalPortal from "../components/common/ModalPortal";
 import ReviewModal from "../components/reviews/ReviewModal";
 import styles from "./Profile.module.css";
@@ -77,7 +77,7 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
       if (!response.ok)
         throw new Error(data.message || "Failed to update profile");
 
-      setProfile({ ...profile, ...updatedData });
+      setProfile(data.profile);
       setIsEditing(false);
 
       if (refreshProfile) refreshProfile();
@@ -160,43 +160,30 @@ const Profile = ({ user, userProfile, onProfileUpdate }) => {
               isOwner={isOwner}
             />
 
-            {/* Portfolio Section - Provider Only */}
-            {isProvider && (
-              <ProfilePortfolio
-                profile={profile}
-                userId={profile.id}
-                isOwner={isOwner}
-              />
-            )}
+            {/* Portfolio Section - Visible for everyone now */}
+            <ProfilePortfolio
+              profile={profile}
+              userId={profile.id}
+              isOwner={isOwner}
+            />
           </div>
 
           {/* Right Column */}
           <div className={styles.rightColumn}>
-            {/* Rating Section - Provider Only */}
-            {isProvider && <ProfileRating profile={profile} user={user} />}
+            {/* Rating Section - Visible for everyone */}
+            <ProfileRating profile={profile} user={user} />
 
-            {/* Contact Section - hidden for freelance providers */}
-            {!(isProvider && profile?.provider_type === "freelance") && (
-              <ProfileContact
-                profile={profile}
-                user={user}
-                isEditing={isEditing}
-                onUpdate={handleUpdateProfile}
-                isOwner={isOwner}
-              />
-            )}
+            {/* Contact Section - Always visible */}
+            <ProfileContact
+              profile={profile}
+              user={user}
+              isEditing={isEditing}
+              onUpdate={handleUpdateProfile}
+              isOwner={isOwner}
+            />
 
-            {/* Role Switcher Section - Only for Owner */}
-            {isOwner && (
-              <ProfileRoleSwitcher
-                isProvider={isProvider}
-                onSwitchRole={handleSwitchRole}
-                isSwitching={isSwitching}
-              />
-            )}
-
-            {/* Rate Button - Only for Non-Owner and Only for Providers */}
-            {!isOwner && profile?.user_role === "provider" && (
+            {/* Rate Button - Only for Non-Owner */}
+            {!isOwner && (
               <button
                 className={styles.rateBtn}
                 onClick={() => setShowReviewModal(true)}

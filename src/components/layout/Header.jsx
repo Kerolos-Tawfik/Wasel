@@ -132,33 +132,16 @@ const Header = ({ user, userProfile }) => {
   const userName = user?.full_name
     ? user.full_name
     : user?.email
-    ? user.email.split("@")[0]
-    : t("header.user");
+      ? user.email.split("@")[0]
+      : t("header.user");
 
-  const isClient = userProfile?.user_role === "client";
-  const isProvider = userProfile?.user_role === "provider";
-  const providerSubtype = userProfile?.provider_type;
+  const isHeadAdmin = user?.role === "head_admin";
 
-  const roleLabel = isClient
-    ? t("header.role_client")
-    : isProvider
-    ? providerSubtype
-      ? `${t("header.role_provider")} (${t(
-          "profile.provider_type_" + providerSubtype
-        )})`
-      : t("header.role_provider")
-    : null;
-  const RoleIcon = isClient ? Briefcase : isProvider ? Wrench : null;
-
-  const actionTo = isClient ? "/addwork" : isProvider ? "/findwork" : null;
-  const actionLabel = isClient
-    ? t("header.add_work")
-    : isProvider
-    ? t("header.browse_work")
-    : null;
-  const ActionIcon = isClient ? PlusCircle : isProvider ? Search : null;
-
-  const location = useLocation();
+  // Open Platform: Everyone can Add Work and Find Work
+  // We can show "Add Work" as primary action
+  const actionTo = "/addwork";
+  const actionLabel = t("header.add_work");
+  const ActionIcon = PlusCircle;
 
   const scrollToSection = (id) => {
     setIsMenuOpen(false); // Close mobile menu
@@ -174,11 +157,7 @@ const Header = ({ user, userProfile }) => {
 
   return (
     <header className={styles.header}>
-      <Link
-        to={
-          user ? (isProvider ? "/findwork" : isClient ? "/addwork" : "/") : "/"
-        }
-      >
+      <Link to="/">
         <img
           className={styles.logo}
           src="/assets/images/Wasel-Logo-Without-Slogan.svg"
@@ -268,10 +247,7 @@ const Header = ({ user, userProfile }) => {
                             notif.type === "status_confirmed" ||
                             notif.type === "status_rejected"
                           ) {
-                            const target =
-                              userProfile?.user_role === "client"
-                                ? "/my-requests"
-                                : "/findwork";
+                            const target = "/my-requests";
                             navigate(target, {
                               state: {
                                 workRequestId: notif.data?.work_request_id,
@@ -291,7 +267,7 @@ const Header = ({ user, userProfile }) => {
                           <p className={styles.notifMessage}>
                             {notif.message &&
                             notif.message.includes(
-                              "You have a new message from"
+                              "You have a new message from",
                             )
                               ? t("notifications.new_message_body", {
                                   sender_name:
@@ -339,26 +315,38 @@ const Header = ({ user, userProfile }) => {
 
             {isDropdownOpen && (
               <div className={styles.dropdownMenu}>
-                {roleLabel && RoleIcon && (
+                {isHeadAdmin && (
                   <>
-                    <div className={styles.dropdownRole}>
-                      <RoleIcon size={16} />
-                      <span>{roleLabel}</span>
-                    </div>
+                    <Link
+                      to="/admin/dashboard"
+                      className={`${styles.dropdownItem} ${styles.adminItem}`} // Add appropriate style if needed
+                      onClick={() => setIsDropdownOpen(false)}
+                      style={{ color: "#e11d48", fontWeight: "bold" }}
+                    >
+                      <Briefcase size={16} /> {/* Or simpler icon */}
+                      {t("admin.layout.dashboard") || "Dashboard"}
+                    </Link>
                     <div className={styles.dropdownDivider}></div>
                   </>
                 )}
 
-                {actionTo && ActionIcon && (
-                  <Link
-                    to={actionTo}
-                    className={`${styles.dropdownItem} ${styles.actionItem}`}
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    <ActionIcon size={16} />
-                    {actionLabel}
-                  </Link>
-                )}
+                <Link
+                  to="/addwork"
+                  className={`${styles.dropdownItem} ${styles.actionItem}`}
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <PlusCircle size={16} />
+                  {t("header.add_work")}
+                </Link>
+
+                <Link
+                  to="/findwork"
+                  className={styles.dropdownItem}
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <Search size={16} />
+                  {t("header.browse_work")}
+                </Link>
 
                 <Link
                   to="/messages"
@@ -369,16 +357,14 @@ const Header = ({ user, userProfile }) => {
                   {t("header.messages") || "Messages"}
                 </Link>
 
-                {isClient && (
-                  <Link
-                    to="/my-requests"
-                    className={styles.dropdownItem}
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    <Briefcase size={16} />
-                    {t("header.my_requests") || "My Requests"}
-                  </Link>
-                )}
+                <Link
+                  to="/my-requests"
+                  className={styles.dropdownItem}
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <Briefcase size={16} />
+                  {t("header.my_requests") || "My Requests"}
+                </Link>
 
                 <Link
                   to="/profile"
@@ -535,36 +521,38 @@ const Header = ({ user, userProfile }) => {
               </div>
               <div className={styles.mobileUserDetails}>
                 <span className={styles.mobileUserName}>{userName}</span>
-                {roleLabel && RoleIcon && (
-                  <span className={styles.mobileUserRole}>
-                    <RoleIcon size={14} />
-                    {roleLabel}
-                  </span>
-                )}
               </div>
             </div>
 
-            {actionTo && ActionIcon && (
+            {isHeadAdmin && (
               <Link
-                to={actionTo}
-                className={`${styles.mobileMenuItem} ${styles.actionLink}`}
+                to="/admin/dashboard"
+                className={styles.mobileMenuItem}
                 onClick={closeMenu}
+                style={{ color: "#e11d48" }}
               >
-                <ActionIcon size={18} />
-                {actionLabel}
+                <Briefcase size={18} />
+                {t("admin.layout.dashboard") || "Dashboard"}
               </Link>
             )}
 
-            {isClient && (
-              <Link
-                to="/my-requests"
-                className={styles.mobileMenuItem}
-                onClick={closeMenu}
-              >
-                <Briefcase size={18} />
-                {t("header.my_requests") || "My Requests"}
-              </Link>
-            )}
+            <Link
+              to="/addwork"
+              className={`${styles.mobileMenuItem} ${styles.actionLink}`}
+              onClick={closeMenu}
+            >
+              <PlusCircle size={18} />
+              {t("header.add_work")}
+            </Link>
+
+            <Link
+              to="/findwork"
+              className={styles.mobileMenuItem}
+              onClick={closeMenu}
+            >
+              <Search size={18} />
+              {t("header.browse_work")}
+            </Link>
 
             <Link
               to="/messages"
@@ -573,6 +561,15 @@ const Header = ({ user, userProfile }) => {
             >
               <MessageSquare size={18} />
               {t("header.messages") || "Messages"}
+            </Link>
+
+            <Link
+              to="/my-requests"
+              className={styles.mobileMenuItem}
+              onClick={closeMenu}
+            >
+              <Briefcase size={18} />
+              {t("header.my_requests") || "My Requests"}
             </Link>
 
             <Link

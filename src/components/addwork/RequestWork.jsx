@@ -11,7 +11,6 @@ import {
   Briefcase,
   User,
   FileText,
-  Calendar,
   Phone,
   Upload,
   Send,
@@ -30,7 +29,7 @@ function RequestWork({ user }) {
   const [name, setName] = useState("");
   const [titleMessage, setTitleMessage] = useState("");
   const [textareaMsg, setTextAreaMsg] = useState("");
-  const [date, setDate] = useState("");
+
   const [duration, setDuration] = useState("");
   const [budgetMin, setBudgetMin] = useState("");
   const [budgetMax, setBudgetMax] = useState("");
@@ -70,7 +69,7 @@ function RequestWork({ user }) {
   ];
 
   const filteredCities = cities.filter((city) =>
-    city.label.toLowerCase().includes(citySearchQuery.toLowerCase())
+    city.label.toLowerCase().includes(citySearchQuery.toLowerCase()),
   );
 
   const handleCitySelect = (cityId) => {
@@ -144,7 +143,7 @@ function RequestWork({ user }) {
     ) {
       toast.error(
         t("auth.errors.phone_invalid") || "Invalid phone number",
-        toastConfig
+        toastConfig,
       );
       return;
     }
@@ -160,7 +159,7 @@ function RequestWork({ user }) {
       formData.append("work_description", textareaMsg);
       formData.append("service_type", service);
       formData.append("city", service === "local" ? pickCity : "");
-      if (date) formData.append("expected_date", date);
+
       if (duration) formData.append("duration", duration);
       if (budgetMin) formData.append("budget_min", budgetMin);
       if (budgetMax) formData.append("budget_max", budgetMax);
@@ -169,7 +168,7 @@ function RequestWork({ user }) {
       if (Number(budgetMin) < 50 || Number(budgetMax) < 50) {
         toast.error(
           t("addWork.errors.budget_too_low") || "Budget should be at least 50",
-          toastConfig
+          toastConfig,
         );
         return;
       }
@@ -177,7 +176,7 @@ function RequestWork({ user }) {
         toast.error(
           t("addWork.errors.budget_invalid") ||
             "Max budget cannot be less than min budget",
-          toastConfig
+          toastConfig,
         );
         return;
       }
@@ -203,7 +202,7 @@ function RequestWork({ user }) {
       // Reset form
       setTitleMessage("");
       setTextAreaMsg("");
-      setDate("");
+
       setDuration("");
       setBudgetMin("");
       setBudgetMax("");
@@ -378,21 +377,6 @@ function RequestWork({ user }) {
               value={textareaMsg}
               onChange={(e) => setTextAreaMsg(e.target.value)}
               placeholder={t("addWork.labels.work_desc")}
-              required
-            />
-          </div>
-
-          {/* Expected Date */}
-          <div className={styles.inputGroup}>
-            <label className={styles.inputLabel}>
-              <Calendar size={16} />
-              {t("addWork.labels.date_label")}
-            </label>
-            <input
-              type="date"
-              className={styles.input}
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
               required
             />
           </div>
@@ -682,8 +666,8 @@ function RequestWork({ user }) {
               service === "local"
                 ? t("addWork.validation_hint")
                 : selectedCategoryIds.length === 0
-                ? t("addWork.errors.category_required")
-                : t("addWork.errors.city_required")}
+                  ? t("addWork.errors.category_required")
+                  : t("addWork.errors.city_required")}
             </p>
           )}
       </form>

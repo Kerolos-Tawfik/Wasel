@@ -85,12 +85,8 @@ export const profileAPI = {
   },
 
   updateProfile: async (userId, profileData) => {
-    const response = await fetch(`${API_BASE_URL}/profile/update/${userId}`, {
+    const response = await apiFetch(`/profile/update/${userId}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
       body: JSON.stringify(profileData),
     });
     return response;
@@ -114,7 +110,7 @@ export const profileAPI = {
           Accept: "application/json",
         },
         body: JSON.stringify({ user_role: newRole }),
-      }
+      },
     );
     return response;
   },
@@ -135,7 +131,7 @@ export const profileAPI = {
           Accept: "application/json",
         },
         body: formData,
-      }
+      },
     );
     return response;
   },
@@ -171,7 +167,7 @@ export const portfolioAPI = {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-      }
+      },
     );
     return response;
   },
@@ -301,6 +297,16 @@ export const chatAPI = {
       method: "POST",
       body: JSON.stringify(messageData),
     });
+    return response;
+  },
+
+  markConversationNotificationsRead: async (workRequestId, senderId) => {
+    const response = await apiFetch(
+      `/chat/mark-notifications-read/${workRequestId}/${senderId}`,
+      {
+        method: "POST",
+      },
+    );
     return response;
   },
 };

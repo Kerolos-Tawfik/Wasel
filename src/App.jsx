@@ -20,8 +20,14 @@ import Messages from "./pages/Messages.jsx";
 import Onboarding from "./pages/Onboarding.jsx";
 import Profile from "./pages/Profile.jsx";
 import MyRequests from "./pages/MyRequests.jsx";
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminRequests from "./pages/admin/AdminRequests.jsx";
+import AdminLayout from "./layouts/AdminLayout.jsx";
+import PublicLayout from "./layouts/PublicLayout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import GuestRoute from "./components/GuestRoute.jsx";
+import AdminRoute from "./components/AdminRoute.jsx";
 import styles from "./App.module.css";
 import { LoaderCircle } from "lucide-react";
 import { AuthProvider } from "./context/AuthContext.jsx";
@@ -134,132 +140,154 @@ export default function App() {
   }
 
   // Check if user needs onboarding (no role selected yet)
-  const needsOnboarding = user && !userProfile?.user_role;
+  // Skip onboarding if user is head_admin
+  const needsOnboarding =
+    user && !userProfile?.user_role && user.role !== "head_admin";
 
   return (
     <AuthProvider>
       <ToastContainer />
       <Router>
         <div className="app-container">
-          <Header user={user} userProfile={userProfile} />
           <Routes>
+            {/* Public/Main Site Routes */}
             <Route
-              path="/"
-              element={<Home user={user} selectedRole={selectedRole} />}
-            />
-            <Route
-              path="/login"
-              element={
-                <GuestRoute user={user}>
-                  <Login />
-                </GuestRoute>
-              }
-            />
-            <Route
-              path="/join"
-              element={
-                <GuestRoute user={user}>
-                  <Join />
-                </GuestRoute>
-              }
-            />
-            <Route
-              path="/forgot-password"
-              element={
-                <GuestRoute user={user}>
-                  <ForgotPassword />
-                </GuestRoute>
-              }
-            />
-            <Route path="/update-password" element={<UpdatePassword />} />
-            <Route path="/email-verified" element={<EmailVerified />} />
-            <Route path="/verify-error" element={<VerifyError />} />
+              element={<PublicLayout user={user} userProfile={userProfile} />}
+            >
+              <Route
+                path="/"
+                element={<Home user={user} selectedRole={selectedRole} />}
+              />
+              {/* Admin Login Route */}
+              <Route path="/admin/login" element={<AdminLogin />} />
 
-            <Route
-              path="/findwork"
-              element={
-                <ProtectedRoute user={user}>
-                  {needsOnboarding ? (
-                    <Onboarding
+              <Route
+                path="/login"
+                element={
+                  <GuestRoute user={user}>
+                    <Login />
+                  </GuestRoute>
+                }
+              />
+              <Route
+                path="/join"
+                element={
+                  <GuestRoute user={user}>
+                    <Join />
+                  </GuestRoute>
+                }
+              />
+              <Route
+                path="/forgot-password"
+                element={
+                  <GuestRoute user={user}>
+                    <ForgotPassword />
+                  </GuestRoute>
+                }
+              />
+              <Route path="/update-password" element={<UpdatePassword />} />
+              <Route path="/email-verified" element={<EmailVerified />} />
+              <Route path="/verify-error" element={<VerifyError />} />
+
+              <Route
+                path="/findwork"
+                element={
+                  <ProtectedRoute user={user}>
+                    {needsOnboarding ? (
+                      <Onboarding
+                        user={user}
+                        selectedRole={selectedRole}
+                        setSelectedRole={setSelectedRole}
+                        refreshProfile={refreshProfile}
+                      />
+                    ) : (
+                      <FindWork
+                        savedData={formData}
+                        service={service}
+                        setService={setService}
+                        user={user}
+                      />
+                    )}
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/addwork"
+                element={
+                  <ProtectedRoute user={user}>
+                    {needsOnboarding ? (
+                      <Onboarding
+                        user={user}
+                        selectedRole={selectedRole}
+                        setSelectedRole={setSelectedRole}
+                        onComplete={refreshProfile}
+                      />
+                    ) : (
+                      <AddWork user={user} onComplete={fetchWorkRequests} />
+                    )}
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/my-requests"
+                element={
+                  <ProtectedRoute user={user}>
+                    <MyRequests user={user} />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/messages"
+                element={
+                  <ProtectedRoute user={user}>
+                    <Messages user={user} />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute user={user}>
+                    <Profile
                       user={user}
-                      selectedRole={selectedRole}
-                      setSelectedRole={setSelectedRole}
-                      refreshProfile={refreshProfile}
+                      userProfile={userProfile}
+                      onProfileUpdate={refreshProfile}
                     />
-                  ) : (
-                    <FindWork
-                      savedData={formData}
-                      service={service}
-                      setService={setService}
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile/:id"
+                element={
+                  <ProtectedRoute user={user}>
+                    <Profile
                       user={user}
+                      userProfile={userProfile}
+                      onProfileUpdate={refreshProfile}
                     />
-                  )}
-                </ProtectedRoute>
-              }
-            />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
 
+            {/* Admin Routes - Protected by AdminRoute */}
             <Route
-              path="/addwork"
+              path="/admin"
               element={
-                <ProtectedRoute user={user}>
-                  {needsOnboarding ? (
-                    <Onboarding
-                      user={user}
-                      selectedRole={selectedRole}
-                      setSelectedRole={setSelectedRole}
-                      onComplete={refreshProfile}
-                    />
-                  ) : (
-                    <AddWork user={user} onComplete={fetchWorkRequests} />
-                  )}
-                </ProtectedRoute>
+                <AdminRoute user={user}>
+                  <AdminLayout />
+                </AdminRoute>
               }
-            />
-
-            <Route
-              path="/my-requests"
-              element={
-                <ProtectedRoute user={user}>
-                  <MyRequests user={user} />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/messages"
-              element={
-                <ProtectedRoute user={user}>
-                  <Messages user={user} />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute user={user}>
-                  <Profile
-                    user={user}
-                    userProfile={userProfile}
-                    onProfileUpdate={refreshProfile}
-                  />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile/:id"
-              element={
-                <ProtectedRoute user={user}>
-                  <Profile
-                    user={user}
-                    userProfile={userProfile}
-                    onProfileUpdate={refreshProfile}
-                  />
-                </ProtectedRoute>
-              }
-            />
+            >
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="requests" element={<AdminRequests />} />
+              <Route index element={<AdminDashboard />} />
+            </Route>
           </Routes>
-          <Footer user={user} />
         </div>
       </Router>
     </AuthProvider>

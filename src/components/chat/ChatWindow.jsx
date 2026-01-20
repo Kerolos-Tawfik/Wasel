@@ -35,6 +35,16 @@ function ChatWindow({
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
+
+        // Mark notifications as read when viewing the conversation
+        try {
+          await chatAPI.markConversationNotificationsRead(
+            workRequestId,
+            receiverId,
+          );
+        } catch (error) {
+          console.error("Error marking notifications as read:", error);
+        }
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -137,12 +147,11 @@ function ChatWindow({
               onClick={async () => {
                 if (window.confirm(t("chat.confirm_assign"))) {
                   try {
-                    const { workStatusAPI } = await import(
-                      "../../lib/apiService"
-                    );
+                    const { workStatusAPI } =
+                      await import("../../lib/apiService");
                     const response = await workStatusAPI.assignProvider(
                       workRequestId,
-                      { provider_id: receiverId }
+                      { provider_id: receiverId },
                     );
                     const data = await response.json();
                     if (response.ok) {

@@ -14,7 +14,8 @@
     "error": "حدث خطأ ما، يرجى المحاولة مرة أخرى",
     "confirm_delete": "هل أنت متأكد من حذف هذا العنصر؟",
     "image": "صورة",
-    "images": "صور"
+    "images": "صور",
+    "no_data": "لا توجد بيانات"
   },
   "cities": {
     "saihat": "سيهات",
@@ -262,7 +263,7 @@
       "contact": "تواصل مع العميل",
       "budget": "الميزانية",
       "duration": "المدة",
-      "expected_date": "تاريخ البدء",
+
       "open_chat": "محادثة داخلية",
       "status_history": "سجل الحالة",
       "no_history": "لا يوجد سجل متاح بعد.",
@@ -277,7 +278,7 @@
       "completed": "مكتمل"
     },
     "city_not_specified": "المدينة غير محددة",
-    "date_not_specified": "التاريخ غير محدد",
+
     "status_updated_successfully": "تم تحديث الحالة بنجاح",
     "status_request_sent": "تم إرسال طلب تغيير الحالة للطرف الآخر",
     "status_confirmed": "تم تأكيد تغيير الحالة بنجاح",
@@ -333,8 +334,7 @@
       "description_label": "وصف العمل",
       "user": "ادخل اسمك الكامل",
       "work_desc": "صف ما تحتاجه بالتفصيل...",
-      "date_label": "تاريخ الإنجاز المتوقع",
-      "expected_date": "اختر تاريخ الإنجاز المتوقع",
+
       "phone_label": "رقم الهاتف",
       "phone": "ادخل رقم هاتفك",
       "attachments": "المرفقات (اختياري)",
@@ -471,5 +471,52 @@
     "send": "إرسال الرسالة",
     "success": "تم إرسال رسالتك بنجاح!",
     "error": "فشل إرسال الرسالة. حاول مرة أخرى."
+  },
+  "admin": {
+    "login": {
+      "title": "دخول المشرف",
+      "subtitle": "أدخل بيانات الاعتماد للمتابعة",
+      "email_label": "البريد الإلكتروني",
+      "email_placeholder": "admin@example.com",
+      "password_label": "كلمة المرور",
+      "password_placeholder": "••••••••",
+      "submit": "تسجيل الدخول",
+      "success": "تم تسجيل الدخول بنجاح",
+      "failed": "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+    },
+    "requests": {
+      "title": "إدارة الطلبات",
+      "all_statuses": "كل الحالات",
+      "status_new": "جديد",
+      "status_pending": "معلق",
+      "status_assigned": "تم التعيين",
+      "status_completed": "مكتمل",
+      "status_cancelled": "ملغي",
+      "id": "معرف",
+      "client": "العميل",
+      "title": "العنوان",
+      "date": "التاريخ",
+      "status": "الحالة",
+      "actions": "إجراءات",
+      "confirm_status_change": "هل أنت متأكد من تغيير الحالة؟",
+      "tab_confirmed":"الطلبات المؤكدة",
+      "tab_pending": "الطلبات قيد المراجعة",
+      "edit_title": "تعديل"
+    },
+    "layout": {
+      "title": "المشرف",
+      "dashboard": "لوحة التحكم",
+      "requests": "الطلبات",
+      "logout": "خروج",
+      "role": "مسؤول النظام"
+    },
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "total_users": "إجمالي المستخدمين",
+      "total_published_requests": "الطلبات المنشورة",
+      "pending_requests": "الطلبات المعلقة",
+      "active_providers": "مقدمو الخدمات النشطون",
+      "total_revenue": "إجمالي الإيرادات"
+    }
   }
 }
