@@ -72,7 +72,7 @@ const ProfilePortfolio = ({ profile, userId, isOwner = false }) => {
         formData.append("user_id", userId);
 
         const uploadResponse = await fetch(
-          "http://localhost:8000/api/portfolio/upload-files",
+          "https://waselp.com/api/portfolio/upload-files",
           {
             method: "POST",
             body: formData,

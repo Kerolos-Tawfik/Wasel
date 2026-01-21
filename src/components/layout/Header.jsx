@@ -89,7 +89,7 @@ const Header = ({ user, userProfile }) => {
     setIsMenuOpen(false);
     try {
       const token = localStorage.getItem("authToken");
-      await fetch("http://localhost:8000/api/logout", {
+      await fetch("https://waselp.com/api/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

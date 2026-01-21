@@ -213,6 +213,7 @@ function RequestWork({ user }) {
       setFiles([]);
 
       toast.success(t("addWork.messages.success"), toastConfig);
+      
       // Redirect to My Requests page after successful submission
       navigate("/my-requests");
     } catch (error) {

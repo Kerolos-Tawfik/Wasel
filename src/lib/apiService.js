@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+const API_BASE_URL = "https://waselp.com/api";
+=======
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+>>>>>>> f6b337d1edad2c855d6357286650f980cbaea225
 
 /**
  * Get authentication token from localStorage
