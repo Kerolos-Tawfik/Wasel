@@ -27,11 +27,15 @@ export const adminAPI = {
     });
   },
 
-  updateRequestStatus: async (id, status) => {
+  updateRequestStatus: async (id, status, rejection_reason = null) => {
+    const body = { status };
+    if (rejection_reason) {
+      body.rejection_reason = rejection_reason;
+    }
     return fetch(`${BASE_URL}/requests/${id}/status`, {
       method: "PUT",
       headers: getHeaders(),
-      body: JSON.stringify({ status }),
+      body: JSON.stringify(body),
     });
   },
 

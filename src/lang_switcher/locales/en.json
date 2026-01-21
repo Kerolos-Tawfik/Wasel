@@ -78,7 +78,19 @@
     "new_message_title": "New Message",
     "new_message_body": "You have a new message from {{sender_name}}",
     "status_update": "Status Update",
-    "view_profile": "View Profile"
+    "view_profile": "View Profile",
+    "request_approved_title": "Request Approved",
+    "request_approved_message": "Your request '{{work_title}}' has been approved and is now live.",
+    "request_rejected_title": "Request Rejected",
+    "request_rejected_message": "Your request '{{work_title}}' was rejected. Reason: {{reason}}",
+    "status_accepted_title": "Status Change Accepted",
+    "status_accepted_message": "Your request to change status to '{{status}}' has been accepted.",
+    "status_rejected_title": "Status Change Rejected",
+    "status_rejected_message": "Your request to change status to '{{status}}' was rejected.",
+    "status_pending_title": "Status Change Requested",
+    "status_pending_message": "A status change to '{{pending_status}}' has been requested for '{{work_title}}'. Please confirm.",
+    "project_assigned_title": "Project Assigned",
+    "project_assigned_message": "You have been assigned to '{{work_title}}'."
   },
   "categories": {
     "title": "Browse by Category",
@@ -451,10 +463,9 @@
       "total_revenue": "Total Revenue"
     },
     "requests": {
-      "title": "Requests Management",
+      "page_title": "Requests Management",
       "tab_pending": "Needs Confirmation",
       "tab_confirmed": "Published Requests",
-      "edit_title": "Edit Request",
       "all_statuses": "All Statuses",
       "status_new": "New",
       "status_pending": "Pending",
@@ -468,7 +479,18 @@
       "status": "Status",
       "actions": "Actions",
       "confirm_status_change": "Are you sure you want to change the status?",
-      "edit_title": "Edit"
+      "edit_title": "Edit",
+      "confirm_approve": "Confirm Approval?",
+      "review": "Review",
+      "review_title": "Review Request",
+      "reject": "Reject",
+      "approve_publish": "Approve & Publish",
+      "rejection_reason": "Rejection Reason (Required):",
+      "rejection_placeholder": "Explain why this request is being rejected...",
+      "confirm_rejection": "Confirm Rejection",
+      "attachments": "Attachments",
+      "file": "File",
+      "no_attachments": "No attachments"
     }
   }
 }

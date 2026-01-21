@@ -28,17 +28,17 @@ const Header = ({ user, userProfile }) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const notifRef = useRef(null);
+  const desktopNotifRef = useRef(null);
+  const mobileNotifRef = useRef(null);
   const navigate = useNavigate();
 
   const fetchNotifications = async () => {
     try {
       const response = await notificationAPI.getNotifications();
-      if (response.ok) {
-        const data = await response.json();
-        setNotifications(data.notifications || []);
-        setUnreadCount(data.unread_count || 0);
-      }
+      if (!response.ok) return;
+      const data = await response.json();
+      setNotifications(data.notifications || []);
+      setUnreadCount(data.unread_count || 0);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
@@ -72,7 +72,12 @@ const Header = ({ user, userProfile }) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
-      if (notifRef.current && !notifRef.current.contains(event.target)) {
+      if (
+        desktopNotifRef.current &&
+        !desktopNotifRef.current.contains(event.target) &&
+        mobileNotifRef.current &&
+        !mobileNotifRef.current.contains(event.target)
+      ) {
         setIsNotifOpen(false);
       }
     };
@@ -111,7 +116,8 @@ const Header = ({ user, userProfile }) => {
     }
   };
 
-  const handleMarkAllAsRead = async () => {
+  const handleMarkAllAsRead = async (e) => {
+    if (e) e.stopPropagation();
     try {
       await notificationAPI.markAllAsRead();
       fetchNotifications();
@@ -201,7 +207,7 @@ const Header = ({ user, userProfile }) => {
 
       <div className={styles.desktopRight}>
         {user && (
-          <div className={styles.notifContainer} ref={notifRef}>
+          <div className={styles.notifContainer} ref={desktopNotifRef}>
             <button
               className={styles.notifBtn}
               onClick={() => setIsNotifOpen(!isNotifOpen)}
@@ -400,7 +406,7 @@ const Header = ({ user, userProfile }) => {
       </div>
 
       {user && (
-        <div className={styles.mobileHeaderNotif} ref={notifRef}>
+        <div className={styles.mobileHeaderNotif} ref={mobileNotifRef}>
           <button
             className={styles.notifBtn}
             onClick={() => setIsNotifOpen(!isNotifOpen)}

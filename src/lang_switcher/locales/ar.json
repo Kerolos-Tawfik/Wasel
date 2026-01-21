@@ -82,6 +82,25 @@
     "my_requests": "طلباتي",
     "user": "المستخدم"
   },
+  "notifications": {
+    "title": "الإشعارات",
+    "mark_all": "تحديد الكل كمقروء",
+    "empty": "لا توجد إشعارات",
+    "new_message_title": "رسالة جديدة",
+    "new_message_body": "لديك رسالة جديدة من {{sender_name}}",
+    "request_approved_title": "تم قبول الطلب",
+    "request_approved_message": "تم قبول طلبك '{{work_title}}' وهو الآن متاح للعرض.",
+    "request_rejected_title": "تم رفض الطلب",
+    "request_rejected_message": "تم رفض طلبك '{{work_title}}'. السبب: {{reason}}",
+    "status_accepted_title": "تم تأكيد تغيير الحالة",
+    "status_accepted_message": "تم قبول طلبك لتغيير الحالة إلى '{{status}}'.",
+    "status_rejected_title": "تم رفض تغيير الحالة",
+    "status_rejected_message": "تم رفض طلبك لتغيير الحالة إلى '{{status}}'.",
+    "status_pending_title": "تم طلب تغيير الحالة",
+    "status_pending_message": "تم طلب تغيير الحالة إلى '{{pending_status}}' للمشروع '{{work_title}}'. يرجى التأكيد.",
+    "project_assigned_title": "تم تعيين مشروع",
+    "project_assigned_message": "تم تعيينك للمشروع '{{work_title}}'."
+  },
   "hero": {
     "title": "اعثر على أفضل مقدمي الخدمات لاحتياجاتك",
     "subtitle": "تواصل مع محترفين موثوقين في مدينتك بكل سهولة وأمان.",
@@ -433,16 +452,6 @@
     "provider_type_local": "محلي",
     "switch_success": "تم تغيير الدور بنجاح"
   },
-  "notifications": {
-    "title": "التنبيهات",
-    "mark_all": "تحديد الكل كمقروء",
-    "empty": "لا توجد تنبيهات",
-    "new_message": "رسالة جديدة",
-    "new_message_title": "رسالة جديدة",
-    "new_message_body": "لديك رسالة جديدة من {{sender_name}}",
-    "status_update": "تحديث حالة الطلب",
-    "view_profile": "عرض الملف الشخصي"
-  },
   "reviews": {
     "title": "التقييمات",
     "rate_now": "قيم الآن",
@@ -485,7 +494,7 @@
       "failed": "البريد الإلكتروني أو كلمة المرور غير صحيحة"
     },
     "requests": {
-      "title": "إدارة الطلبات",
+      "page_title": "إدارة الطلبات",
       "all_statuses": "كل الحالات",
       "status_new": "جديد",
       "status_pending": "معلق",
@@ -499,9 +508,20 @@
       "status": "الحالة",
       "actions": "إجراءات",
       "confirm_status_change": "هل أنت متأكد من تغيير الحالة؟",
-      "tab_confirmed":"الطلبات المؤكدة",
+      "tab_confirmed": "الطلبات المؤكدة",
       "tab_pending": "الطلبات قيد المراجعة",
-      "edit_title": "تعديل"
+      "edit_title": "تعديل",
+      "confirm_approve": "تأكيد الطلب؟",
+      "review": "مراجعة",
+      "review_title": "مراجعة الطلب",
+      "reject": "رفض",
+      "approve_publish": "قبول ونشر",
+      "rejection_reason": "سبب الرفض (مطلوب):",
+      "rejection_placeholder": "اشرح سبب رفض هذا الطلب...",
+      "confirm_rejection": "تأكيد الرفض",
+      "attachments": "المرفقات",
+      "file": "ملف",
+      "no_attachments": "لا توجد مرفقات"
     },
     "layout": {
       "title": "المشرف",

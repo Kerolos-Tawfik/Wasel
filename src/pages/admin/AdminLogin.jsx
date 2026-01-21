@@ -28,10 +28,8 @@ const AdminLogin = () => {
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
-        // Also refresh the app state if possible, or simple redirect
-        window.location.href = "/admin/dashboard"; // Force reload to pick up auth context
+        window.location.href = "/admin/dashboard"; 
       } else {
-        // Force generic localized error for login failure to ensure translation
         setError(t("admin.login.failed"));
       }
     } catch (err) {
