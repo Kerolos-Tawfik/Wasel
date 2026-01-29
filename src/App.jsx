@@ -20,9 +20,10 @@ import Messages from "./pages/Messages.jsx";
 import Onboarding from "./pages/Onboarding.jsx";
 import Profile from "./pages/Profile.jsx";
 import MyRequests from "./pages/MyRequests.jsx";
-import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminRequests from "./pages/admin/AdminRequests.jsx";
+import AdminUsers from "./pages/admin/AdminUsers.jsx";
+
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import PublicLayout from "./layouts/PublicLayout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -158,8 +159,6 @@ export default function App() {
                 path="/"
                 element={<Home user={user} selectedRole={selectedRole} />}
               />
-              {/* Admin Login Route */}
-              <Route path="/admin/login" element={<AdminLogin />} />
 
               <Route
                 path="/login"
@@ -285,6 +284,7 @@ export default function App() {
             >
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="requests" element={<AdminRequests />} />
+              <Route path="users" element={<AdminUsers />} />
               <Route index element={<AdminDashboard />} />
             </Route>
           </Routes>

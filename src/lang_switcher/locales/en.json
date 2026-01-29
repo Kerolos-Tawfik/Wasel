@@ -12,7 +12,10 @@
     "image": "image",
     "images": "images",
     "save": "Save",
-    "no_data": "No data"
+    "no_data": "No data",
+    "continue": "Continue",
+    "search": "Search",
+    "send": "Send"
   },
   "cities": {
     "saihat": "Saihat",
@@ -42,10 +45,20 @@
     "user": "User"
   },
   "hero": {
+    "badge": "Professional Services Marketplace",
+    "title_part1": "Connect with the best",
+    "title_decorative": "Freelance Excellence",
+    "title_part2": "for your projects",
     "title": "Find the best service providers for your needs",
     "subtitle": "Connect with trusted professionals in your city with ease and security.",
-    "search_placeholder": "Try \"Home maintenance\"...",
-    "search_button": "Search",
+    "search_placeholder": "What service are you looking for?",
+    "search_cta": "Search",
+    "select_category": "Category",
+    "popular": "Popular:",
+    "cta_get_started": "Get Started",
+    "cta_learn_more": "Learn More",
+    "trusted_label": "Trusted by over 500+ companies worldwide:",
+    "trust_text": "Joined by 12,000+ experts and clients",
     "features": {
       "quality": "Quality work done, quickly",
       "budget": "Best for every budget",
@@ -53,7 +66,23 @@
       "support": "24/7 support"
     }
   },
+  "faq": {
+    "sub_tag": "FAQ",
+    "title": "Have any questions?",
+    "subtitle": "Here are answers to the most frequently asked questions about our platform",
+    "q1": "How do I start as a service provider?",
+    "a1": "You can start by creating an account and selecting 'I want to work', then complete your profile and add your portfolio.",
+    "q2": "Does the site guarantee my financial rights?",
+    "a2": "Yes, we use a secure payment system that protects the rights of both the client and provider until work completion is confirmed.",
+    "q3": "What types of services can I offer?",
+    "a3": "You can offer digital services (remote) like programming and design, or local services like plumbing and electrical work.",
+    "q4": "How do I communicate with clients?",
+    "a4": "The platform provides a secure internal chat system for direct communication and agreeing on project details.",
+    "q5": "Are there any registration fees?",
+    "a5": "Registering on the platform is completely free for both clients and service providers."
+  },
   "offer": {
+    "sub_tag": "Our Process",
     "title": "Why Choose Us?",
     "subtitle": "We provide a seamless and trusted experience to get your work done",
     "items": {
@@ -93,17 +122,20 @@
     "project_assigned_message": "You have been assigned to '{{work_title}}'."
   },
   "categories": {
-    "title": "Browse by Category",
-    "subtitle": "Find the right expert for any task",
+    "sub_tag": "Browse Categories",
+    "title": "Browse Services by Category",
+    "subtitle": "Find the right expert for any task, whether digital or on-site",
+    "listings_label": "Services",
+    "view_all": "View All",
     "items": {
+      "web_dev": "Web Development",
+      "design": "Graphic Design",
+      "writing": "Content Writing",
       "plumbing": "Plumbing",
-      "electrical": "Electrical Work",
-      "photography": "Outdoor Photography",
+      "electrical": "Electrical",
+      "photography": "Photography",
       "cleaning": "Cleaning",
-      "carpentry": "Carpentry & Metalwork",
-      "interior_design": "Interior Design & Gypsum",
-      "contracting": "Light Contracting",
-      "car_services": "Car Services"
+      "carpentry": "Carpentry"
     }
   },
   "onboarding": {
@@ -126,12 +158,19 @@
     "step3_desc": "Tell us what you're good at so we can find you the right work."
   },
   "footer": {
-    "about_us": "About Us",
-    "about_desc": "Your #1 platform to connect with the best local service providers in your city.",
+    "about_us": "About Wasel",
+    "about_desc": "Your premier platform to reach the best service providers and freelancers in the Kingdom and the Middle East.",
     "quick_links": "Quick Links",
+    "platform_label": "Platform",
+    "support_label": "Support",
+    "legal_label": "Legal",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "cookies": "Cookies",
+    "saudi_made": "Proudly Made in Saudi Arabia 🇸🇦",
     "contact": "Contact Us",
     "email_placeholder": "Enter your email",
-    "rights": "All rights reserved © 2025",
+    "rights": "All rights reserved © 2026 Wasel",
     "develeoped_by": "Developed by Ali Safaa"
   },
   "auth": {
@@ -452,7 +491,8 @@
       "dashboard": "Dashboard",
       "requests": "Requests",
       "logout": "Logout",
-      "role": "Administrator"
+      "role": "Administrator",
+      "users": "Users"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -462,6 +502,24 @@
       "active_providers": "Active Providers",
       "total_revenue": "Total Revenue"
     },
+    "users": {
+      "title": "User Management",
+      "delete_success": "User deleted successfully",
+      "id": "ID",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "joined": "Joined",
+      "actions": "Actions",
+      "send_notification": "Send Notification",
+      "delete_user": "Delete User",
+      "send_notification_title": "Send Notification to {{name}}",
+      "notification_title": "Title",
+      "notification_message": "Message",
+      "notification_sent": "Notification Sent Successfully",
+      "send": "Send"
+    },
+    "active_chats": "Active Chats Monitoring",
     "requests": {
       "page_title": "Requests Management",
       "tab_pending": "Needs Confirmation",

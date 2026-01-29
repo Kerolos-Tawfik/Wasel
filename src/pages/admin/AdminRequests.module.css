@@ -314,14 +314,6 @@
 }
 
 @media (max-width: 1024px) {
-  /* Switch to cards earlier if table gets squeezed */
-  .tablecontainer {
-    display: none;
-  }
-  .mobileCards {
-    display: flex;
-  }
-
   .container {
     padding: 1rem;
   }
@@ -334,6 +326,12 @@
   .select,
   .input {
     width: 100%;
+  }
+
+  /* Make table scrollable horizontally on tablets */
+  .tablecontainer {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -570,4 +568,122 @@
   content: "📂";
   font-size: 3rem;
   opacity: 0.5;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .tabsWrapper {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tabBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .filtersWrapper {
+    padding: 1rem;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
+
+  .select,
+  .input {
+    width: 100%;
+  }
+
+  /* Make table scrollable horizontally on mobile */
+  .tablecontainer {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table {
+    min-width: 600px; /* Ensure table doesn't collapse */
+    display: table; /* Force table display */
+  }
+
+  .table th,
+  .table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .table th {
+    font-size: 0.7rem;
+  }
+
+  /* Adjust action buttons for mobile */
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .actionBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Modal adjustments */
+  .modalOverlay {
+    padding: 1rem;
+  }
+
+  .modalContent {
+    max-width: 95%;
+    max-height: 90vh;
+    padding: 1.5rem;
+  }
+
+  .modalHeader h3 {
+    font-size: 1.25rem;
+  }
+
+  /* Pagination */
+  .pagination {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .pageBtn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .tabBtn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .table {
+    min-width: 500px;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
 }

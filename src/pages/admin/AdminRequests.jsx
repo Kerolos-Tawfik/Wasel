@@ -24,6 +24,10 @@ const AdminRequests = () => {
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
+  // Chat State
+  const [chatMessages, setChatMessages] = useState([]);
+  const [loadingChat, setLoadingChat] = useState(false);
+
   const fetchRequests = async () => {
     setLoading(true);
     try {
@@ -50,6 +54,27 @@ const AdminRequests = () => {
     setIsModalOpen(true);
     setShowRejectInput(false);
     setRejectionReason("");
+    setChatMessages([]);
+
+    // Fetch chat if not completed/cancelled
+    if (req.status && !["completed", "cancelled"].includes(req.status)) {
+      fetchChat(req.id);
+    }
+  };
+
+  const fetchChat = async (id) => {
+    setLoadingChat(true);
+    try {
+      const response = await adminAPI.getChatMessages(id);
+      if (response.ok) {
+        const data = await response.json();
+        setChatMessages(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch chat:", error);
+    } finally {
+      setLoadingChat(false);
+    }
   };
 
   const handleApprove = async () => {
@@ -391,6 +416,62 @@ const AdminRequests = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Chat Section */}
+              {selectedRequest.status &&
+                !["new", "pending", "completed", "cancelled"].includes(
+                  selectedRequest.status,
+                ) && (
+                  <div
+                    style={{
+                      marginTop: "20px",
+                      borderTop: "1px solid #eee",
+                      paddingTop: "20px",
+                    }}
+                  >
+                    <h4 style={{ fontWeight: "bold", marginBottom: "10px" }}>
+                      Chat Log
+                    </h4>
+                    {loadingChat ? (
+                      <div>Loading chat...</div>
+                    ) : chatMessages.length === 0 ? (
+                      <div>No messages.</div>
+                    ) : (
+                      <div
+                        style={{
+                          maxHeight: "200px",
+                          overflowY: "auto",
+                          background: "#f9f9f9",
+                          padding: "10px",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        {chatMessages.map((msg) => (
+                          <div
+                            key={msg.id}
+                            style={{
+                              marginBottom: "8px",
+                              borderBottom: "1px solid #eee",
+                              paddingBottom: "4px",
+                            }}
+                          >
+                            <strong>{msg.sender?.full_name}:</strong>{" "}
+                            {msg.content}
+                            <span
+                              style={{
+                                fontSize: "0.8em",
+                                color: "#666",
+                                marginLeft: "8px",
+                              }}
+                            >
+                              {new Date(msg.created_at).toLocaleString()}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
               {/* Review Actions */}
               {modalMode === "review" && (

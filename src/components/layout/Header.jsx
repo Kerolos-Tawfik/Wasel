@@ -166,7 +166,7 @@ const Header = ({ user, userProfile }) => {
       <Link to="/">
         <img
           className={styles.logo}
-          src="/assets/images/Wasel-Logo-Without-Slogan.svg"
+          src="/assets/images/Wasel.png"
           alt="logo"
         />
       </Link>

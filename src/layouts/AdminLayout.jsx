@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { MdDashboard, MdList } from "react-icons/md";
+import { MdDashboard, MdList, MdPeople, MdChatBubble } from "react-icons/md";
 import { HiMenuAlt3, HiLogout } from "react-icons/hi";
 import styles from "./AdminLayout.module.css";
 
@@ -11,9 +11,8 @@ const AdminLayout = () => {
   const { t, i18n } = useTranslation();
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken"); // Unify on authToken
-    localStorage.removeItem("adminToken"); // Clear legacy just in case
-    navigate("/login"); // Redirect to main login
+    // Just navigate back to the main site without logging out
+    navigate("/");
   };
 
   const toggleLanguage = () => {
@@ -64,6 +63,17 @@ const AdminLayout = () => {
                   style={{ display: !isSidebarOpen ? "none" : "block" }}
                 >
                   {t("admin.layout.requests")}
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/admin/users" className={styles.navItem}>
+                <MdPeople size={22} />
+                <span
+                  className={styles.navText}
+                  style={{ display: !isSidebarOpen ? "none" : "block" }}
+                >
+                  {t("admin.layout.users") || "Users"}
                 </span>
               </Link>
             </li>

@@ -1,49 +1,70 @@
-const BASE_URL = "http://localhost:8000/api/admin";
-
-const getHeaders = () => {
-  const token = localStorage.getItem("authToken");
-  return {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-    Authorization: `Bearer ${token}`,
-  };
-};
+import { apiFetch } from "./apiService";
 
 export const adminAPI = {
-  // Stats
   getStats: async () => {
-    return fetch(`${BASE_URL}/stats`, {
-      method: "GET",
-      headers: getHeaders(),
-    });
+    const response = await apiFetch("/admin/stats");
+    return response;
   },
 
-  // Requests
   getRequests: async (page = 1, filters = {}) => {
-    const queryParams = new URLSearchParams({ page, ...filters }).toString();
-    return fetch(`${BASE_URL}/requests?${queryParams}`, {
-      method: "GET",
-      headers: getHeaders(),
+    const queryParams = new URLSearchParams();
+    queryParams.append("page", page);
+    Object.keys(filters).forEach((key) => {
+      if (filters[key]) {
+        queryParams.append(key, filters[key]);
+      }
     });
+    const response = await apiFetch(
+      `/admin/requests?${queryParams.toString()}`,
+    );
+    return response;
   },
 
-  updateRequestStatus: async (id, status, rejection_reason = null) => {
+  updateRequestStatus: async (id, status, rejectionReason = null) => {
     const body = { status };
-    if (rejection_reason) {
-      body.rejection_reason = rejection_reason;
+    if (rejectionReason) {
+      body.rejection_reason = rejectionReason;
     }
-    return fetch(`${BASE_URL}/requests/${id}/status`, {
+    const response = await apiFetch(`/admin/requests/${id}/status`, {
       method: "PUT",
-      headers: getHeaders(),
       body: JSON.stringify(body),
     });
+    return response;
   },
 
   updateRequest: async (id, data) => {
-    return fetch(`${BASE_URL}/requests/${id}`, {
+    const response = await apiFetch(`/admin/requests/${id}`, {
       method: "PUT",
-      headers: getHeaders(),
       body: JSON.stringify(data),
     });
+    return response;
+  },
+
+  getUsers: async (page = 1, search = "") => {
+    const queryParams = new URLSearchParams();
+    queryParams.append("page", page);
+    if (search) queryParams.append("search", search);
+    const response = await apiFetch(`/admin/users?${queryParams.toString()}`);
+    return response;
+  },
+
+  deleteUser: async (id) => {
+    const response = await apiFetch(`/admin/users/${id}`, {
+      method: "DELETE",
+    });
+    return response;
+  },
+
+  sendNotification: async (data) => {
+    const response = await apiFetch(`/admin/users/notify`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return response;
+  },
+
+  getChatMessages: async (requestId) => {
+    const response = await apiFetch(`/admin/chats/${requestId}`);
+    return response;
   },
 };

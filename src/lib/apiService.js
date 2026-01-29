@@ -1,21 +1,11 @@
-<<<<<<< HEAD
-const API_BASE_URL = "https://waselp.com/api";
-=======
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
->>>>>>> f6b337d1edad2c855d6357286650f980cbaea225
+// const API_BASE_URL = "https://waselp.com/api";
+const API_BASE_URL = "http://127.0.0.1:8000/api";
 
-/**
- * Get authentication token from localStorage
- */
 const getAuthToken = () => {
   return localStorage.getItem("authToken");
 };
 
-/**
- * Base fetch wrapper with authentication
- */
-const apiFetch = async (endpoint, options = {}) => {
+export const apiFetch = async (endpoint, options = {}) => {
   const token = getAuthToken();
 
   const headers = {
@@ -38,9 +28,6 @@ const apiFetch = async (endpoint, options = {}) => {
   return response;
 };
 
-/**
- * Authentication API calls
- */
 export const authAPI = {
   register: async (userData) => {
     const response = await fetch(`${API_BASE_URL}/register`, {
@@ -141,9 +128,6 @@ export const profileAPI = {
   },
 };
 
-/**
- * Portfolio API calls
- */
 export const portfolioAPI = {
   getPortfolio: async (userId) => {
     const response = await fetch(`${API_BASE_URL}/portfolio/${userId}`);
@@ -196,9 +180,6 @@ export const categoriesAPI = {
   },
 };
 
-/**
- * Work Request API calls
- */
 export const workRequestAPI = {
   getAllWorkRequests: async () => {
     const response = await fetch(`${API_BASE_URL}/work-requests`);
@@ -331,5 +312,57 @@ export const notificationAPI = {
       method: "POST",
     });
     return response;
+  },
+};
+
+export const adminAPI = {
+  getStats: async () => {
+    return await apiFetch("/admin/stats");
+  },
+
+  getRequests: async (params) => {
+    const queryString = new URLSearchParams(params).toString();
+    return await apiFetch(`/admin/requests?${queryString}`);
+  },
+
+  updateRequestStatus: async (id, statusData) => {
+    return await apiFetch(`/admin/requests/${id}/status`, {
+      method: "PUT",
+      body: JSON.stringify(statusData),
+    });
+  },
+
+  updateRequest: async (id, data) => {
+    return await apiFetch(`/admin/requests/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  getUsers: async (params) => {
+    const queryString = new URLSearchParams(params).toString();
+    return await apiFetch(`/admin/users?${queryString}`);
+  },
+
+  deleteUser: async (id) => {
+    return await apiFetch(`/admin/users/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  sendNotification: async (data) => {
+    return await apiFetch("/admin/users/notify", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  getActiveChats: async (params) => {
+    const queryString = new URLSearchParams(params).toString();
+    return await apiFetch(`/admin/chats/active?${queryString}`);
+  },
+
+  getChatMessages: async (workRequestId) => {
+    return await apiFetch(`/admin/chats/${workRequestId}`);
   },
 };
