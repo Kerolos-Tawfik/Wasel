@@ -64,22 +64,67 @@
       "budget": "Best for every budget",
       "protected": "Protected payments",
       "support": "24/7 support"
+    },
+    "stats": {
+      "freelancers": "Freelancers & Experts",
+      "verified": "Verified Experts"
     }
   },
   "faq": {
-    "sub_tag": "FAQ",
-    "title": "Have any questions?",
-    "subtitle": "Here are answers to the most frequently asked questions about our platform",
-    "q1": "How do I start as a service provider?",
-    "a1": "You can start by creating an account and selecting 'I want to work', then complete your profile and add your portfolio.",
-    "q2": "Does the site guarantee my financial rights?",
-    "a2": "Yes, we use a secure payment system that protects the rights of both the client and provider until work completion is confirmed.",
-    "q3": "What types of services can I offer?",
-    "a3": "You can offer digital services (remote) like programming and design, or local services like plumbing and electrical work.",
-    "q4": "How do I communicate with clients?",
-    "a4": "The platform provides a secure internal chat system for direct communication and agreeing on project details.",
-    "q5": "Are there any registration fees?",
-    "a5": "Registering on the platform is completely free for both clients and service providers."
+    "sub_tag": "Talk to support",
+    "title": "Frequently asked questions",
+    "subtitle": "Find answers to your questions instantly. Need more guidance? Dive into our extensive documentation for all your queries.",
+    "contact_cta": "Contact Our Team",
+    "q1": "How do I get started as a freelancer?",
+    "a1": "Sign up, complete your profile, and start browsing projects. Submit proposals and communicate with clients to get hired.",
+    "q2": "What kind of projects can I find?",
+    "a2": "You can find a wide range of projects in various fields such as web development, design, writing, and more.",
+    "q3": "How do I ensure payment security?",
+    "a3": "We use a secure payment system that ensures the rights of both the client and the freelancer through the escrow feature.",
+    "q4": "What fees are involved for freelancers?",
+    "a4": "Our fees are competitive and transparent, with a small percentage deducted from each completed project to cover platform operating costs.",
+    "q5": "How can I build trust with clients?",
+    "a5": "By completing your profile, showcasing your previous work, and getting positive reviews from previous clients."
+  },
+  "featured": {
+    "tagline": "Boost Your Working Flow",
+    "title": "Your One-Stop Online Marketplace for Everything You Need",
+    "subtitle": "Your premier online marketplace. Find quality products and services, connect with trusted sellers, and enjoy a seamless shopping experience today.",
+    "user_review": "User review",
+    "starting_from": "Starting from",
+    "categories": {
+      "all": "All",
+      "prog": "Programming & Tech",
+      "ai": "Smart AI Services",
+      "design": "Graphics & Design",
+      "marketing": "Digital Marketing"
+    },
+    "services": {
+      "s1": {
+        "title": "Custom WordPress Website Development",
+        "location": "Germany"
+      },
+      "s2": {
+        "title": "AI Solution Development",
+        "location": "Japan"
+      },
+      "s3": {
+        "title": "AI Solution Development",
+        "location": "Germany"
+      },
+      "s4": {
+        "title": "Stunning UI/UX for iOS & Android",
+        "location": "United States (US)"
+      },
+      "s5": {
+        "title": "Website SEO Audit and Optimization",
+        "location": "United States (US)"
+      },
+      "s6": {
+        "title": "WordPress Website Development",
+        "location": "United States (US)"
+      }
+    }
   },
   "offer": {
     "sub_tag": "Our Process",
@@ -132,10 +177,10 @@
       "design": "Graphic Design",
       "writing": "Content Writing",
       "plumbing": "Plumbing",
-      "electrical": "Electrical",
+      "electrical": "Electrical Work",
       "photography": "Photography",
-      "cleaning": "Cleaning",
-      "carpentry": "Carpentry"
+      "cleaning": "Cleaning Services",
+      "carpentry": "Carpentry & Smithing"
     }
   },
   "onboarding": {
@@ -517,7 +562,10 @@
       "notification_title": "Title",
       "notification_message": "Message",
       "notification_sent": "Notification Sent Successfully",
-      "send": "Send"
+      "send": "Send",
+      "confirm_role_change": "Change role of {{name}} to {{role}}?",
+      "role_update_success": "Role updated successfully",
+      "role_update_failed": "Failed to update role"
     },
     "active_chats": "Active Chats Monitoring",
     "requests": {
@@ -549,6 +597,22 @@
       "attachments": "Attachments",
       "file": "File",
       "no_attachments": "No attachments"
+    },
+    "support": {
+      "title": "Support Chats",
+      "user": "User",
+      "last_message": "Last Message",
+      "status": "Status",
+      "action": "Action",
+      "no_chats": "No active support chats",
+      "open_chat": "Open Chat"
     }
+  },
+  "support": {
+    "title": "Help & Support",
+    "subtitle": "We are here to help you with any questions or issues.",
+    "start_chat": "Start Live Chat",
+    "login_required": "Please login to contact support",
+    "initiate_error": "Failed to start support chat"
   }
 }

@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./hero.module.css";
 
 const Hero = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   return (
@@ -35,7 +35,11 @@ const Hero = () => {
           </div>
           <h1 className={styles.title}>
             {t("hero.title_part1") || "Connect with the best"}{" "}
-            <span className={styles.decorative}>
+            <span
+              className={`${styles.decorative} ${
+                i18n.language === "en" ? styles.blockDecorative : ""
+              }`}
+            >
               {t("hero.title_decorative") || "Freelance Excellence"}
             </span>{" "}
             {t("hero.title_part2") || "for your projects"}
@@ -72,18 +76,6 @@ const Hero = () => {
             <button className={styles.btnSecondary}>
               {t("hero.cta_learn_more") || "Learn More"}
             </button>
-          </div>
-
-          <div className={styles.trustSignals}>
-            <div className={styles.avatars}>
-              <img src="https://i.pravatar.cc/40?u=1" alt="user" />
-              <img src="https://i.pravatar.cc/40?u=2" alt="user" />
-              <img src="https://i.pravatar.cc/40?u=3" alt="user" />
-              <div className={styles.avatarMore}>+12k</div>
-            </div>
-            <p>
-              {t("hero.trust_text") || "Joined by 12,000+ experts and clients"}
-            </p>
           </div>
         </motion.div>
 
@@ -131,6 +123,34 @@ const Hero = () => {
             </motion.div>
           </div>
         </motion.div>
+
+        {/* Logo Footer integrated at bottom of container */}
+        <div className={styles.heroFooter}>
+          <div className={styles.logoGrid}>
+            {[
+              {
+                name: "VISA",
+                url: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg",
+              },
+              {
+                name: "PayPal",
+                url: "https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg",
+              },
+              {
+                name: "Apple Pay",
+                url: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg",
+              },
+              {
+                name: "Stripe",
+                url: "https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg",
+              },
+            ].map((logo, index) => (
+              <div key={index} className={styles.logoWrapper}>
+                <img src={logo.url} alt={logo.name} className={styles.logo} />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

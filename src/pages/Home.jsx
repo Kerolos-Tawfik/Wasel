@@ -1,7 +1,7 @@
 import Hero from "../../../Wasel/src/components/home/Hero";
 import Features from "../../../Wasel/src/components/home/Features";
 import Categories from "../../../Wasel/src/components/home/Categories";
-import TrustedBy from "../../../Wasel/src/components/home/TrustedBy";
+import FeaturedServices from "../../../Wasel/src/components/home/FeaturedServices";
 import FAQ from "../../../Wasel/src/components/home/FAQ";
 import ContactUs from "../../../Wasel/src/components/home/ContactUs";
 import { useEffect } from "react";
@@ -35,8 +35,8 @@ const Home = ({ user, selectedRole }) => {
   return (
     <>
       <Hero />
-      <TrustedBy />
       <Categories />
+      <FeaturedServices />
       <Features />
       <FAQ />
       <ContactUs />

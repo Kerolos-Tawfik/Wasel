@@ -1,6 +1,6 @@
 .section {
   padding: 8rem 2rem;
-  background-color: white;
+  background-color: var(--bg-secondary);
   position: relative;
   overflow: hidden;
 }
@@ -14,14 +14,14 @@
 
 .title {
   font-size: clamp(2.5rem, 5vw, 3.5rem);
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-color);
   margin-bottom: 1rem;
 }
 
 .subtitle {
-  font-size: 1.125rem;
-  color: #64748b;
+  font-size: 1rem;
+  color: var(--text-light);
   max-width: 600px;
   margin: 0 auto;
 }
@@ -133,7 +133,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #cbd5e1;
   transition: color 0.3s ease;
 }

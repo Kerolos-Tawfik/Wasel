@@ -5,8 +5,9 @@ import { Plus, Minus, HelpCircle } from "lucide-react";
 import styles from "./FAQ.module.css";
 
 const FAQ = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(null);
+  const isRTL = i18n.language === "ar";
 
   const faqs = [
     { id: 1, question: t("faq.q1"), answer: t("faq.a1") },
@@ -19,29 +20,36 @@ const FAQ = () => {
   return (
     <section className={styles.section} id="faq">
       <div className={styles.container}>
-        <motion.div
-          className={styles.header}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <div className="sub-tag">
-            <HelpCircle size={14} style={{ marginRight: "8px" }} />
-            {t("faq.sub_tag") || "Common Questions"}
-          </div>
-          <h2 className={styles.title}>
-            {t("faq.title") || "Frequently Asked Questions"}
-          </h2>
-          <p className={styles.subtitle}>{t("faq.subtitle")}</p>
-        </motion.div>
+        <div className={styles.sideContent}>
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className={styles.tagline}>
+              {t("faq.sub_tag") || "Talk to support"}
+            </span>
+            <h2 className={styles.title}>
+              {t("faq.title") || "Frequently asked questions"}
+            </h2>
+            <p className={styles.subtitle}>
+              {t("faq.subtitle") ||
+                "Find answers to your questions instantly. Need more guidance? Dive into our extensive documentation for all your queries."}
+            </p>
+            <button className={styles.contactBtn}>
+              {t("faq.contact_cta") || "Contact Our Team"}
+            </button>
+          </motion.div>
+        </div>
 
         <div className={styles.faqList}>
           {faqs.map((faq, index) => (
             <motion.div
               key={faq.id}
               className={`${styles.faqItem} ${activeIndex === index ? styles.active : ""}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
@@ -54,9 +62,9 @@ const FAQ = () => {
                 <span>{faq.question}</span>
                 <div className={styles.iconWrapper}>
                   {activeIndex === index ? (
-                    <Minus size={20} />
+                    <Minus size={18} />
                   ) : (
-                    <Plus size={20} />
+                    <Plus size={18} />
                   )}
                 </div>
               </button>

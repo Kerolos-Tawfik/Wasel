@@ -67,4 +67,23 @@ export const adminAPI = {
     const response = await apiFetch(`/admin/chats/${requestId}`);
     return response;
   },
+
+  updateUser: async (id, data) => {
+    const response = await apiFetch(`/admin/users/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+    return response;
+  },
+
+  getSupportChats: async () => {
+    const response = await apiFetch("/admin/support/chats");
+    return response;
+  },
+
+  getActiveChats: async (params) => {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await apiFetch(`/admin/chats/active?${queryString}`);
+    return response;
+  },
 };

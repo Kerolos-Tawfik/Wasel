@@ -1,6 +1,6 @@
 .section {
   padding: 8rem 2rem;
-  background-color: white;
+  background-color: var(--bg-secondary);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -27,14 +27,14 @@
 
 .title {
   font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-color);
   margin-bottom: 1.5rem;
 }
 
 .subtitle {
-  font-size: 1.125rem;
-  color: #64748b;
+  font-size: 1rem;
+  color: var(--text-light);
   max-width: 650px;
   margin: 0 auto;
 }
@@ -107,7 +107,7 @@
 
 .cardTitle {
   font-size: 1.625rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: 1.25rem;
   color: var(--text-color);
   position: relative;
@@ -115,11 +115,12 @@
 }
 
 .cardDesc {
-  color: #64748b;
+  color: var(--text-light);
   line-height: 1.8;
   font-size: 1.0625rem;
   position: relative;
   z-index: 2;
+  font-weight: 400;
 }
 
 .connector {
