@@ -21,76 +21,74 @@ const Footer = ({ user }) => {
 
   return (
     <footer className={styles.footer} id="footer">
-      {/* Logo Section - Top Center */}
-      <div className={styles.logoSection}>
-        <img
-          className={styles.logo}
-          src="/assets/images/Wasel-Logo-Without-Slogan.svg"
-          alt="Wasel"
-        />
-      </div>
-
-      {/* Main Footer Content */}
-      <div className={styles.mainContent}>
-        {/* About */}
-        <div className={styles.brandArea}>
-          <p className={styles.tagline}>{t("footer.about_desc")}</p>
-        </div>
-
-        <div className={styles.linksArea}>
-          <div className={styles.linkGroup}>
-            <h5>{t("footer.quick_links")}</h5>
-            {user ? (
-              <>
-                <button onClick={() => scrollToSection("add-work")}>
-                  {t("header.add_work")}
-                </button>
-                <button onClick={() => scrollToSection("browse-work")}>
-                  {t("header.browse_work")}
-                </button>
-              </>
-            ) : (
-              <>
-                <button onClick={() => scrollToSection("home")}>
-                  {t("header.home")}
-                </button>
-                <button onClick={() => scrollToSection("why-choose-us")}>
-                  {t("header.why_choose_us")}
-                </button>
-                <button onClick={() => scrollToSection("services")}>
-                  {t("header.services")}
-                </button>
-              </>
-            )}
+      <div className={styles.container}>
+        <div className={styles.topSection}>
+          <div className={styles.brandColumn}>
+            <img
+              className={styles.logo}
+              src="/assets/images/Wasel_footer.png"
+              alt="Wasel"
+            />
+            <p className={styles.tagline}>
+              {t("footer.about_desc") ||
+                "Connecting talent with opportunity across the kingdom and beyond."}
+            </p>
+            <div className={styles.socialIcons}>
+              <a href="#" className={styles.socialLink}>
+                <Facebook size={18} />
+              </a>
+              <a href="#" className={styles.socialLink}>
+                <Twitter size={18} />
+              </a>
+              <a href="#" className={styles.socialLink}>
+                <Instagram size={18} />
+              </a>
+              <a href="#" className={styles.socialLink}>
+                <Youtube size={18} />
+              </a>
+            </div>
           </div>
 
-          {/* Contact */}
-          <div className={styles.linkGroup}>
-            <h5>{t("footer.contact")}</h5>
-            <a href="mailto:info@wasel.com">info@wasel.com</a>
-            <a href="tel:+966123456789">+966 12 345 6789</a>
+          <div className={styles.linksGrid}>
+            <div className={styles.linkColumn}>
+              <h5>{t("footer.platform_label") || "Platform"}</h5>
+              <button onClick={() => scrollToSection("home")}>
+                {t("header.home")}
+              </button>
+              <button onClick={() => scrollToSection("services")}>
+                {t("header.services")}
+              </button>
+              <button onClick={() => scrollToSection("why-choose-us")}>
+                {t("header.why_choose_us")}
+              </button>
+            </div>
+            <div className={styles.linkColumn}>
+              <h5>{t("footer.support_label") || "Support"}</h5>
+              <button onClick={() => scrollToSection("faq")}>
+                {t("faq.title") || "Help Center"}
+              </button>
+              <button onClick={() => scrollToSection("footer")}>
+                {t("footer.contact")}
+              </button>
+              <a href="mailto:info@wasel.com">info@wasel.com</a>
+            </div>
+            <div className={styles.linkColumn}>
+              <h5>{t("footer.legal_label") || "Legal"}</h5>
+              <button>{t("footer.privacy_policy") || "Privacy Policy"}</button>
+              <button>
+                {t("footer.terms_of_service") || "Terms of Service"}
+              </button>
+              <button>{t("footer.cookies") || "Cookies"}</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom Bar */}
-      <div className={styles.bottomBar}>
-        <div className={styles.bottomContent}>
-          <p>{t("footer.rights")}</p>
-
-          <div className={styles.socialIcons}>
-            <a href="#" aria-label="Facebook">
-              <Facebook size={20} />
-            </a>
-            <a href="#" aria-label="Twitter">
-              <Twitter size={20} />
-            </a>
-            <a href="#" aria-label="Instagram">
-              <Instagram size={20} />
-            </a>
-            <a href="#" aria-label="Youtube">
-              <Youtube size={20} />
-            </a>
+        <div className={styles.bottomBar}>
+          <p>{t("footer.rights") || "© 2026 Wasel. All rights reserved."}</p>
+          <div className={styles.bottomLinks}>
+            <span>
+              {t("footer.saudi_made") || "Proudly Made in Saudi Arabia 🇸🇦"}
+            </span>
           </div>
         </div>
       </div>

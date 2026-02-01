@@ -44,7 +44,7 @@ const MyRequests = ({ user }) => {
   useEffect(() => {
     if (!loading && requests.length > 0 && targetWorkRequestId) {
       const work = requests.find(
-        (r) => String(r.id) === String(targetWorkRequestId)
+        (r) => String(r.id) === String(targetWorkRequestId),
       );
       if (work) {
         if (
@@ -73,7 +73,7 @@ const MyRequests = ({ user }) => {
       console.error("Error fetching my requests:", error);
       toast.error(
         "An error occurred while fetching your requests",
-        toastConfig
+        toastConfig,
       );
     } finally {
       setLoading(false);
@@ -140,13 +140,7 @@ const MyRequests = ({ user }) => {
                         </span>
                       </div>
                     )}
-                    <div className={styles.metaItem}>
-                      <Calendar size={16} />
-                      <span>
-                        {request.expected_date ||
-                          t("findWork.date_not_specified")}
-                      </span>
-                    </div>
+
                     {request.budget_max && (
                       <div className={styles.metaItem}>
                         <span>
@@ -239,7 +233,7 @@ const DetailModal = ({
         setCurrentStatus(data.work_request.status);
         toast.info(
           t("findWork.status_request_sent") || "Status change requested",
-          toastConfig
+          toastConfig,
         );
         onUpdate();
         onClose();
@@ -281,12 +275,7 @@ const DetailModal = ({
                 </span>
               </div>
             )}
-            <div className={styles.infoRow}>
-              <Calendar size={16} />
-              <span>
-                {work.expected_date || t("findWork.date_not_specified")}
-              </span>
-            </div>
+
             {work.budget_max && (
               <div className={styles.infoRow}>
                 <strong>{t("findWork.modal.budget")}: </strong>
@@ -333,8 +322,8 @@ const DetailModal = ({
                   ? t("findWork.assign_provider_first") ||
                     "Please assign a provider first"
                   : work.pending_status
-                  ? "Waiting for confirmation"
-                  : ""
+                    ? "Waiting for confirmation"
+                    : ""
               }
               className={`${styles.statusSelect} ${
                 work.pending_status ? styles.hasPending : ""

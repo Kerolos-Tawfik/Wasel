@@ -11,7 +11,11 @@
     "confirm_delete": "Are you sure you want to delete this item?",
     "image": "image",
     "images": "images",
-    "save": "Save"
+    "save": "Save",
+    "no_data": "No data",
+    "continue": "Continue",
+    "search": "Search",
+    "send": "Send"
   },
   "cities": {
     "saihat": "Saihat",
@@ -41,10 +45,20 @@
     "user": "User"
   },
   "hero": {
+    "badge": "Professional Services Marketplace",
+    "title_part1": "Connect with the best",
+    "title_decorative": "Freelance Excellence",
+    "title_part2": "for your projects",
     "title": "Find the best service providers for your needs",
     "subtitle": "Connect with trusted professionals in your city with ease and security.",
-    "search_placeholder": "Try \"Home maintenance\"...",
-    "search_button": "Search",
+    "search_placeholder": "What service are you looking for?",
+    "search_cta": "Search",
+    "select_category": "Category",
+    "popular": "Popular:",
+    "cta_get_started": "Get Started",
+    "cta_learn_more": "Learn More",
+    "trusted_label": "Trusted by over 500+ companies worldwide:",
+    "trust_text": "Joined by 12,000+ experts and clients",
     "features": {
       "quality": "Quality work done, quickly",
       "budget": "Best for every budget",
@@ -52,7 +66,23 @@
       "support": "24/7 support"
     }
   },
+  "faq": {
+    "sub_tag": "FAQ",
+    "title": "Have any questions?",
+    "subtitle": "Here are answers to the most frequently asked questions about our platform",
+    "q1": "How do I start as a service provider?",
+    "a1": "You can start by creating an account and selecting 'I want to work', then complete your profile and add your portfolio.",
+    "q2": "Does the site guarantee my financial rights?",
+    "a2": "Yes, we use a secure payment system that protects the rights of both the client and provider until work completion is confirmed.",
+    "q3": "What types of services can I offer?",
+    "a3": "You can offer digital services (remote) like programming and design, or local services like plumbing and electrical work.",
+    "q4": "How do I communicate with clients?",
+    "a4": "The platform provides a secure internal chat system for direct communication and agreeing on project details.",
+    "q5": "Are there any registration fees?",
+    "a5": "Registering on the platform is completely free for both clients and service providers."
+  },
   "offer": {
+    "sub_tag": "Our Process",
     "title": "Why Choose Us?",
     "subtitle": "We provide a seamless and trusted experience to get your work done",
     "items": {
@@ -77,20 +107,35 @@
     "new_message_title": "New Message",
     "new_message_body": "You have a new message from {{sender_name}}",
     "status_update": "Status Update",
-    "view_profile": "View Profile"
+    "view_profile": "View Profile",
+    "request_approved_title": "Request Approved",
+    "request_approved_message": "Your request '{{work_title}}' has been approved and is now live.",
+    "request_rejected_title": "Request Rejected",
+    "request_rejected_message": "Your request '{{work_title}}' was rejected. Reason: {{reason}}",
+    "status_accepted_title": "Status Change Accepted",
+    "status_accepted_message": "Your request to change status to '{{status}}' has been accepted.",
+    "status_rejected_title": "Status Change Rejected",
+    "status_rejected_message": "Your request to change status to '{{status}}' was rejected.",
+    "status_pending_title": "Status Change Requested",
+    "status_pending_message": "A status change to '{{pending_status}}' has been requested for '{{work_title}}'. Please confirm.",
+    "project_assigned_title": "Project Assigned",
+    "project_assigned_message": "You have been assigned to '{{work_title}}'."
   },
   "categories": {
-    "title": "Browse by Category",
-    "subtitle": "Find the right expert for any task",
+    "sub_tag": "Browse Categories",
+    "title": "Browse Services by Category",
+    "subtitle": "Find the right expert for any task, whether digital or on-site",
+    "listings_label": "Services",
+    "view_all": "View All",
     "items": {
+      "web_dev": "Web Development",
+      "design": "Graphic Design",
+      "writing": "Content Writing",
       "plumbing": "Plumbing",
-      "electrical": "Electrical Work",
-      "photography": "Outdoor Photography",
+      "electrical": "Electrical",
+      "photography": "Photography",
       "cleaning": "Cleaning",
-      "carpentry": "Carpentry & Metalwork",
-      "interior_design": "Interior Design & Gypsum",
-      "contracting": "Light Contracting",
-      "car_services": "Car Services"
+      "carpentry": "Carpentry"
     }
   },
   "onboarding": {
@@ -113,12 +158,19 @@
     "step3_desc": "Tell us what you're good at so we can find you the right work."
   },
   "footer": {
-    "about_us": "About Us",
-    "about_desc": "Your #1 platform to connect with the best local service providers in your city.",
+    "about_us": "About Wasel",
+    "about_desc": "Your premier platform to reach the best service providers and freelancers in the Kingdom and the Middle East.",
     "quick_links": "Quick Links",
+    "platform_label": "Platform",
+    "support_label": "Support",
+    "legal_label": "Legal",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "cookies": "Cookies",
+    "saudi_made": "Proudly Made in Saudi Arabia 🇸🇦",
     "contact": "Contact Us",
     "email_placeholder": "Enter your email",
-    "rights": "All rights reserved © 2025",
+    "rights": "All rights reserved © 2026 Wasel",
     "develeoped_by": "Developed by Ali Safaa"
   },
   "auth": {
@@ -226,7 +278,7 @@
     },
     "card": {
       "client": "Client",
-      "expected_date": "Expected Date",
+
       "city": "City",
       "category": "Category",
       "phone": "Phone Number",
@@ -251,7 +303,7 @@
       "contact": "Contact Client",
       "budget": "Budget",
       "duration": "Duration",
-      "expected_date": "Start Date",
+
       "open_chat": "Internal Chat",
       "status_history": "Status History",
       "no_history": "No history available yet.",
@@ -310,8 +362,7 @@
       "description_label": "Work Description",
       "user": "Enter your full name",
       "work_desc": "Describe what you need in detail...",
-      "date_label": "Expected Completion Date",
-      "expected_date": "Enter expected completion date",
+
       "phone_label": "Phone Number",
       "phone": "Enter your phone number",
       "attachments": "Attachments (Optional)",
@@ -422,5 +473,82 @@
     "send": "Send Message",
     "success": "Your message has been sent successfully!",
     "error": "Failed to send message. Please try again."
+  },
+  "admin": {
+    "login": {
+      "title": "Admin Access",
+      "subtitle": "Enter your credentials to continue",
+      "email_label": "Email Address",
+      "email_placeholder": "admin@example.com",
+      "password_label": "Password",
+      "password_placeholder": "••••••••",
+      "submit": "Sign In",
+      "success": "Login successful",
+      "failed": "Invalid email or password"
+    },
+    "layout": {
+      "title": "Admin",
+      "dashboard": "Dashboard",
+      "requests": "Requests",
+      "logout": "Logout",
+      "role": "Administrator",
+      "users": "Users"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "total_users": "Total Users",
+      "total_published_requests": "Published Requests",
+      "pending_requests": "Pending Requests",
+      "active_providers": "Active Providers",
+      "total_revenue": "Total Revenue"
+    },
+    "users": {
+      "title": "User Management",
+      "delete_success": "User deleted successfully",
+      "id": "ID",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "joined": "Joined",
+      "actions": "Actions",
+      "send_notification": "Send Notification",
+      "delete_user": "Delete User",
+      "send_notification_title": "Send Notification to {{name}}",
+      "notification_title": "Title",
+      "notification_message": "Message",
+      "notification_sent": "Notification Sent Successfully",
+      "send": "Send"
+    },
+    "active_chats": "Active Chats Monitoring",
+    "requests": {
+      "page_title": "Requests Management",
+      "tab_pending": "Needs Confirmation",
+      "tab_confirmed": "Published Requests",
+      "all_statuses": "All Statuses",
+      "status_new": "New",
+      "status_pending": "Pending",
+      "status_assigned": "Assigned",
+      "status_completed": "Completed",
+      "status_cancelled": "Cancelled",
+      "id": "ID",
+      "client": "Client",
+      "title": "Title",
+      "date": "Date",
+      "status": "Status",
+      "actions": "Actions",
+      "confirm_status_change": "Are you sure you want to change the status?",
+      "edit_title": "Edit",
+      "confirm_approve": "Confirm Approval?",
+      "review": "Review",
+      "review_title": "Review Request",
+      "reject": "Reject",
+      "approve_publish": "Approve & Publish",
+      "rejection_reason": "Rejection Reason (Required):",
+      "rejection_placeholder": "Explain why this request is being rejected...",
+      "confirm_rejection": "Confirm Rejection",
+      "attachments": "Attachments",
+      "file": "File",
+      "no_attachments": "No attachments"
+    }
   }
 }

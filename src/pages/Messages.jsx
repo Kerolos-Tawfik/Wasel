@@ -28,7 +28,7 @@ function Messages({ user }) {
         const data = await response.json();
         // Filter out conversations with no messages
         const validConversations = (data.conversations || []).filter(
-          (c) => c.last_message
+          (c) => c.last_message,
         );
         setConversations(validConversations);
       }
@@ -106,7 +106,7 @@ function Messages({ user }) {
                   <span className={styles.convTime}>
                     {conv.last_message
                       ? new Date(
-                          conv.last_message.created_at
+                          conv.last_message.created_at,
                         ).toLocaleDateString()
                       : ""}
                   </span>
@@ -123,14 +123,7 @@ function Messages({ user }) {
                       </span>
                     </div>
                   )}
-                  {conv.expected_date && (
-                    <div className={styles.contextItem}>
-                      <Calendar size={14} />
-                      <span>
-                        {new Date(conv.expected_date).toLocaleDateString()}
-                      </span>
-                    </div>
-                  )}
+
                   {conv.budget_max && (
                     <div className={styles.contextItem}>
                       <span className={styles.budgetText}>

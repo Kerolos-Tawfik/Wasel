@@ -49,9 +49,8 @@ function ClientsCard({
         try {
           // Always fetch fresh data to ensure status is up to date (handling notifications)
           const { workRequestAPI } = await import("../../lib/apiService");
-          const response = await workRequestAPI.getWorkRequestById(
-            initialWorkRequestId
-          );
+          const response =
+            await workRequestAPI.getWorkRequestById(initialWorkRequestId);
           if (response.ok) {
             const data = await response.json();
             const work = data.work_request;
@@ -150,7 +149,7 @@ function ClientsCard({
     // 5. Current User filter (My Requests)
     if (showMyRequestsOnly && currentUser) {
       currentFilteredData = currentFilteredData.filter(
-        (item) => item.user_id === currentUser.id
+        (item) => item.user_id === currentUser.id,
       );
     }
 
@@ -299,7 +298,7 @@ function ClientsCard({
                 >
                   {page}
                 </button>
-              )
+              ),
             )}
           </div>
 
@@ -423,22 +422,6 @@ function ClientsCard({
                     </div>
                   )}
 
-                  {selectedWork.expected_date && (
-                    <div className={styles.modalInfoItem}>
-                      <Calendar size={18} />
-                      <div>
-                        <span className={styles.modalLabel}>
-                          {t("findWork.modal.expected_date") || "Start Date"}
-                        </span>
-                        <p>
-                          {new Date(
-                            selectedWork.expected_date
-                          ).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
                   {selectedWork.created_at && (
                     <div className={styles.modalInfoItem}>
                       <Calendar size={18} />
@@ -448,7 +431,7 @@ function ClientsCard({
                         </span>
                         <p>
                           {new Date(
-                            selectedWork.created_at
+                            selectedWork.created_at,
                           ).toLocaleDateString()}
                         </p>
                       </div>
@@ -482,7 +465,7 @@ function ClientsCard({
                                 }`}
                               >
                                 {t(
-                                  `findWork.status.${log.old_status || "new"}`
+                                  `findWork.status.${log.old_status || "new"}`,
                                 )}
                               </span>
                               <ArrowRight
@@ -533,7 +516,7 @@ function ClientsCard({
                         <p>
                           {t("findWork.waiting_confirmation", {
                             status: t(
-                              `findWork.status.${selectedWork.pending_status}`
+                              `findWork.status.${selectedWork.pending_status}`,
                             ),
                           })}
                         </p>
@@ -558,7 +541,7 @@ function ClientsCard({
                             {
                               status: newStatus,
                               notes: "Status change requested",
-                            }
+                            },
                           );
                           if (response.ok) {
                             const data = await response.json();
@@ -571,7 +554,7 @@ function ClientsCard({
                         } catch (error) {
                           toast.error(
                             t("findWork.status_error") ||
-                              "Failed to update status"
+                              "Failed to update status",
                           );
                         }
                       }}
@@ -603,7 +586,7 @@ function ClientsCard({
                         <p className={styles.actionPrompt}>
                           {t("findWork.client_requested_status", {
                             status: t(
-                              `findWork.status.${selectedWork.pending_status}`
+                              `findWork.status.${selectedWork.pending_status}`,
                             ),
                           }) ||
                             `Client requested to change status to ${selectedWork.pending_status}`}
@@ -617,7 +600,7 @@ function ClientsCard({
                                 {
                                   status: selectedWork.pending_status,
                                   confirm: true,
-                                }
+                                },
                               );
                               if (response.ok) {
                                 const data = await response.json();
@@ -626,16 +609,15 @@ function ClientsCard({
 
                                 if (notificationId) {
                                   try {
-                                    const { notificationAPI } = await import(
-                                      "../../lib/apiService"
-                                    );
+                                    const { notificationAPI } =
+                                      await import("../../lib/apiService");
                                     await notificationAPI.markAsRead(
-                                      notificationId
+                                      notificationId,
                                     );
                                   } catch (e) {
                                     console.error(
                                       "Failed to mark notification read",
-                                      e
+                                      e,
                                     );
                                   }
                                 }
@@ -653,28 +635,27 @@ function ClientsCard({
                                 {
                                   status: selectedWork.status || "new",
                                   reject: true,
-                                }
+                                },
                               );
                               if (response.ok) {
                                 const data = await response.json();
                                 setSelectedWork(data.work_request);
                                 toast.success(
                                   t("findWork.status_rejected") ||
-                                    "Status change rejected"
+                                    "Status change rejected",
                                 );
 
                                 if (notificationId) {
                                   try {
-                                    const { notificationAPI } = await import(
-                                      "../../lib/apiService"
-                                    );
+                                    const { notificationAPI } =
+                                      await import("../../lib/apiService");
                                     await notificationAPI.markAsRead(
-                                      notificationId
+                                      notificationId,
                                     );
                                   } catch (e) {
                                     console.error(
                                       "Failed to mark notification read",
-                                      e
+                                      e,
                                     );
                                   }
                                 }
