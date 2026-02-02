@@ -23,6 +23,8 @@ import MyRequests from "./pages/MyRequests.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminRequests from "./pages/admin/AdminRequests.jsx";
 import AdminUsers from "./pages/admin/AdminUsers.jsx";
+import AdminSupport from "./pages/admin/AdminSupport.jsx";
+import Support from "./pages/Support.jsx";
 
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import PublicLayout from "./layouts/PublicLayout.jsx";
@@ -271,6 +273,15 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+
+              <Route
+                path="/support"
+                element={
+                  <ProtectedRoute user={user}>
+                    <Support currentUser={user} />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
 
             {/* Admin Routes - Protected by AdminRoute */}
@@ -285,6 +296,7 @@ export default function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="requests" element={<AdminRequests />} />
               <Route path="users" element={<AdminUsers />} />
+              <Route path="support" element={<AdminSupport />} />
               <Route index element={<AdminDashboard />} />
             </Route>
           </Routes>

@@ -1,11 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Original+Surfer&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Original+Surfer&family=Rakkas&family=Lalezar&display=swap");
 :root {
   --primary-color: #3b82f6;
   --primary-hover: #2563eb;
-  --primary-dark: #1e3a8a; /* Added darker blue for sections */
-  --bg-dark: #0f172a; /* Deep dark blue for contrasting sections */
-  --text-color: #1f2937;
-  --text-light: #6b7280;
+  --primary-dark: #1e3a8a;
+  --bg-dark: #0f172a;
+  --text-color: #1e293b;
+  --text-light: #64748b;
+  --text-muted: #94a3b8;
   --bg-color: #ffffff;
   --bg-secondary: #f3f4f6;
   --border-color: #e5e7eb;
@@ -29,7 +30,6 @@ body {
   overflow-x: hidden;
 }
 
-/* RTL Support Helpers */
 [dir="rtl"] {
   text-align: right;
 }

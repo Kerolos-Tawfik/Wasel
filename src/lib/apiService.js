@@ -359,6 +359,17 @@ export const adminAPI = {
     });
   },
 
+  updateUser: async (id, data) => {
+    return await apiFetch(`/admin/users/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  getSupportChats: async () => {
+    return await apiFetch("/admin/support/chats");
+  },
+
   getActiveChats: async (params) => {
     const queryString = new URLSearchParams(params).toString();
     return await apiFetch(`/admin/chats/active?${queryString}`);
@@ -366,5 +377,13 @@ export const adminAPI = {
 
   getChatMessages: async (workRequestId) => {
     return await apiFetch(`/admin/chats/${workRequestId}`);
+  },
+};
+
+export const supportAPI = {
+  initiateChat: async () => {
+    return await apiFetch("/support/chat/initiate", {
+      method: "POST",
+    });
   },
 };

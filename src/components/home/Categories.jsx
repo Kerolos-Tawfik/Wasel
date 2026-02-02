@@ -1,10 +1,9 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import styles from "./Categories.module.css";
-import { apiFetch } from "../../lib/apiService";
 
 const defaultImages = [
   // Tech & Office
@@ -31,26 +30,49 @@ const Categories = () => {
   const carouselRef = useRef(null);
   const navigate = useNavigate();
   const isRTL = i18n.language === "ar";
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await apiFetch("/categories");
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data.categories || []);
-        }
-      } catch (error) {
-        console.error("Failed to fetch categories", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const manualCategories = [
+    {
+      id: 1,
+      name: t("categories.items.web_dev"),
+      icon: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      id: 2,
+      name: t("categories.items.design"),
+      icon: "https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      id: 3,
+      name: t("categories.items.writing"),
+      icon: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      id: 4,
+      name: t("categories.items.plumbing"),
+      icon: "https://images.unsplash.com/photo-1581578731117-104f2a417954?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      id: 5,
+      name: t("categories.items.electrical"),
+      icon: "https://images.unsplash.com/photo-1621905476059-5f3360e755a2?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      id: 6,
+      name: t("categories.items.photography"),
+      icon: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      id: 7,
+      name: t("categories.items.cleaning"),
+      icon: "https://images.unsplash.com/photo-1584622050111-993a426fbf0a?auto=format&fit=crop&q=80&w=600",
+    },
+    {
+      id: 8,
+      name: t("categories.items.carpentry"),
+      icon: "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?auto=format&fit=crop&q=80&w=600",
+    },
+  ];
 
   const handleCardClick = () => {
     navigate("/login");
@@ -81,55 +103,35 @@ const Categories = () => {
             }
             whileTap={{ cursor: "grabbing" }}
           >
-            {loading ? (
-              <div
-                style={{
-                  padding: "2rem",
-                  textAlign: "center",
-                  width: "100%",
-                  color: "#64748b",
-                }}
+            {manualCategories.map((cat) => (
+              <motion.div
+                key={cat.id}
+                className={styles.card}
+                whileHover={{ y: -10 }}
               >
-                {t("common.loading")}
-              </div>
-            ) : (
-              categories.map((cat, index) => (
-                <motion.div
-                  key={cat.id}
-                  className={styles.card}
-                  whileHover={{ y: -10 }}
-                >
-                  <div
-                    className={styles.cardImage}
-                    style={{
-                      backgroundImage: `url(${cat.icon || defaultImages[index % defaultImages.length]})`,
+                <div
+                  className={styles.cardImage}
+                  style={{
+                    backgroundImage: `url(${cat.icon})`,
+                  }}
+                />
+                <div className={styles.imageOverlay} />
+
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle}>{cat.name}</h3>
+                  <p
+                    className={styles.cardLink}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCardClick();
                     }}
-                  />
-                  <div className={styles.imageOverlay} />
-
-                  {/* Optional: Show count if available */}
-                  {/* <div className={styles.countBadge}>
-                  {cat.work_requests_count || 0} {t("categories.listings_label")}
-                </div> */}
-
-                  <div className={styles.cardContent}>
-                    <h3 className={styles.cardTitle}>
-                      {isRTL ? cat.name_ar : cat.name_en}
-                    </h3>
-                    <p
-                      className={styles.cardLink}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCardClick();
-                      }}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {t("categories.view_all")} <ArrowRight size={16} />
-                    </p>
-                  </div>
-                </motion.div>
-              ))
-            )}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {t("categories.view_all")} <ArrowRight size={16} />
+                  </p>
+                </div>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </div>

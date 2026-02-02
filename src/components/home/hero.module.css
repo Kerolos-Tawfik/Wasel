@@ -60,10 +60,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 5rem;
+  row-gap: 2rem;
+  column-gap: 5rem;
   width: 100%;
   position: relative;
   z-index: 2;
+  flex-wrap: wrap;
 }
 
 .content {
@@ -73,21 +75,26 @@
 
 .title {
   font-size: clamp(2.75rem, 5.5vw, 4.75rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.05;
   color: white;
   margin-bottom: 2rem;
 }
 
 .decorative {
-  font-family: "Original Surfer", cursive;
+  font-family: "Lalezar", system-ui;
   color: var(--primary-color);
   font-weight: 400;
 }
 
+.blockDecorative {
+  display: block;
+  margin: 0.5rem 0;
+}
+
 .subtitle {
-  font-size: 1.375rem;
-  color: #cbd5e1;
+  font-size: 1rem;
+  color: #94a3b8; 
   line-height: 1.6;
   margin-bottom: 3.5rem;
   max-width: 650px;
@@ -155,8 +162,7 @@
   color: white;
   border: none;
   padding: 0.875rem 2.75rem;
-  border-radius: 100px;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 1rem;
   transition: all 0.3s ease;
 }
@@ -178,7 +184,7 @@
 .popularKeywords span {
   color: #94a3b8;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .keywordPills {
@@ -218,7 +224,6 @@
   gap: 0.75rem;
   color: #e2e8f0;
   font-size: 1rem;
-  font-weight: 500;
 }
 
 .checkIcon {
@@ -238,7 +243,7 @@
   border: none;
   padding: 1.125rem 2.75rem;
   border-radius: 18px;
-  font-weight: 800;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -256,7 +261,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 1.125rem 2.5rem;
   border-radius: 18px;
-  font-weight: 700;
+  font-weight: 500;
   transition: all 0.3s ease;
   backdrop-filter: blur(12px);
 }
@@ -266,49 +271,59 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Trust Signals */
-.trustSignals {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+/* Hero Footer (Logos) */
+.heroFooter {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding-top: 0;
 }
 
-.avatars {
-  display: flex;
-  align-items: center;
-}
-
-.avatars img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 3px solid var(--bg-dark);
-  margin-left: -18px;
-}
-
-.avatars img:first-child {
-  margin-left: 0;
-}
-
-.avatarMore {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  color: white;
+.logoGrid {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.875rem;
-  font-weight: 800;
-  border: 3px solid var(--bg-dark);
-  margin-left: -18px;
+  gap: 5rem;
+  flex-wrap: wrap;
 }
 
-.trustSignals p {
-  color: #94a3b8;
-  font-size: 1rem;
-  font-weight: 600;
+.logoWrapper {
+  opacity: 0.35;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoWrapper:hover {
+  opacity: 0.8;
+  transform: translateY(-3px);
+  filter: brightness(0) invert(1)
+    drop-shadow(0 5px 15px rgba(255, 255, 255, 0.1));
+}
+
+.logo {
+  height: 28px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+@media (max-width: 1200px) {
+  .heroFooter {
+    margin-top: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .logoGrid {
+    gap: 2.5rem;
+  }
+
+  .logo {
+    height: 20px;
+  }
 }
 
 /* Image Column Refinement */
@@ -336,7 +351,7 @@
 .floatingProfile {
   position: absolute;
   top: 10%;
-  left: -20%;
+  inset-inline-end: -20%;
   background: white;
   padding: 1.5rem;
   border-radius: 32px;
@@ -398,7 +413,7 @@
 .floatingStats {
   position: absolute;
   bottom: 10%;
-  right: -10%;
+  inset-inline-start: -10%;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   padding: 1.5rem 2rem;
@@ -426,21 +441,21 @@
   margin: 0;
   color: var(--text-color);
   font-size: 1.375rem;
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .statContent p {
   margin: 0;
   color: #64748b;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 /* Verified Badge Pro */
 .verifiedBadge {
   position: absolute;
   top: -10%;
-  right: 10%;
+  inset-inline-end: 10%;
   background: white;
   padding: 0.875rem 1.75rem;
   border-radius: 100px;
@@ -469,7 +484,7 @@
 /* Mobile Responsiveness Refinement */
 @media (max-width: 1280px) {
   .floatingProfile {
-    left: -10%;
+    inset-inline-end: -10%;
   }
 }
 

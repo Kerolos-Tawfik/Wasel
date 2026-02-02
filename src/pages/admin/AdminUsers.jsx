@@ -40,7 +40,12 @@ const AdminUsers = () => {
       const response = await adminAPI.getUsers(page, debouncedSearch);
       if (response.ok) {
         const data = await response.json();
-        setUsers(data.data || []);
+        const allUsers = data.data || [];
+        // Filter out admins from the list
+        const filteredUsers = allUsers.filter(
+          (u) => u.role !== "admin" && u.role !== "head_admin",
+        );
+        setUsers(filteredUsers);
         setTotalPages(data.last_page || 1);
       }
     } catch (error) {
@@ -194,18 +199,69 @@ const AdminUsers = () => {
                       </td>
                       <td>{user.email}</td>
                       <td>
-                        <span
-                          className={styles.statusBadge}
+                        <select
+                          value={user.role || "user"}
+                          onChange={async (e) => {
+                            const newRole = e.target.value;
+                            if (
+                              window.confirm(
+                                t("admin.users.confirm_role_change", {
+                                  name: user.full_name,
+                                  role: newRole,
+                                }) ||
+                                  `Change role of ${user.full_name} to ${newRole}?`,
+                              )
+                            ) {
+                              try {
+                                const response = await adminAPI.updateUser(
+                                  user.id,
+                                  {
+                                    role: newRole,
+                                  },
+                                );
+                                if (response.ok) {
+                                  toast.success(
+                                    t("admin.users.role_update_success") ||
+                                      "Role updated successfully",
+                                  );
+                                  fetchUsers();
+                                } else {
+                                  toast.error(
+                                    t("admin.users.role_update_failed") ||
+                                      "Failed to update role",
+                                  );
+                                }
+                              } catch (error) {
+                                console.error("Error updating role:", error);
+                                toast.error("Error updating role");
+                              }
+                            }
+                          }}
+                          className={styles.roleSelect}
                           style={{
+                            padding: "4px 8px",
+                            borderRadius: "6px",
+                            border: "1px solid #cbd5e1",
                             backgroundColor:
-                              user.role === "admin" ? "#f3e8ff" : "#dbeafe",
+                              user.role === "admin"
+                                ? "#f3e8ff"
+                                : user.role === "support"
+                                  ? "#dcfce7"
+                                  : "#fff",
                             color:
-                              user.role === "admin" ? "#6b21a8" : "#1e40af",
-                            border: `1px solid ${user.role === "admin" ? "#e9d5ff" : "#bfdbfe"}`,
+                              user.role === "admin"
+                                ? "#6b21a8"
+                                : user.role === "support"
+                                  ? "#166534"
+                                  : "#0f172a",
+                            fontWeight: 500,
+                            cursor: "pointer",
                           }}
                         >
-                          {user.role || "user"}
-                        </span>
+                          <option value="user">User</option>
+                          <option value="support">Support</option>
+                          <option value="admin">Admin</option>
+                        </select>
                       </td>
                       <td>{new Date(user.created_at).toLocaleDateString()}</td>
                       <td>
