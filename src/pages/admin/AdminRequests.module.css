@@ -109,6 +109,37 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* User Role Select - Custom Style */
+.roleSelect {
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+  appearance: none; /* Remove default arrow to style if needed, or keep for simplicity */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3F%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+  padding-right: 2rem; /* Space for arrow */
+}
+
+.roleSelect:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Role Specific Colors for Select Option Backgrounds (Visual indication) */
+.roleSelect option {
+  color: #0f172a;
+  background: white;
+  padding: 0.5rem;
+}
+
 /* Request Cards Grid (Replaces Table for Desktop too if desired, relying on Grid here) */
 /* We will keep Table for Desktop as requested usually, but styled nicely. */
 
@@ -483,15 +514,15 @@
 }
 
 .formGroup input,
+.formGroup textarea,
 .formGroup select,
-.formGroup textarea {
+.statusSelect {
   width: 100%;
-  padding: 0.875rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
   transition: all 0.2s;
-  background-color: #f8fafc;
-  font-size: 1rem;
 }
 
 .formGroup textarea {
@@ -501,11 +532,12 @@
 }
 
 .formGroup input:focus,
+.formGroup textarea:focus,
 .formGroup select:focus,
-.formGroup textarea:focus {
-  border-color: #3b82f6;
+.statusSelect:focus {
+  border-color: #6366f1;
   background-color: white;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
   outline: none;
 }
 

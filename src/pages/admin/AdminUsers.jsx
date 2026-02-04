@@ -239,9 +239,6 @@ const AdminUsers = () => {
                           }}
                           className={styles.roleSelect}
                           style={{
-                            padding: "4px 8px",
-                            borderRadius: "6px",
-                            border: "1px solid #cbd5e1",
                             backgroundColor:
                               user.role === "admin"
                                 ? "#f3e8ff"
@@ -254,8 +251,12 @@ const AdminUsers = () => {
                                 : user.role === "support"
                                   ? "#166534"
                                   : "#0f172a",
-                            fontWeight: 500,
-                            cursor: "pointer",
+                            borderColor:
+                              user.role === "admin"
+                                ? "#d8b4fe"
+                                : user.role === "support"
+                                  ? "#86efac"
+                                  : "#cbd5e1",
                           }}
                         >
                           <option value="user">User</option>

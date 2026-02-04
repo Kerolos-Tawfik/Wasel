@@ -86,4 +86,11 @@ export const adminAPI = {
     const response = await apiFetch(`/admin/chats/active?${queryString}`);
     return response;
   },
+
+  closeSupportTicket: async (id) => {
+    const response = await apiFetch(`/admin/support/chats/${id}/close`, {
+      method: "POST",
+    });
+    return response;
+  },
 };

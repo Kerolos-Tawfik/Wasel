@@ -15,7 +15,8 @@
     "no_data": "No data",
     "continue": "Continue",
     "search": "Search",
-    "send": "Send"
+    "send": "Send",
+    "open": "Open chat"
   },
   "cities": {
     "saihat": "Saihat",
@@ -217,6 +218,14 @@
     "email_placeholder": "Enter your email",
     "rights": "All rights reserved © 2026 Wasel",
     "develeoped_by": "Developed by Ali Safaa"
+  },
+  "status": {
+    "new": "New",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "assigned": "Assigned",
+    "pending": "Pending"
   },
   "auth": {
     "login_title": "Login",
@@ -520,6 +529,38 @@
     "error": "Failed to send message. Please try again."
   },
   "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Comprehensive platform performance overview",
+      "live": "Live",
+      "total_users": "Total Users",
+      "confirmed_requests": "Confirmed Requests",
+      "pending_requests": "Pending Review",
+      "total_requests": "Total Requests",
+      "requests_overview": "Requests Overview",
+      "distribution": "Request Distribution",
+      "live_analysis": "Live Analysis",
+      "confirmed": "Confirmed",
+      "pending": "Pending",
+      "total": "Total",
+      "no_data": "No Data",
+      "acceptance_rate": "Acceptance Rate",
+      "avg_processing": "Avg Processing",
+      "today_activity": "Today's Activity",
+      "completion_rate": "Completion Rate",
+      "days": "days",
+      "completed_requests": "Completed Requests",
+      "in_progress_requests": "In Progress",
+      "status_breakdown": "Status Breakdown",
+      "new_today": "New Today",
+      "completed": "Completed",
+      "in_progress": "In Progress",
+      "new": "New",
+      "cancelled": "Cancelled",
+      "of_total": "Of total requests",
+      "new_requests": "New requests",
+      "of_confirmed": "Of confirmed requests"
+    },
     "login": {
       "title": "Admin Access",
       "subtitle": "Enter your credentials to continue",
@@ -537,15 +578,8 @@
       "requests": "Requests",
       "logout": "Logout",
       "role": "Administrator",
-      "users": "Users"
-    },
-    "dashboard": {
-      "title": "Dashboard",
-      "total_users": "Total Users",
-      "total_published_requests": "Published Requests",
-      "pending_requests": "Pending Requests",
-      "active_providers": "Active Providers",
-      "total_revenue": "Total Revenue"
+      "users": "Users",
+      "support": "Support"
     },
     "users": {
       "title": "User Management",
@@ -592,11 +626,12 @@
       "reject": "Reject",
       "approve_publish": "Approve & Publish",
       "rejection_reason": "Rejection Reason (Required):",
-      "rejection_placeholder": "Explain why this request is being rejected...",
+      "rejection_placeholder": "Explain the reason for rejecting this request...",
       "confirm_rejection": "Confirm Rejection",
       "attachments": "Attachments",
       "file": "File",
-      "no_attachments": "No attachments"
+      "no_attachments": "No attachments",
+      "status_label": "Request Status"
     },
     "support": {
       "title": "Support Chats",
@@ -605,14 +640,69 @@
       "status": "Status",
       "action": "Action",
       "no_chats": "No active support chats",
-      "open_chat": "Open Chat"
+      "open_chat": "Open Chat",
+      "close": "Close Chat",
+      "confirm_close": "Are you sure you want to close the chat?"
     }
   },
   "support": {
     "title": "Help & Support",
     "subtitle": "We are here to help you with any questions or issues.",
-    "start_chat": "Start Live Chat",
+    "start_chat": "Contact Us",
     "login_required": "Please login to contact support",
-    "initiate_error": "Failed to start support chat"
+    "initiate_error": "Failed to start support chat",
+    "sidebar_title": "Help Center",
+    "menu_main": "Main Menu",
+    "menu_guides": "How it Works",
+    "menu_tickets": "My Support Tickets",
+    "knowledge_base": "Knowledge Base",
+    "search_placeholder": "How can we help you?",
+    "search_input": "Search for answers...",
+    "stat_quality": "Updated Content",
+    "stat_support": "24/7 Support",
+    "footer_copy": "© 2026 Wasel Help Center",
+    "client_cat": "For Clients",
+    "provider_cat": "For Providers",
+    "general_cat": "Account & General",
+    "article_1": "How to post a work request?",
+    "article_1_content": "To post a new request, log in and click 'Add Work' in the header. Fill in project details like title, description, and budget.",
+    "article_2": "How to choose the right provider?",
+    "article_2_content": "Review proposals, check provider profiles, and read previous client reviews to make an informed decision.",
+    "article_3": "Payment Protection Policy",
+    "article_3_content": "We secure your payments until the work is completed and you are satisfied with the delivery.",
+    "article_4": "How to cancel a request?",
+    "article_4_content": "You can cancel your request from the request details page as long as work hasn't started.",
+    "footer_links": "Important Links",
+    "provider_article_1": "How to verify my profile?",
+    "provider_article_1_content": "To verify your profile, upload your ID and portfolio items.",
+    "provider_article_2": "Improving my acceptance rate",
+    "provider_article_2_content": "Complete work on time and communicate well to get better reviews.",
+    "provider_article_3": "Commission fees explained",
+    "provider_article_3_content": "We charge a standard 15% commission fee on completed projects.",
+    "provider_article_4": "Withdrawing my earnings",
+    "provider_article_4_content": "Go to your wallet settings to link a bank account for withdrawal.",
+    "general_article_1": "Forgot Password?",
+    "general_article_1_content": "Use the 'Forgot Password' link on the login page to reset via email.",
+    "general_article_2": "Changing account email",
+    "general_article_2_content": "Contact support to update your registered email address.",
+    "general_article_3": "Privacy Policy",
+    "general_article_3_content": "We respect your privacy. Your data is encrypted and protected.",
+    "general_article_4": "Terms of Service",
+    "general_article_4_content": "By using our platform, you agree to our standard terms of service.",
+    "guide_client_title": "Start as a Client",
+    "guide_client_step_1": "Register Account",
+    "guide_client_step_1_desc": "Create a client account and explore services.",
+    "guide_client_step_2": "Post a Project",
+    "guide_client_step_2_desc": "Add project details, budget, and deadline to receive proposals.",
+    "guide_client_step_3": "Hire Freelancer",
+    "guide_client_step_3_desc": "Compare proposals, choose the best fit, and start working securely.",
+    "guide_provider_title": "Start as a Freelancer",
+    "guide_provider_step_1": "Complete Profile",
+    "guide_provider_step_1_desc": "Add your skills, bio, and a strong portfolio to attract clients.",
+    "guide_provider_step_2": "Browse Projects",
+    "guide_provider_step_2_desc": "Find projects matching your skills and submit convincing proposals.",
+    "guide_provider_step_3": "Work & Earn",
+    "guide_provider_step_3_desc": "Deliver high-quality work, get paid, and earn great reviews.",
+    "contact_support": "Contact Support"
   }
 }
