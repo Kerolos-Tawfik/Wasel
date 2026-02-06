@@ -1,8 +1,5 @@
 const API_BASE_URL = "https://waselp.com/api";
 
-/**
- * Get authentication token from localStorage
- */
 const getAuthToken = () => {
   return localStorage.getItem("authToken");
 };
@@ -385,5 +382,9 @@ export const supportAPI = {
     return await apiFetch("/support/chat/initiate", {
       method: "POST",
     });
+  },
+
+  getMySupportChats: async () => {
+    return await apiFetch("/support/my-chats");
   },
 };

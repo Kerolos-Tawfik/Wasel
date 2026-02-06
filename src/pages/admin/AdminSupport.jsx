@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { adminAPI } from "../../lib/adminApiService"; // We need to ensure adminApiService has getActiveChats
 import { supportAPI } from "../../lib/apiService"; // Or adminAPI depending on where we put it
 import ChatWindow from "../../components/chat/ChatWindow";
 import styles from "./AdminRequests.module.css";
+import customStyles from "./AdminSupport.module.css";
 import { LoaderCircle, MessageCircle, User } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -12,6 +13,13 @@ const AdminSupport = () => {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedChat, setSelectedChat] = useState(null);
+  const selectedChatRef = useRef(selectedChat);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Sync ref with state
+  useEffect(() => {
+    selectedChatRef.current = selectedChat;
+  }, [selectedChat]);
 
   // Poll for active chats
   const fetchChats = async () => {
@@ -19,7 +27,18 @@ const AdminSupport = () => {
       const response = await adminAPI.getSupportChats();
       if (response.ok) {
         const data = await response.json();
-        setChats(data.chats || []);
+        const newChats = data.chats || [];
+        setChats(newChats);
+
+        // Update selectedChat if it exists and matches the current ref (to avoid race condition)
+        if (selectedChatRef.current) {
+          const updatedChat = newChats.find(
+            (c) => c.id === selectedChatRef.current.id,
+          );
+          if (updatedChat) {
+            setSelectedChat(updatedChat);
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching chats:", error);
@@ -29,10 +48,26 @@ const AdminSupport = () => {
   };
 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { authAPI } = await import("../../lib/apiService");
+        const response = await authAPI.getCurrentUser();
+        if (response.ok) {
+          const data = await response.json();
+          setCurrentUser(data.user);
+        }
+      } catch (error) {
+        console.error("Error fetching admin user:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
     fetchChats();
     const interval = setInterval(fetchChats, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedChat]);
 
   return (
     <div className={styles.container}>
@@ -113,27 +148,77 @@ const AdminSupport = () => {
                       </td>
                       <td>
                         <span
-                          className={styles.statusBadge}
+                          className={`${styles.statusBadge} ${customStyles[chat.status] || styles.statusBadge}`}
                           style={{
-                            backgroundColor: "#dcfce7",
-                            color: "#166534",
-                            border: "1px solid #bbf7d0",
+                            backgroundColor:
+                              chat.status === "completed"
+                                ? "#f1f5f9"
+                                : chat.status === "in_progress"
+                                  ? "#dcfce7"
+                                  : "#e2e8f0",
+                            color:
+                              chat.status === "completed"
+                                ? "#64748b"
+                                : chat.status === "in_progress"
+                                  ? "#166534"
+                                  : "#1e293b",
+                            border: `1px solid ${chat.status === "completed" ? "#e2e8f0" : chat.status === "in_progress" ? "#bbf7d0" : "#cbd5e1"}`,
                           }}
                         >
-                          Active
+                          {t(`status.${chat.status}`) || chat.status}
                         </span>
                       </td>
                       <td>
-                        <button
-                          onClick={() => setSelectedChat(chat)}
-                          className={styles.actionBtnEdit}
-                          title={t("admin.support.open_chat")}
-                        >
-                          <MessageCircle size={16} />
-                          <span style={{ marginLeft: "5px" }}>
-                            {t("common.open")}
-                          </span>
-                        </button>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <button
+                            onClick={() => setSelectedChat(chat)}
+                            className={styles.actionBtnEdit}
+                            title={t("admin.support.open_chat")}
+                          >
+                            <MessageCircle size={16} />
+                            <span style={{ marginLeft: "5px" }}>
+                              {t("common.open")}
+                            </span>
+                          </button>
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              if (
+                                window.confirm(
+                                  t("admin.support.confirm_close") ||
+                                    "Are you sure you want to close this ticket?",
+                                )
+                              ) {
+                                try {
+                                  const response =
+                                    await adminAPI.closeSupportTicket(chat.id);
+                                  if (response.ok) {
+                                    toast.success(
+                                      t("admin.support.ticket_closed") ||
+                                        "Ticket closed successfully",
+                                    );
+                                    fetchChats();
+                                  } else {
+                                    toast.error(t("common.error"));
+                                  }
+                                } catch (e) {
+                                  toast.error(t("common.error"));
+                                }
+                              }
+                            }}
+                            className={customStyles.closeTicketBtnSmall}
+                            title={t("admin.support.close_ticket")}
+                            style={{
+                              padding: "0.25rem 0.5rem",
+                              fontSize: "0.8rem",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "4px",
+                            }}
+                          >
+                            {t("admin.support.close") || "Close"}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -144,13 +229,14 @@ const AdminSupport = () => {
         )}
       </div>
 
-      {selectedChat && (
+      {selectedChat && currentUser && (
         <ChatWindow
           workRequestId={selectedChat.id}
           receiverId={selectedChat.user_id} // Admin chats with the user
           onClose={() => setSelectedChat(null)}
-          currentUser={{ id: "admin", user_role: "admin" }} // Mock or fetch actual admin user
+          currentUser={currentUser}
           otherUser={selectedChat.user}
+          workRequestInit={selectedChat}
         />
       )}
     </div>

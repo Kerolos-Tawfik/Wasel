@@ -13,6 +13,7 @@ import {
   Search,
   MessageSquare,
   Bell,
+  Headset,
 } from "lucide-react";
 
 import styles from "./Header.module.css";
@@ -37,7 +38,7 @@ const Header = ({ user, userProfile }) => {
       const response = await notificationAPI.getNotifications();
       if (!response.ok) return;
       const data = await response.json();
-      console.log("Fetched notifications:", data); // DEBUG: Inspect notification structure
+      // console.log("Fetched notifications:", data); // DEBUG: Inspect notification structure
       setNotifications(data.notifications || []);
       setUnreadCount(data.unread_count || 0);
     } catch (error) {
@@ -142,7 +143,7 @@ const Header = ({ user, userProfile }) => {
       ? user.email.split("@")[0]
       : t("header.user");
 
-  const isHeadAdmin = user?.role === "head_admin";
+  const isHeadAdmin = ["head_admin", "admin", "support"].includes(user?.role);
 
   // Open Platform: Everyone can Add Work and Find Work
   // We can show "Add Work" as primary action
@@ -240,7 +241,6 @@ const Header = ({ user, userProfile }) => {
                     </div>
                   ) : (
                     notifications.map((notif) => {
-                      console.log("Notification:", notif);
                       // Check if notification is from admin
                       const isAdminNotif =
                         notif.type === "admin_notification" ||
@@ -409,6 +409,15 @@ const Header = ({ user, userProfile }) => {
                 >
                   <User size={16} />
                   {t("header.profile")}
+                </Link>
+
+                <Link
+                  to="/support"
+                  className={styles.dropdownItem}
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <Headset size={16} />
+                  {t("support.title") || "Support"}
                 </Link>
 
                 <div className={styles.dropdownDivider}></div>
@@ -615,6 +624,15 @@ const Header = ({ user, userProfile }) => {
             >
               <User size={18} />
               {t("header.profile")}
+            </Link>
+
+            <Link
+              to="/support"
+              className={styles.mobileMenuItem}
+              onClick={closeMenu}
+            >
+              <Headset size={18} />
+              {t("support.title") || "Support"}
             </Link>
 
             <button

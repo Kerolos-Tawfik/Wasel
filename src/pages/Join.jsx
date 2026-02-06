@@ -57,7 +57,17 @@ const Join = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || t("errors.default"), toastConfig);
+        let errorMessage = data.message || t("errors.default");
+
+        // Check for validation errors
+        if (data.errors) {
+          const firstErrorKey = Object.keys(data.errors)[0];
+          if (firstErrorKey) {
+            errorMessage = data.errors[firstErrorKey][0];
+          }
+        }
+
+        toast.error(errorMessage, toastConfig);
         return;
       }
 

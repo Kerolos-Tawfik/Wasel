@@ -24,6 +24,12 @@ function ChatWindow({
   const [workRequest, setWorkRequest] = useState(workRequestInit || null);
   const messagesEndRef = useRef(null);
 
+  useEffect(() => {
+    if (workRequestInit) {
+      setWorkRequest(workRequestInit);
+    }
+  }, [workRequestInit]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -140,39 +146,44 @@ function ChatWindow({
           </button>
         </div>
 
-        {currentUser?.user_role === "client" && !workRequest?.provider_id && (
-          <div className={styles.chatActions}>
-            <button
-              className={styles.assignBtn}
-              onClick={async () => {
-                if (window.confirm(t("chat.confirm_assign"))) {
-                  try {
-                    const { workStatusAPI } =
-                      await import("../../lib/apiService");
-                    const response = await workStatusAPI.assignProvider(
-                      workRequestId,
-                      { provider_id: receiverId },
-                    );
-                    const data = await response.json();
-                    if (response.ok) {
-                      toast.success(t("chat.provider_assigned"));
-                      setWorkRequest({
-                        ...data.work_request,
-                        provider_id: receiverId,
-                      });
-                    } else {
-                      toast.error(data.message);
+        {/* Only show Assign Provider for Clients on non-Support, open requests */}
+        {currentUser?.role === "client" &&
+          workRequest &&
+          !workRequest.provider_id &&
+          workRequest.service_type !== "Support" &&
+          !["completed", "cancelled"].includes(workRequest.status) && (
+            <div className={styles.chatActions}>
+              <button
+                className={styles.assignBtn}
+                onClick={async () => {
+                  if (window.confirm(t("chat.confirm_assign"))) {
+                    try {
+                      const { workStatusAPI } =
+                        await import("../../lib/apiService");
+                      const response = await workStatusAPI.assignProvider(
+                        workRequestId,
+                        { provider_id: receiverId },
+                      );
+                      const data = await response.json();
+                      if (response.ok) {
+                        toast.success(t("chat.provider_assigned"));
+                        setWorkRequest({
+                          ...data.work_request,
+                          provider_id: receiverId,
+                        });
+                      } else {
+                        toast.error(data.message);
+                      }
+                    } catch (error) {
+                      toast.error(t("common.error"));
                     }
-                  } catch (error) {
-                    toast.error(t("common.error"));
                   }
-                }
-              }}
-            >
-              {t("chat.assign_provider")}
-            </button>
-          </div>
-        )}
+                }}
+              >
+                {t("chat.assign_provider")}
+              </button>
+            </div>
+          )}
 
         {workRequest?.provider_id && (
           <div className={styles.chatStatus}>
@@ -196,7 +207,16 @@ function ChatWindow({
               <div
                 key={msg.id}
                 className={`${styles.messageWrapper} ${
-                  String(msg.sender_id) === String(currentUser?.id || "")
+                  // Logic: Message is 'own' (blue/right) if:
+                  // 1. I sent it (sender_id == current_id)
+                  // 2. OR I am staff AND sender is also staff (Group all staff messages together)
+                  String(msg.sender_id) === String(currentUser?.id || "") ||
+                  (["admin", "head_admin", "support"].includes(
+                    currentUser?.role,
+                  ) &&
+                    ["admin", "head_admin", "support"].includes(
+                      msg.sender?.role,
+                    ))
                     ? styles.ownMessage
                     : ""
                 }`}
@@ -216,26 +236,35 @@ function ChatWindow({
           <div ref={messagesEndRef} />
         </div>
 
-        <form className={styles.chatInputArea} onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={t("chat.placeholder") || "Type a message..."}
-            className={styles.chatInput}
-          />
-          <button
-            type="submit"
-            disabled={sending || !newMessage.trim()}
-            className={styles.sendBtn}
-          >
-            {sending ? (
-              <Loader2 className={styles.spinner} size={18} />
-            ) : (
-              <Send size={18} />
-            )}
-          </button>
-        </form>
+        {["completed", "cancelled"].includes(workRequest?.status) ? (
+          <div className={styles.chatClosed}>
+            <p>
+              {t("chat.ticket_closed") ||
+                "This conversation is closed. You can no longer send messages."}
+            </p>
+          </div>
+        ) : (
+          <form className={styles.chatInputArea} onSubmit={handleSendMessage}>
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder={t("chat.placeholder") || "Type a message..."}
+              className={styles.chatInput}
+            />
+            <button
+              type="submit"
+              disabled={sending || !newMessage.trim()}
+              className={styles.sendBtn}
+            >
+              {sending ? (
+                <Loader2 className={styles.spinner} size={18} />
+              ) : (
+                <Send size={18} />
+              )}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

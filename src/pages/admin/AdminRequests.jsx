@@ -8,7 +8,7 @@ const AdminRequests = () => {
   const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("confirmed"); // Default to confirmed or pending based on preference
+  const [activeTab, setActiveTab] = useState("pending_confirmation"); // Default to pending confirmation
   const [filters, setFilters] = useState({
     status: "all",
     date_from: "",
@@ -381,6 +381,28 @@ const AdminRequests = () => {
                     />
                   )}
                 </div>
+
+                {/* Status Field - Only in Edit Mode */}
+                {modalMode === "edit" && (
+                  <div className={styles.formGroup}>
+                    <label>{t("admin.requests.status_label")}</label>
+                    <select
+                      name="status"
+                      value={selectedRequest.status || "new"}
+                      onChange={handleEditChange}
+                      className={styles.statusSelect}
+                    >
+                      <option value="new">New</option>
+                      <option value="pending">Pending</option>
+                      <option value="assigned">Assigned</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="completed">Completed</option>
+                      <option value="cancelled">Cancelled</option>
+                      <option value="delayed">Delayed</option>
+                      <option value="pending_payment">Pending Payment</option>
+                    </select>
+                  </div>
+                )}
 
                 <div
                   className={styles.formGroup}

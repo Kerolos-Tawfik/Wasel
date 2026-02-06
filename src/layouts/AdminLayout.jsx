@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { MdDashboard, MdList, MdPeople, MdChatBubble } from "react-icons/md";
 import { HiMenuAlt3, HiLogout } from "react-icons/hi";
@@ -11,7 +11,9 @@ const AdminLayout = () => {
   const { t, i18n } = useTranslation();
   // We need to fetch the current user to know the role
   // Assuming we can get it from localStorage or context. For now, let's use a placeholder or check localStorage if available.
-  const [userRole, setUserRole] = useState("admin"); // Default to admin for safety, but real implementation needs check
+  // Initialize as null to prevent flickering
+  const [userRole, setUserRole] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -20,14 +22,25 @@ const AdminLayout = () => {
         const response = await authAPI.getCurrentUser();
         if (response.ok) {
           const data = await response.json();
-          setUserRole(data.user?.role || "user");
+          const role = data.user?.role || "user";
+          setUserRole(role);
+
+          // Force redirect for support users if they land on restricted pages
+          if (
+            role === "support" &&
+            (location.pathname === "/admin" ||
+              location.pathname === "/admin/dashboard")
+          ) {
+            navigate("/admin/support", { replace: true });
+          }
         }
       } catch (error) {
         console.error("Error fetching user role", error);
+        setUserRole("user"); // Fallback
       }
     };
     fetchUserRole();
-  }, []);
+  }, [navigate]); // Add navigate dependency
 
   const handleLogout = () => {
     // Just navigate back to the main site without logging out
@@ -39,6 +52,11 @@ const AdminLayout = () => {
     i18n.changeLanguage(newLang);
     document.dir = newLang === "ar" ? "rtl" : "ltr";
   };
+
+  // Show nothing or a loader while determining role to prevent flickering
+  if (userRole === null) {
+    return null; // Or a simple loader
+  }
 
   return (
     <div className={styles.adminContainer}>
