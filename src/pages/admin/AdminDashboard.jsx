@@ -21,7 +21,10 @@ const AdminDashboard = () => {
     pending_requests: 0,
     completed_requests: 0,
     in_progress_requests: 0,
+    completed_reports: 0,
+    in_progress_reports: 0,
   });
+
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -36,6 +39,8 @@ const AdminDashboard = () => {
             pending_requests: data.pending_requests || 0,
             completed_requests: data.completed_requests || 0,
             in_progress_requests: data.in_progress_requests || 0,
+            completed_reports: data.completed_reports || 0,
+            in_progress_reports: data.in_progress_reports || 0,
           });
         }
       } catch (error) {
@@ -139,6 +144,20 @@ const AdminDashboard = () => {
           value={totalRequests}
           color="#06b6d4"
           gradient="linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%)"
+        />
+        <StatCard
+          icon={CheckCircle2}
+          title={t("admin.dashboard.completed_reports")}
+          value={stats.completed_reports}
+          color="#f43f5e"
+          gradient="linear-gradient(135deg, #f43f5e 0%, #fb7185 100%)"
+        />
+        <StatCard
+          icon={AlertCircle}
+          title={t("admin.dashboard.in_progress_reports")}
+          value={stats.in_progress_reports}
+          color="#d97706"
+          gradient="linear-gradient(135deg, #d97706 0%, #f59e0b 100%)"
         />
       </div>
 

@@ -118,7 +118,10 @@ const MyRequests = ({ user }) => {
                       styles[`status-${request.status}`]
                     }`}
                   >
-                    {t(`findWork.status.${request.status}`) || request.status}
+                    {request.status === "new" && !request.is_published
+                      ? t("findWork.status.pending_review")
+                      : t(`findWork.status.${request.status}`) ||
+                        request.status}
                   </span>
                 </div>
 

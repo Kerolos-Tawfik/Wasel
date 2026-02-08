@@ -169,7 +169,11 @@ const Header = ({ user, userProfile }) => {
         <Link to="/">
           <img
             className={styles.logo}
-            src="/assets/images/Wasel.png"
+            src={
+              i18n.language === "ar"
+                ? "/assets/images/Wasel_ar.png"
+                : "/assets/images/Wasel_en.png"
+            }
             alt="logo"
           />
         </Link>
@@ -288,14 +292,24 @@ const Header = ({ user, userProfile }) => {
                         >
                           {isAdminNotif && (
                             <div className={styles.adminIcon}>
-                              <img src="/assets/images/Wasel.png" alt="Admin" />
+                              <img
+                                src={
+                                  i18n.language === "ar"
+                                    ? "/assets/images/Wasel_ar.png"
+                                    : "/assets/images/Wasel_en.png"
+                                }
+                                alt="Admin"
+                              />
                             </div>
                           )}
+
                           <div className={styles.notifText}>
                             <p className={styles.notifTitle}>
                               {notif.title === "New Message"
                                 ? t("notifications.new_message_title")
                                 : t(notif.title, notif.data)}
+                              {notif.data?.unread_count > 1 &&
+                                ` (${notif.data.unread_count})`}
                             </p>
                             <p className={styles.notifMessage}>
                               {notif.message &&
@@ -477,61 +491,92 @@ const Header = ({ user, userProfile }) => {
                     {t("notifications.empty") || "No notifications"}
                   </div>
                 ) : (
-                  notifications.map((notif) => (
-                    <div
-                      key={notif.id}
-                      className={`${styles.notifItem} ${
-                        !notif.read_at ? styles.unread : ""
-                      }`}
-                      onClick={() => {
-                        handleMarkAsRead(notif.id);
-                        if (notif.type === "new_message") {
-                          navigate("/messages");
-                        } else if (
-                          notif.type === "status_update" ||
-                          notif.type === "status_pending" ||
-                          notif.type === "status_confirmed" ||
-                          notif.type === "status_rejected"
-                        ) {
-                          const target =
-                            userProfile?.user_role === "client"
-                              ? "/my-requests"
-                              : "/findwork";
-                          navigate(target, {
-                            state: {
-                              workRequestId: notif.data?.work_request_id,
-                              notificationType: notif.type,
-                              notificationId: notif.id,
-                            },
-                          });
-                        }
-                        setIsNotifOpen(false);
-                      }}
-                    >
-                      <div className={styles.notifText}>
-                        <p className={styles.notifTitle}>
-                          {notif.title === "New Message"
-                            ? t("notifications.new_message_title")
-                            : t(notif.title, notif.data)}
-                        </p>
-                        <p className={styles.notifMessage}>
-                          {notif.message &&
-                          notif.message.includes("You have a new message from")
-                            ? t("notifications.new_message_body", {
-                                sender_name:
-                                  notif.data?.sender_name ||
-                                  notif.message.split("from ")[1] ||
-                                  "User",
-                              })
-                            : t(notif.message, notif.data)}
-                        </p>
-                        <span className={styles.notifTime}>
-                          {new Date(notif.created_at).toLocaleDateString()}
-                        </span>
+                  notifications.map((notif) => {
+                    const isAdminNotif =
+                      notif.type === "admin_notification" ||
+                      notif.type === "admin_message" ||
+                      notif.type === "request_rejected" ||
+                      notif.type === "request_approved" ||
+                      notif.data?.is_admin === true ||
+                      notif.sender_id === 1 ||
+                      notif.type === "status_rejected" ||
+                      notif.data?.sender_role === "admin" ||
+                      notif.data?.sender_role === "head_admin";
+
+                    return (
+                      <div
+                        key={notif.id}
+                        className={`${styles.notifItem} ${
+                          !notif.read_at ? styles.unread : ""
+                        } ${isAdminNotif ? styles.adminNotif : ""}`}
+                        onClick={() => {
+                          handleMarkAsRead(notif.id);
+                          if (notif.type === "new_message") {
+                            navigate("/messages");
+                          } else if (
+                            notif.type === "status_update" ||
+                            notif.type === "status_pending" ||
+                            notif.type === "status_confirmed" ||
+                            notif.type === "status_rejected" ||
+                            notif.type === "request_rejected" ||
+                            notif.type === "request_approved"
+                          ) {
+                            const target =
+                              userProfile?.user_role === "client"
+                                ? "/my-requests"
+                                : "/findwork";
+                            navigate(target, {
+                              state: {
+                                workRequestId: notif.data?.work_request_id,
+                                notificationType: notif.type,
+                                notificationId: notif.id,
+                              },
+                            });
+                          }
+                          setIsNotifOpen(false);
+                        }}
+                      >
+                        {isAdminNotif && (
+                          <div className={styles.adminIcon}>
+                            <img
+                              src={
+                                i18n.language === "ar"
+                                  ? "/assets/images/Wasel_ar.png"
+                                  : "/assets/images/Wasel_en.png"
+                              }
+                              alt="Admin"
+                            />
+                          </div>
+                        )}
+                        <div className={styles.notifText}>
+                          <p className={styles.notifTitle}>
+                            {notif.title === "New Message"
+                              ? t("notifications.new_message_title")
+                              : t(notif.title, notif.data)}
+                            {notif.data?.unread_count > 1 &&
+                              ` (${notif.data.unread_count})`}
+                          </p>
+                          <p className={styles.notifMessage}>
+                            {notif.message &&
+                            notif.message.includes(
+                              "You have a new message from",
+                            )
+                              ? t("notifications.new_message_body", {
+                                  sender_name:
+                                    notif.data?.sender_name ||
+                                    notif.message.split("from ")[1] ||
+                                    "User",
+                                })
+                              : t(notif.message, notif.data)}
+                          </p>
+                          <span className={styles.notifTime}>
+                            {new Date(notif.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {!notif.read_at && <div className={styles.unreadDot} />}
                       </div>
-                      {!notif.read_at && <div className={styles.unreadDot} />}
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>

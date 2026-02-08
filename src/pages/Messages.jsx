@@ -173,7 +173,9 @@ function Messages({ user }) {
           receiverId={selectedReceiverId}
           otherUser={selectedOtherUser}
           currentUser={user}
-          workRequestInit={conversations.find((c) => c.id === selectedWorkId)}
+          workRequestInit={conversations.find(
+            (c) => String(c.work_request_id) === String(selectedWorkId),
+          )}
           onClose={() => setIsChatOpen(false)}
         />
       )}

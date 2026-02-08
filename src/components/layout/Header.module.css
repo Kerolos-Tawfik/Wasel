@@ -6,16 +6,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1.5rem;
   background-color: var(--bg-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
   position: sticky;
   top: 0;
   z-index: 50;
 }
 
 .logo {
-  width: 100px;
+  width: 80px;
   height: auto;
 }
 
@@ -135,10 +136,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
+  padding: 6px 12px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 10px;
+
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -149,8 +151,9 @@
 }
 
 .userAvatar {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -318,7 +321,7 @@
   }
 
   .logo {
-    width: 80px;
+    width: 70px;
   }
 
   /* Hide desktop elements on mobile */
@@ -572,7 +575,7 @@
   }
 
   .logo {
-    width: 70px;
+    width: 60px;
   }
 
   .mobileMenu {

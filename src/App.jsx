@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
@@ -7,24 +7,26 @@ import { authAPI, profileAPI, workRequestAPI } from "./lib/apiService";
 import { toastConfig } from "./lib/toastConfig";
 import Header from "./components/layout/Header.jsx";
 import Footer from "./components/layout/Footer.jsx";
-import Home from "./pages/Home.jsx";
-import Join from "./pages/Join.jsx";
-import Login from "./pages/Login.jsx";
-import UpdatePassword from "./pages/UpdatePassword.jsx";
-import ForgotPassword from "./pages/ForgotPassword.jsx";
-import FindWork from "./pages/FindWork.jsx";
-import AddWork from "./pages/AddWork.jsx";
-import EmailVerified from "./pages/EmailVerified.jsx";
-import VerifyError from "./pages/VerifyError.jsx";
-import Messages from "./pages/Messages.jsx";
-import Onboarding from "./pages/Onboarding.jsx";
-import Profile from "./pages/Profile.jsx";
-import MyRequests from "./pages/MyRequests.jsx";
-import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
-import AdminRequests from "./pages/admin/AdminRequests.jsx";
-import AdminUsers from "./pages/admin/AdminUsers.jsx";
-import AdminSupport from "./pages/admin/AdminSupport.jsx";
-import Support from "./pages/Support.jsx";
+
+// Lazy load pages
+const Home = lazy(() => import("./pages/Home.jsx"));
+const Join = lazy(() => import("./pages/Join.jsx"));
+const Login = lazy(() => import("./pages/Login.jsx"));
+const UpdatePassword = lazy(() => import("./pages/UpdatePassword.jsx"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword.jsx"));
+const FindWork = lazy(() => import("./pages/FindWork.jsx"));
+const AddWork = lazy(() => import("./pages/AddWork.jsx"));
+const EmailVerified = lazy(() => import("./pages/EmailVerified.jsx"));
+const VerifyError = lazy(() => import("./pages/VerifyError.jsx"));
+const Messages = lazy(() => import("./pages/Messages.jsx"));
+const Onboarding = lazy(() => import("./pages/Onboarding.jsx"));
+const Profile = lazy(() => import("./pages/Profile.jsx"));
+const MyRequests = lazy(() => import("./pages/MyRequests.jsx"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.jsx"));
+const AdminRequests = lazy(() => import("./pages/admin/AdminRequests.jsx"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers.jsx"));
+const AdminSupport = lazy(() => import("./pages/admin/AdminSupport.jsx"));
+const Support = lazy(() => import("./pages/Support.jsx"));
 
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import PublicLayout from "./layouts/PublicLayout.jsx";
@@ -144,162 +146,151 @@ export default function App() {
 
   // Check if user needs onboarding (no role selected yet)
   // Skip onboarding if user is head_admin
-  const needsOnboarding =
-    user && !userProfile?.user_role && user.role !== "head_admin";
+  const needsOnboarding = false;
 
   return (
     <AuthProvider>
       <ToastContainer />
       <Router>
         <div className="app-container">
-          <Routes>
-            {/* Public/Main Site Routes */}
-            <Route
-              element={<PublicLayout user={user} userProfile={userProfile} />}
-            >
+          <Suspense
+            fallback={
+              <div className={styles.loading}>
+                <LoaderCircle className={styles.animate_spin} size={48} />
+              </div>
+            }
+          >
+            <Routes>
+              {/* Public/Main Site Routes */}
               <Route
-                path="/"
-                element={<Home user={user} selectedRole={selectedRole} />}
-              />
+                element={<PublicLayout user={user} userProfile={userProfile} />}
+              >
+                <Route
+                  path="/"
+                  element={<Home user={user} selectedRole={selectedRole} />}
+                />
 
-              <Route
-                path="/login"
-                element={
-                  <GuestRoute user={user}>
-                    <Login />
-                  </GuestRoute>
-                }
-              />
-              <Route
-                path="/join"
-                element={
-                  <GuestRoute user={user}>
-                    <Join />
-                  </GuestRoute>
-                }
-              />
-              <Route
-                path="/forgot-password"
-                element={
-                  <GuestRoute user={user}>
-                    <ForgotPassword />
-                  </GuestRoute>
-                }
-              />
-              <Route path="/update-password" element={<UpdatePassword />} />
-              <Route path="/email-verified" element={<EmailVerified />} />
-              <Route path="/verify-error" element={<VerifyError />} />
+                <Route
+                  path="/login"
+                  element={
+                    <GuestRoute user={user}>
+                      <Login />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="/join"
+                  element={
+                    <GuestRoute user={user}>
+                      <Join />
+                    </GuestRoute>
+                  }
+                />
+                <Route
+                  path="/forgot-password"
+                  element={
+                    <GuestRoute user={user}>
+                      <ForgotPassword />
+                    </GuestRoute>
+                  }
+                />
+                <Route path="/update-password" element={<UpdatePassword />} />
+                <Route path="/email-verified" element={<EmailVerified />} />
+                <Route path="/verify-error" element={<VerifyError />} />
 
-              <Route
-                path="/findwork"
-                element={
-                  <ProtectedRoute user={user}>
-                    {needsOnboarding ? (
-                      <Onboarding
-                        user={user}
-                        selectedRole={selectedRole}
-                        setSelectedRole={setSelectedRole}
-                        refreshProfile={refreshProfile}
-                      />
-                    ) : (
+                <Route
+                  path="/findwork"
+                  element={
+                    <ProtectedRoute user={user}>
                       <FindWork
                         savedData={formData}
                         service={service}
                         setService={setService}
                         user={user}
                       />
-                    )}
-                  </ProtectedRoute>
-                }
-              />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/addwork"
-                element={
-                  <ProtectedRoute user={user}>
-                    {needsOnboarding ? (
-                      <Onboarding
-                        user={user}
-                        selectedRole={selectedRole}
-                        setSelectedRole={setSelectedRole}
-                        onComplete={refreshProfile}
-                      />
-                    ) : (
+                <Route
+                  path="/addwork"
+                  element={
+                    <ProtectedRoute user={user}>
                       <AddWork user={user} onComplete={fetchWorkRequests} />
-                    )}
-                  </ProtectedRoute>
-                }
-              />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/my-requests"
-                element={
-                  <ProtectedRoute user={user}>
-                    <MyRequests user={user} />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/my-requests"
+                  element={
+                    <ProtectedRoute user={user}>
+                      <MyRequests user={user} />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/messages"
-                element={
-                  <ProtectedRoute user={user}>
-                    <Messages user={user} />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/messages"
+                  element={
+                    <ProtectedRoute user={user}>
+                      <Messages user={user} />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute user={user}>
-                    <Profile
-                      user={user}
-                      userProfile={userProfile}
-                      onProfileUpdate={refreshProfile}
-                    />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile/:id"
-                element={
-                  <ProtectedRoute user={user}>
-                    <Profile
-                      user={user}
-                      userProfile={userProfile}
-                      onProfileUpdate={refreshProfile}
-                    />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute user={user}>
+                      <Profile
+                        user={user}
+                        userProfile={userProfile}
+                        onProfileUpdate={refreshProfile}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile/:id"
+                  element={
+                    <ProtectedRoute user={user}>
+                      <Profile
+                        user={user}
+                        userProfile={userProfile}
+                        onProfileUpdate={refreshProfile}
+                      />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/support"
-                element={
-                  <ProtectedRoute user={user}>
-                    <Support currentUser={user} />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
+                <Route
+                  path="/support"
+                  element={
+                    <ProtectedRoute user={user}>
+                      <Support currentUser={user} />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
 
-            {/* Admin Routes - Protected by AdminRoute */}
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute user={user}>
-                  <AdminLayout />
-                </AdminRoute>
-              }
-            >
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="requests" element={<AdminRequests />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="support" element={<AdminSupport />} />
-              <Route index element={<AdminDashboard />} />
-            </Route>
-          </Routes>
+              {/* Admin Routes - Protected by AdminRoute */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute user={user}>
+                    <AdminLayout />
+                  </AdminRoute>
+                }
+              >
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="requests" element={<AdminRequests />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="support" element={<AdminSupport />} />
+                <Route index element={<AdminDashboard />} />
+              </Route>
+            </Routes>
+          </Suspense>
         </div>
       </Router>
     </AuthProvider>

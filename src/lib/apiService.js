@@ -1,4 +1,5 @@
-const API_BASE_URL = "https://waselp.com/api";
+// const API_BASE_URL = "https://waselp.com/api";
+const API_BASE_URL = "http://127.0.0.1:8000/api";
 
 const getAuthToken = () => {
   return localStorage.getItem("authToken");
@@ -10,6 +11,7 @@ export const apiFetch = async (endpoint, options = {}) => {
   const headers = {
     "Content-Type": "application/json",
     Accept: "application/json",
+    "Accept-Language": localStorage.getItem("i18nextLng") || "ar",
     ...options.headers,
   };
 
@@ -34,7 +36,9 @@ export const authAPI = {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "Accept-Language": localStorage.getItem("i18nextLng") || "ar",
       },
+
       body: JSON.stringify(userData),
     });
     return response;
@@ -46,7 +50,9 @@ export const authAPI = {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
+        "Accept-Language": localStorage.getItem("i18nextLng") || "ar",
       },
+
       body: JSON.stringify(credentials),
     });
     return response;

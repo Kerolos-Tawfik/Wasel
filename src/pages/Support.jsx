@@ -484,7 +484,10 @@ const Support = ({ currentUser }) => {
           receiverId={null}
           onClose={() => setIsChatOpen(false)}
           currentUser={currentUser}
-          otherUser={{ full_name: "Support Agent", avatar_url: null }}
+          otherUser={{
+            full_name: t("support.agent_name") || "Support Agent",
+            avatar_url: null,
+          }}
           workRequestInit={activeChat}
         />
       )}

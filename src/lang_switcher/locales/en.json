@@ -16,7 +16,8 @@
     "continue": "Continue",
     "search": "Search",
     "send": "Send",
-    "open": "Open chat"
+    "open": "Open chat",
+    "clear": "Clear"
   },
   "cities": {
     "saihat": "Saihat",
@@ -368,8 +369,11 @@
       "in_progress": "In Progress",
       "pending_payment": "Pending Payment",
       "delayed": "Delayed",
-      "completed": "Completed"
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "pending_review": "Under Review"
     },
+
     "status_updated": "Status updated successfully!",
     "status_error": "Failed to update status.",
     "current_status": "Current Status",
@@ -381,7 +385,9 @@
     "placeholder": "Type a message...",
     "error_sending": "Failed to send message",
     "send": "Send",
-    "online": "Online"
+    "online": "Online",
+    "view_profile": "View Profile",
+    "ticket_closed": "Ticket Closed"
   },
   "messages": {
     "title": "Messages",
@@ -433,8 +439,9 @@
       "duration": "e.g. 5 days, 1 week"
     },
     "messages": {
-      "success": "Work request submitted successfully!"
+      "success": "Your request has been submitted successfully and is now under review"
     },
+
     "errors": {
       "category_required": "Please select a category",
       "city_required": "Please select a city for local services",
@@ -549,7 +556,10 @@
       "today_activity": "Today's Activity",
       "completion_rate": "Completion Rate",
       "days": "days",
+      "completed_reports": "Completed Reports",
+      "in_progress_reports": "Reports In Progress",
       "completed_requests": "Completed Requests",
+
       "in_progress_requests": "In Progress",
       "status_breakdown": "Status Breakdown",
       "new_today": "New Today",
@@ -642,12 +652,15 @@
       "no_chats": "No active support chats",
       "open_chat": "Open Chat",
       "close": "Close Chat",
-      "confirm_close": "Are you sure you want to close the chat?"
+      "confirm_close": "Are you sure you want to close the chat?",
+      "close_ticket": "Close Ticket"
     }
   },
   "support": {
     "title": "Help & Support",
+    "no_results": "No results",
     "subtitle": "We are here to help you with any questions or issues.",
+    "no_chats": "No active support chats",
     "start_chat": "Contact Us",
     "login_required": "Please login to contact support",
     "initiate_error": "Failed to start support chat",
@@ -703,6 +716,7 @@
     "guide_provider_step_2_desc": "Find projects matching your skills and submit convincing proposals.",
     "guide_provider_step_3": "Work & Earn",
     "guide_provider_step_3_desc": "Deliver high-quality work, get paid, and earn great reviews.",
-    "contact_support": "Contact Support"
+    "contact_support": "Contact Support",
+    "agent_name": "Support Agent"
   }
 }

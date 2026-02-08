@@ -26,7 +26,19 @@ function ChatWindow({
 
   useEffect(() => {
     if (workRequestInit) {
-      setWorkRequest(workRequestInit);
+      setWorkRequest((prev) => {
+        if (!prev) return workRequestInit;
+        // Merge: avoid losing provider_id or status if local state is more 'advanced'
+        // or if workRequestInit is just missing some fields but has the same ID
+        return {
+          ...prev,
+          ...workRequestInit,
+          // Explicitly preserve provider_id if workRequestInit (from polling list) missing it
+          provider_id: prev.provider_id || workRequestInit.provider_id,
+          // And service_type just to be safe
+          service_type: prev.service_type || workRequestInit.service_type,
+        };
+      });
     }
   }, [workRequestInit]);
 
@@ -59,30 +71,31 @@ function ChatWindow({
     }
   };
 
+  const fetchWorkRequestStatus = async () => {
+    if (!workRequestId) return;
+    try {
+      const { workRequestAPI } = await import("../../lib/apiService");
+      const response = await workRequestAPI.getWorkRequestById(workRequestId);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.work_request) {
+          setWorkRequest(data.work_request);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching work request status:", error);
+    }
+  };
+
   useEffect(() => {
     fetchMessages();
-    const interval = setInterval(fetchMessages, 5000); // Poll every 5 seconds
-
-    // Also fetch work request status periodically or at least once to ensure we have up-to-date provider assignment
-    const fetchWorkRequestStatus = async () => {
-      if (!workRequestId) return;
-      try {
-        const { workRequestAPI } = await import("../../lib/apiService");
-        // We assume we have an endpoint or we can get it from a list.
-        // If not, we might need a specific endpoint.
-        // fallback: check local storage or re-fetch from list.
-        // For now, let's assume we can rely on parent updates OR we add a check here if API supports it.
-        // Actually, let's just make sure we update it if we assign.
-        // But to fix the "glitch", we need to be sure.
-        // Let's rely on props update if parent updates, but parent might not update if this is standalone.
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    // fetchWorkRequestStatus();
-
+    fetchWorkRequestStatus();
+    const interval = setInterval(() => {
+      fetchMessages();
+      fetchWorkRequestStatus();
+    }, 5000);
     return () => clearInterval(interval);
-  }, [workRequestId]);
+  }, [workRequestId, receiverId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -146,11 +159,13 @@ function ChatWindow({
           </button>
         </div>
 
-        {/* Only show Assign Provider for Clients on non-Support, open requests */}
-        {currentUser?.role === "client" &&
+        {/* Show Assign Provider for Clients/Admins/Support on non-Support, open requests */}
+        {(currentUser?.role === "client" ||
+          ["admin", "head_admin", "support"].includes(currentUser?.role)) &&
           workRequest &&
           !workRequest.provider_id &&
-          workRequest.service_type !== "Support" &&
+          workRequest.service_type &&
+          String(workRequest.service_type).toLowerCase() !== "support" &&
           !["completed", "cancelled"].includes(workRequest.status) && (
             <div className={styles.chatActions}>
               <button
@@ -209,14 +224,17 @@ function ChatWindow({
                 className={`${styles.messageWrapper} ${
                   // Logic: Message is 'own' (blue/right) if:
                   // 1. I sent it (sender_id == current_id)
-                  // 2. OR I am staff AND sender is also staff (Group all staff messages together)
+                  // 2. OR I am staff AND NOT the owner (Platform perspective)
+                  //    AND sender is staff AND NOT the owner (Platform sender)
                   String(msg.sender_id) === String(currentUser?.id || "") ||
                   (["admin", "head_admin", "support"].includes(
                     currentUser?.role,
                   ) &&
+                    String(currentUser?.id) !== String(workRequest?.user_id) &&
                     ["admin", "head_admin", "support"].includes(
                       msg.sender?.role,
-                    ))
+                    ) &&
+                    String(msg.sender_id) !== String(workRequest?.user_id))
                     ? styles.ownMessage
                     : ""
                 }`}
