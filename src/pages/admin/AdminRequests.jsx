@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { adminAPI } from "../../lib/adminApiService";
 import styles from "./AdminRequests.module.css";
-import { LoaderCircle, Edit, CheckCircle, XCircle, Eye } from "lucide-react";
+import { LoaderCircle, Edit, CheckCircle, XCircle, Eye, X } from "lucide-react";
 
 const AdminRequests = () => {
   const { t } = useTranslation();
@@ -286,12 +286,34 @@ const AdminRequests = () => {
       {isModalOpen && selectedRequest && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent} style={{ maxWidth: "700px" }}>
-            <h3>
-              {modalMode === "review"
-                ? t("admin.requests.review_title") || "Review Request"
-                : t("admin.requests.edit_title") || "Edit Request"}{" "}
-              #{selectedRequest.id}
-            </h3>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "20px",
+              }}
+            >
+              <h3 style={{ margin: 0 }}>
+                {modalMode === "review"
+                  ? t("admin.requests.review_title") || "Review Request"
+                  : t("admin.requests.edit_title") || "Edit Request"}{" "}
+                #{selectedRequest.id}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className={styles.closeBtn}
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#666",
+                }}
+              >
+                <X size={24} />
+              </button>
+            </div>
 
             <form onSubmit={handleEditSubmit} className={styles.editForm}>
               <div className={styles.formGrid}>
@@ -512,6 +534,13 @@ const AdminRequests = () => {
                         justifyContent: "flex-end",
                       }}
                     >
+                      <button
+                        type="button"
+                        onClick={() => setIsModalOpen(false)}
+                        className={styles.cancelBtn}
+                      >
+                        {t("common.cancel") || "Close"}
+                      </button>
                       <button
                         type="button"
                         onClick={() => setShowRejectInput(true)}

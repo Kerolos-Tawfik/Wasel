@@ -19,7 +19,8 @@
     "continue": "متابعة",
     "search": "ابحث",
     "send": "ارسل",
-    "open": "فتح الدردشة"
+    "open": "فتح الدردشة",
+    "clear": "مسح"
   },
   "cities": {
     "saihat": "سيهات",
@@ -248,6 +249,7 @@
     "assigned": "تم الإسناد",
     "pending": "معلق"
   },
+
   "auth": {
     "login_title": "تسجيل الدخول",
     "join_title": "إنشاء حساب جديد",
@@ -388,8 +390,11 @@
       "in_progress": "قيد التنفيذ",
       "pending_payment": "بانتظار الدفع",
       "delayed": "متأخر",
-      "completed": "مكتمل"
+      "completed": "مكتمل",
+      "rejected": "مرفوض",
+      "pending_review": "قيد المراجعة"
     },
+
     "city_not_specified": "المدينة غير محددة",
 
     "status_updated_successfully": "تم تحديث الحالة بنجاح",
@@ -411,7 +416,9 @@
     "assign_provider": "تعيين كمقدم خدمة",
     "provider_assigned": "تم تعيين مقدم الخدمة",
     "confirm_assign": "هل أنت متأكد من تعيين هذا الشخص لإنجاز الطلب؟",
-    "online": "متصل الآن"
+    "online": "متصل الآن",
+    "view_profile": "عرض الملف الشخصي",
+    "ticket_closed": "التذكرة مغلقة"
   },
   "messages": {
     "title": "الرسائل",
@@ -464,8 +471,9 @@
       "duration": "مثال: ٥ أيام، أسبوع"
     },
     "messages": {
-      "success": "تم انشاء طلب العمل بنجاح"
+      "success": "تم إرسال طلبك بنجاح وهو الآن قيد المراجعة"
     },
+
     "errors": {
       "category_required": "يرجى اختيار التصنيف",
       "city_required": "يرجى اختيار المدينة للخدمات المحلية",
@@ -596,7 +604,10 @@
       "today_activity": "نشاط اليوم",
       "completion_rate": "معدل الإنجاز",
       "days": "يوم",
+      "completed_reports": "بلاغات مكتملة",
+      "in_progress_reports": "بلاغات قيد التنفيذ",
       "completed_requests": "الطلبات المكتملة",
+
       "in_progress_requests": "قيد التنفيذ",
       "status_breakdown": "توزيع حسب الحالة",
       "new_today": "جديد اليوم",
@@ -687,14 +698,16 @@
       "last_message": "آخر رسالة",
       "status": "الحالة",
       "action": "إجراء",
-      "no_chats": "لا توجد محادثات دعم نشطة",
       "open_chat": "فتح المحادثة",
       "close": "انهاء المحادثة",
-      "confirm_close": "هل انت متاكد من انهاء المحادثة؟"
+      "confirm_close": "هل انت متاكد من انهاء المحادثة؟",
+      "close_ticket": "اغلق التذكرة"
     }
   },
   "support": {
     "title": "المساعدة والدعم",
+    "no_results": "لا توجد نتائج",
+    "no_chats": "لا توجد محادثات دعم نشطة",
     "subtitle": "نحن هنا لمساعدتك في أي أسئلة أو مشاكل.",
     "start_chat": "تواصل معنا",
     "login_required": "يرجى تسجيل الدخول للتواصل مع الدعم",
@@ -751,6 +764,7 @@
     "guide_provider_step_2_desc": "ابحث عن المشاريع التي تناسب مهاراتك وقدم عروضاً مقنعة.",
     "guide_provider_step_3": "أنجز العمل واربح",
     "guide_provider_step_3_desc": "سلم العمل بجودة عالية واحصل على أرباحك وتقييم ممتاز.",
-    "contact_support": "تواصل مع الدعم"
+    "contact_support": "تواصل مع الدعم",
+    "agent_name": "وكيل الدعم"
   }
 }
